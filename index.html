@@ -136,6 +136,21 @@
   .report-head strong{font-family:var(--font-display);font-weight:600;font-size:1.2rem}
   .report-head span{font-size:.8rem;color:var(--cream-dim);letter-spacing:.08em;text-transform:uppercase}
   .report-chart{border-radius:6px;background:var(--navy-deep);padding:16px 12px 10px;margin-bottom:18px}
+  .report-chart svg{display:block;height:auto}
+  /* Horizontale Waterfall-Variante fuer schmale Screens */
+  .chart-m{display:none}
+  .chart-m .row{display:grid;grid-template-columns:76px 1fr 44px;align-items:center;gap:10px;margin-bottom:10px}
+  .chart-m .lbl{font-size:.78rem;color:var(--cream-dim)}
+  .chart-m .val{font-size:.85rem;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+  .chart-m .track{position:relative;height:22px;background:rgba(245,235,208,.06);border-radius:3px}
+  .chart-m .bar{position:absolute;top:0;bottom:0;border-radius:3px;background:rgba(245,235,208,.5)}
+  .chart-m .bar.total{background:var(--cream)}
+  .chart-m .sum{margin-top:14px;padding-top:12px;border-top:1px dashed rgba(245,235,208,.3);font-size:.8rem;font-weight:700;text-align:center}
+  .chart-m .unit{font-size:.7rem;color:var(--cream-dim);text-align:right;margin-bottom:10px}
+  @media(max-width:599px){
+    .report-chart svg{display:none}
+    .chart-m{display:block}
+  }
   .kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
   @media(max-width:420px){.kpi-row{grid-template-columns:1fr 1fr}}
   .kpi{
@@ -330,7 +345,7 @@
           <span>August</span>
         </div>
         <div class="report-chart">
-          <svg viewBox="0 0 320 168" width="100%" style="height:auto;display:block" role="img" aria-label="Waterfall-Diagramm vom Umsatz zum Monatsergebnis: Umsatz 420 Tausend Euro, Materialaufwand minus 160, Personalaufwand minus 130, Fixkosten minus 70, ergibt ein Monatsergebnis von 60 Tausend Euro">
+          <svg viewBox="0 0 320 168" width="100%" role="img" aria-label="Waterfall-Diagramm vom Umsatz zum Monatsergebnis: Umsatz 420 Tausend Euro, Materialaufwand minus 160, Personalaufwand minus 130, Fixkosten minus 70, ergibt ein Monatsergebnis von 60 Tausend Euro">
             <text x="308" y="12" font-size="8.5" fill="#F5EBD0" fill-opacity=".6" text-anchor="end">Beträge in T€</text>
             <g stroke="rgba(245,235,208,.12)" stroke-width="1">
               <line x1="8" y1="93" x2="312" y2="93"/>
@@ -373,6 +388,35 @@
             <!-- Ergebnis-Zeile -->
             <text x="160" y="163" font-size="9" fill="#F5EBD0" fill-opacity=".85" text-anchor="middle" font-weight="700">Monatsergebnis: 60 T€, das sind 14 % vom Umsatz</text>
           </svg>
+          <div class="chart-m">
+            <p class="unit">Beträge in T€</p>
+            <div class="row">
+              <span class="lbl">Umsatz</span>
+              <div class="track"><div class="bar total" style="left:0;width:100%"></div></div>
+              <span class="val">420</span>
+            </div>
+            <div class="row">
+              <span class="lbl">Material</span>
+              <div class="track"><div class="bar" style="left:61.9%;width:38.1%"></div></div>
+              <span class="val">−160</span>
+            </div>
+            <div class="row">
+              <span class="lbl">Personal</span>
+              <div class="track"><div class="bar" style="left:31%;width:30.9%"></div></div>
+              <span class="val">−130</span>
+            </div>
+            <div class="row">
+              <span class="lbl">Fixkosten</span>
+              <div class="track"><div class="bar" style="left:14.3%;width:16.7%"></div></div>
+              <span class="val">−70</span>
+            </div>
+            <div class="row">
+              <span class="lbl">Ergebnis</span>
+              <div class="track"><div class="bar total" style="left:0;width:14.3%"></div></div>
+              <span class="val">60</span>
+            </div>
+            <p class="sum">Monatsergebnis: 60 T€, das sind 14 % vom Umsatz</p>
+          </div>
         </div>
         <div class="kpi-row">
           <div class="kpi">
