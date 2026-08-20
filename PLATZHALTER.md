@@ -1,8 +1,7 @@
 # Platzhalter in den Rechtsseiten
 
-Alle firmenspezifischen Angaben in `impressum.html` und `datenschutz.html` sind als
-`{{PLATZHALTER}}` gesetzt und müssen vor dem Livegang durch echte Werte ersetzt werden.
-Es wurden bewusst keine Beispiel- oder Fantasiewerte eingetragen.
+Firmenspezifische Angaben in `impressum.html` und `datenschutz.html`, die noch fehlen, sind als
+`{{PLATZHALTER}}` gesetzt. Es wurden bewusst keine Beispiel- oder Fantasiewerte eingetragen.
 
 ## Bereits eingesetzt
 
@@ -11,7 +10,10 @@ Es wurden bewusst keine Beispiel- oder Fantasiewerte eingetragen.
 | Firma und Rechtsform | Valtix Financial Management GbR |
 | Vertretungsberechtigte Gesellschafter | Luca Sparhuber, Sharif Ibrahim |
 | Verantwortlich für Inhalte nach § 18 Abs. 2 MStV | Sharif Ibrahim |
+| Telefon | +49 176 22930394 |
+| E-Mail | sekretariat@valtixfm.de (auch auf der Startseite eingesetzt) |
 | Zuständige Datenschutz-Aufsichtsbehörde | Sächsische Datenschutz- und Transparenzbeauftragte, Maternistraße 17, 01067 Dresden |
+| Berufsrechtliche Angaben | Entfallen: erlaubnisfreies Gewerbe. Ersetzt durch den Abschnitt "Tätigkeit und Umfang der Beratung" |
 
 ## Offene Platzhalter
 
@@ -20,36 +22,30 @@ Es wurden bewusst keine Beispiel- oder Fantasiewerte eingetragen.
 | `{{STRASSE_HAUSNUMMER}}` | Ladungsfähige Anschrift, Straße und Hausnummer (kein Postfach) | Musterstraße 1 | impressum.html:80, impressum.html:106, datenschutz.html:82 | Pflicht |
 | `{{PLZ}}` | Postleitzahl | 04109 | impressum.html:81, impressum.html:107, datenschutz.html:83 | Pflicht |
 | `{{ORT}}` | Ort | Leipzig | impressum.html:81, impressum.html:107, datenschutz.html:83 | Pflicht |
-| `{{TELEFONNUMMER}}` | Telefonnummer | +49 341 0000000 | impressum.html:88, datenschutz.html:84 | Pflicht |
-| `{{EMAIL_ADRESSE}}` | E-Mail-Adresse (sollte mit der Kontakt-Mail auf der Startseite übereinstimmen) | hallo@valtix.de | impressum.html:89, datenschutz.html:85 | Pflicht |
 | `{{REGISTERGERICHT}}` | Registergericht | Amtsgericht Leipzig | impressum.html:94 | Optional, nur bei eingetragener GbR (eGbR) |
 | `{{REGISTERNUMMER}}` | Registernummer | GsR 1234 | impressum.html:95 | Optional, nur bei eingetragener GbR (eGbR) |
 | `{{UST_IDNR}}` | Umsatzsteuer-Identifikationsnummer nach § 27a UStG | DE123456789 | impressum.html:100 | Optional, nur falls vergeben |
-| `{{BERUFSBEZEICHNUNG}}` | Berufsbezeichnung, falls reguliert | z. B. Finanzanlagenvermittler | impressum.html:111 | Optional, nur bei erlaubnispflichtiger Tätigkeit |
-| `{{ERLAUBNISNORM}}` | Norm der Erlaubnis | z. B. § 34c GewO oder § 34f GewO | impressum.html:112 | Optional, nur bei erlaubnispflichtiger Tätigkeit |
-| `{{AUFSICHTSBEHOERDE_NAME}}` | Zuständige Aufsichtsbehörde/Kammer | z. B. IHK zu Leipzig | impressum.html:115 | Optional, nur bei erlaubnispflichtiger Tätigkeit |
-| `{{AUFSICHTSBEHOERDE_ANSCHRIFT}}` | Anschrift der Aufsichtsbehörde | Straße, PLZ Ort | impressum.html:116 | Optional, nur bei erlaubnispflichtiger Tätigkeit |
-| `{{BERUFSRECHTLICHE_REGELUNGEN}}` | Einschlägige berufsrechtliche Regelungen mit Fundstelle | z. B. GewO, FinVermV, abrufbar unter gesetze-im-internet.de | impressum.html:118 | Optional, nur bei erlaubnispflichtiger Tätigkeit |
-| `{{BERUFSHAFTPFLICHT_VERSICHERER}}` | Name des Berufshaftpflichtversicherers | Versicherung AG | impressum.html:121 | Optional, nur falls vorhanden/vorgeschrieben |
-| `{{BERUFSHAFTPFLICHT_ANSCHRIFT}}` | Anschrift des Versicherers | Straße, PLZ Ort | impressum.html:122 | Optional, nur falls vorhanden/vorgeschrieben |
-| `{{BERUFSHAFTPFLICHT_GELTUNGSRAUM}}` | Räumlicher Geltungsbereich der Versicherung | Deutschland / EU | impressum.html:123 | Optional, nur falls vorhanden/vorgeschrieben |
-| `{{STAND_DATUM}}` | Datum des Rechtsstands der Seite | 20.08.2026 | impressum.html:131, datenschutz.html:146 | Pflicht |
+| `{{STAND_DATUM}}` | Datum des Rechtsstands der Seite | 20.08.2026 | impressum.html:119, datenschutz.html:146 | Pflicht |
 
 ## Zusätzlich zu prüfen (keine Platzhalter, aber Entscheidungen/Fakten)
 
-- **Anschrift:** Die ladungsfähige Anschrift ist nach § 5 DDG zwingend. Ohne sie darf die
-  Seite nicht öffentlich betrieben werden.
+- **Anschrift:** Die ladungsfähige Anschrift ist nach § 5 DDG zwingend. Ohne sie sollte die
+  Seite nicht öffentlich beworben werden.
 - **GbR und Registereintrag:** Eine klassische GbR hat keinen Registereintrag; der Abschnitt
-  "Registereintrag" entfällt dann ersatzlos. Seit dem MoPeG (2024) kann eine GbR freiwillig
-  als eingetragene GbR (eGbR) im Gesellschaftsregister eingetragen sein. In diesem Fall
-  müssen Registergericht und Registernummer angegeben werden.
+  "Registereintrag" entfällt dann ersatzlos, ebenso der zugehörige Hinweiskasten. Seit dem
+  MoPeG (2024) kann eine GbR freiwillig als eingetragene GbR (eGbR) im Gesellschaftsregister
+  eingetragen sein. In diesem Fall müssen Registergericht und Registernummer angegeben werden.
+- **Umsatzsteuer:** Bei Kleinunternehmerregelung nach § 19 UStG gibt es keine USt-IdNr.; der
+  Abschnitt entfällt dann ersatzlos. Die Steuernummer des Finanzamts gehört nicht ins Impressum.
+- **Tätigkeitsbeschreibung (impressum.html):** Der Abschnitt "Tätigkeit und Umfang der Beratung"
+  stellt klar, dass es sich um ein erlaubnisfreies Gewerbe handelt und keine Rechts-, Steuer-
+  oder Anlageberatung erbracht wird. Inhaltlich gegenprüfen, ob das die Tätigkeit vollständig
+  trifft. Sobald Finanzanlagen vermittelt oder empfohlen werden, kann eine Erlaubnis nach
+  § 34f GewO erforderlich werden; dann muss der Abschnitt überarbeitet werden.
 - **Verbraucherstreitbeilegung (impressum.html):** Eingetragen ist die übliche Erklärung,
-  *nicht* an Schlichtungsverfahren nach § 36 VSBG teilzunehmen. Falls doch eine Teilnahme
-  gewollt oder verpflichtend ist, muss der Text angepasst werden.
+  *nicht* an Schlichtungsverfahren nach § 36 VSBG teilzunehmen.
 - **Datenschutzbeauftragter (datenschutz.html, Abschnitt 1):** Eingetragen ist, dass kein
   Datenschutzbeauftragter bestellt ist. Prüfen, ob das zutrifft.
-- **Berufsrechtlicher Abschnitt (impressum.html):** Komplett löschen, falls die Tätigkeit
-  keiner Erlaubnispflicht/Kammeraufsicht unterliegt.
 - **Hinweiskästen:** Die grauen Kästen (`class="note"`) im Impressum sind Arbeitshilfen und
   sollten vor dem Livegang entfernt werden.
 - **GitHub Pages / Data Privacy Framework (datenschutz.html, Abschnitt 2):** Die Zertifizierung
