@@ -3,24 +3,161 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Datenschutzerklärung – Valtix</title>
-<meta name="robots" content="noindex">
+<title>Datenschutzerklärung | Valtix Financial Management</title>
+<meta name="description" content="Datenschutzerklärung der Valtix Financial Management, Leipzig: Informationen zur Verarbeitung personenbezogener Daten nach Art. 13 DSGVO.">
+<meta name="robots" content="noindex, follow">
+<meta name="theme-color" content="#232941">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <style>
-  body{font-family:"IBM Plex Sans",system-ui,sans-serif;background:#232941;color:#F5EBD0;line-height:1.7;margin:0}
-  main{max-width:720px;margin:0 auto;padding:64px 24px}
-  h1{font-size:2rem;margin-bottom:24px}
-  a{color:#F5EBD0}
-  .hint{background:#2B3250;border:1px solid rgba(245,235,208,.16);border-radius:12px;padding:20px 24px;margin-top:24px}
+  @font-face{font-family:"EB Garamond";font-style:normal;font-weight:600;font-display:swap;src:url("assets/fonts/eb-garamond-latin-600-normal.woff2") format("woff2")}
+  @font-face{font-family:"Lato";font-style:normal;font-weight:400;font-display:swap;src:url("assets/fonts/lato-latin-400-normal.woff2") format("woff2")}
+  @font-face{font-family:"Lato";font-style:normal;font-weight:700;font-display:swap;src:url("assets/fonts/lato-latin-700-normal.woff2") format("woff2")}
+  :root{
+    --navy:#232941;
+    --navy-deep:#1C2136;
+    --navy-card:#2B3250;
+    --cream:#F5EBD0;
+    --cream-dim:rgba(245,235,208,.74);
+    --line-on-navy:rgba(245,235,208,.16);
+    --font-display:"EB Garamond",Georgia,"Times New Roman",serif;
+    --font-body:"Lato",system-ui,-apple-system,sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font-body);background:var(--navy);color:var(--cream);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+  img{max-width:100%;display:block}
+  a{color:var(--cream)}
+  :focus-visible{outline:3px solid var(--cream);outline-offset:3px;border-radius:4px}
+  .skip-link{position:absolute;left:-9999px;top:0;z-index:200;background:var(--cream);color:var(--navy);padding:12px 20px;font-weight:700;border-radius:0 0 8px 0}
+  .skip-link:focus{left:0}
+  .container{width:min(1160px,100% - 48px);margin-inline:auto}
+  @media(max-width:767px){.container{width:calc(100% - 40px)}}
+  .site-header{position:sticky;top:0;z-index:100;background:rgba(35,41,65,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line-on-navy)}
+  .nav{display:flex;align-items:center;justify-content:space-between;min-height:72px;gap:16px}
+  .brand{display:flex;align-items:center;min-height:44px}
+  .brand img{height:34px;width:auto}
+  .nav a.back{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;text-decoration:none;color:var(--cream-dim);font-weight:700;font-size:.95rem;border-radius:8px}
+  .nav a.back:hover{color:var(--cream)}
+  main{max-width:760px;margin-inline:auto;padding:64px 24px 80px;overflow-wrap:break-word}
+  h1{font-family:var(--font-display);font-weight:600;font-size:clamp(2.2rem,5vw,3rem);line-height:1.15;margin-bottom:8px;overflow-wrap:break-word;-webkit-hyphens:auto;hyphens:auto}
+  .lede{color:var(--cream-dim);margin-bottom:40px}
+  h2{font-family:var(--font-display);font-weight:600;font-size:1.55rem;margin:44px 0 12px;overflow-wrap:break-word;-webkit-hyphens:auto;hyphens:auto}
+  h3{font-family:var(--font-display);font-weight:600;font-size:1.2rem;margin:28px 0 8px}
+  p{margin-bottom:14px}
+  address{font-style:normal;margin-bottom:14px}
+  ul{margin:0 0 14px 22px}
+  li{margin-bottom:6px}
+  .note{background:var(--navy-card);border:1px solid var(--line-on-navy);border-radius:6px;padding:16px 20px;font-size:.92rem;color:var(--cream-dim);margin:24px 0}
+  .stand{margin-top:56px;padding-top:20px;border-top:1px solid var(--line-on-navy);color:var(--cream-dim);font-size:.9rem}
+  .site-footer{border-top:1px solid var(--line-on-navy);padding:40px 0;background:var(--navy-deep)}
+  .footer-inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px}
+  .footer-inner img{height:26px;width:auto}
+  .footer-links{display:flex;gap:6px;list-style:none;flex-wrap:wrap;margin:0}
+  .footer-links li{margin:0}
+  .footer-links a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;color:var(--cream-dim);text-decoration:none;font-size:.9rem}
+  .footer-links a:hover{color:var(--cream)}
+  .footer-copy{font-size:.85rem;color:var(--cream-dim)}
 </style>
 </head>
 <body>
-<main>
-  <h1>Datenschutz&shy;erklärung</h1>
-  <p><a href="index.html">← Zurück zur Startseite</a></p>
-  <div class="hint">
-    <p><strong>Platzhalter:</strong> Hier muss eine DSGVO-konforme Datenschutzerklärung ergänzt werden. Hinweis: Die Seite lädt Schriften von Google Fonts – für den Produktivbetrieb in Deutschland sollten die Fonts lokal gehostet oder hier entsprechend aufgeklärt werden.</p>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="index.html" aria-label="Valtix, zur Startseite">
+      <img src="assets/valtix-logo-transparent.png" alt="Valtix Financial Management" width="783" height="298">
+    </a>
+    <a class="back" href="index.html">Zurück zur Startseite</a>
   </div>
+</header>
+
+<main id="main">
+  <h1>Datenschutz&shy;erklärung</h1>
+  <p class="lede">Mit dieser Erklärung informieren wir Sie nach Art. 13 der Datenschutz-Grundverordnung (DSGVO) darüber, welche personenbezogenen Daten beim Besuch dieser Website verarbeitet werden.</p>
+
+  <h2>1. Verantwortlicher</h2>
+  <p>Verantwortlicher im Sinne des Art. 4 Nr. 7 DSGVO ist:</p>
+  <address>
+    {{FIRMA_NAME}} {{RECHTSFORM}}<br>
+    {{VERTRETUNGSBERECHTIGTE_PERSON}}<br>
+    {{STRASSE_HAUSNUMMER}}<br>
+    {{PLZ}} {{ORT}}<br>
+    Telefon: {{TELEFONNUMMER}}<br>
+    E-Mail: {{EMAIL_ADRESSE}}
+  </address>
+  <p>Ein Datenschutzbeauftragter ist nicht bestellt, da die gesetzlichen Voraussetzungen für eine Benennungspflicht (Art. 37 DSGVO, § 38 BDSG) nicht vorliegen.</p>
+
+  <h2>2. Hosting und Server-Logfiles</h2>
+  <p>Diese Website wird bei GitHub Pages gehostet, einem Dienst der GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA („GitHub“).</p>
+  <p>Beim Aufruf der Website verarbeitet GitHub technisch bedingt Verbindungsdaten, insbesondere die IP-Adresse des aufrufenden Geräts, Datum und Uhrzeit des Zugriffs, die aufgerufene Seite, den verwendeten Browser und das Betriebssystem (Server-Logfiles). Diese Daten sind für die Auslieferung und die Sicherheit der Website technisch erforderlich; wir selbst haben auf diese Logfiles keinen Zugriff.</p>
+  <p>Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Unser berechtigtes Interesse liegt in der sicheren und zuverlässigen Bereitstellung dieser Website.</p>
+  <p>Weitere Informationen finden Sie in der Datenschutzerklärung von GitHub: <a href="https://docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">GitHub General Privacy Statement</a>.</p>
+
+  <h3>Übermittlung in Drittländer</h3>
+  <p>GitHub ist ein Unternehmen mit Sitz in den USA; eine Verarbeitung der Verbindungsdaten in den USA kann nicht ausgeschlossen werden. GitHub, Inc. ist unter dem EU-US Data Privacy Framework zertifiziert, für das ein Angemessenheitsbeschluss der Europäischen Kommission nach Art. 45 DSGVO besteht.</p>
+
+  <h2>3. SSL-/TLS-Verschlüsselung</h2>
+  <p>Diese Website nutzt aus Sicherheitsgründen eine SSL-/TLS-Verschlüsselung. Eine verschlüsselte Verbindung erkennen Sie daran, dass die Adresszeile Ihres Browsers mit „https://“ beginnt. Bei aktivierter Verschlüsselung können Daten, die Sie an uns übermitteln, nicht von Dritten mitgelesen werden.</p>
+
+  <h2>4. Keine Cookies, kein Tracking</h2>
+  <p>Diese Website verwendet keine Cookies und keine vergleichbaren Technologien im Sinne des § 25 des Gesetzes über den Datenschutz und den Schutz der Privatsphäre in der Telekommunikation und bei digitalen Diensten (TDDDG). Es werden keine Informationen auf Ihrem Endgerät gespeichert und keine Informationen aus Ihrem Endgerät ausgelesen. Ein Cookie-Banner ist deshalb nicht erforderlich.</p>
+  <p>Wir setzen keine Webanalyse-Dienste (etwa Google Analytics), keine Werbenetzwerke und keine Social-Media-Plugins ein.</p>
+
+  <h2>5. Schriftarten</h2>
+  <p>Diese Website verwendet die Schriftarten „EB Garamond“ und „Lato“. Beide Schriftarten sind lokal auf dem Webserver dieser Website eingebunden. Beim Laden der Schriften wird keine Verbindung zu Servern von Google oder anderen Drittanbietern aufgebaut.</p>
+
+  <h2>6. Kontaktaufnahme per E-Mail oder Telefon</h2>
+  <p>Wenn Sie uns per E-Mail oder Telefon kontaktieren, verarbeiten wir die von Ihnen mitgeteilten Daten (insbesondere Name, Kontaktdaten und den Inhalt Ihrer Anfrage), um Ihre Anfrage zu bearbeiten und zu beantworten.</p>
+  <p>Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO, soweit Ihre Anfrage auf den Abschluss oder die Durchführung eines Vertrags gerichtet ist, im Übrigen Art. 6 Abs. 1 lit. f DSGVO auf Grundlage unseres berechtigten Interesses an der Beantwortung von Anfragen.</p>
+  <p>Ein Kontaktformular wird auf dieser Website nicht eingesetzt.</p>
+
+  <h2>7. Speicherdauer</h2>
+  <p>Wir verarbeiten personenbezogene Daten nur so lange, wie es für die genannten Zwecke erforderlich ist. Daten aus Anfragen löschen wir, sobald die Anfrage abschließend bearbeitet ist und keine gesetzlichen Aufbewahrungspflichten (insbesondere aus dem Handels- und Steuerrecht, §&nbsp;257 HGB, §&nbsp;147 AO) entgegenstehen. Die Server-Logfiles werden von GitHub nach dessen Richtlinien gespeichert und gelöscht.</p>
+
+  <h2>8. Empfänger der Daten</h2>
+  <p>Empfänger von Verbindungsdaten ist der oben genannte Hosting-Anbieter GitHub. Darüber hinaus geben wir personenbezogene Daten nur weiter, wenn hierfür eine gesetzliche Grundlage besteht oder Sie eingewilligt haben.</p>
+
+  <h2>9. Ihre Rechte als betroffene Person</h2>
+  <p>Ihnen stehen bezüglich Ihrer personenbezogenen Daten die folgenden Rechte zu:</p>
+  <ul>
+    <li>Recht auf Auskunft (Art. 15 DSGVO),</li>
+    <li>Recht auf Berichtigung (Art. 16 DSGVO),</li>
+    <li>Recht auf Löschung (Art. 17 DSGVO),</li>
+    <li>Recht auf Einschränkung der Verarbeitung (Art. 18 DSGVO),</li>
+    <li>Recht auf Datenübertragbarkeit (Art. 20 DSGVO),</li>
+    <li>Recht auf Widerspruch gegen die Verarbeitung (Art. 21 DSGVO).</li>
+  </ul>
+  <p>Beruht eine Verarbeitung auf Ihrer Einwilligung, können Sie diese jederzeit mit Wirkung für die Zukunft widerrufen (Art. 7 Abs. 3 DSGVO). Die Rechtmäßigkeit der bis zum Widerruf erfolgten Verarbeitung bleibt davon unberührt.</p>
+  <p>Zur Ausübung Ihrer Rechte genügt eine formlose Mitteilung an die oben genannten Kontaktdaten.</p>
+
+  <h3>Widerspruchsrecht nach Art. 21 DSGVO</h3>
+  <p>Soweit wir Daten auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO verarbeiten, haben Sie das Recht, aus Gründen, die sich aus Ihrer besonderen Situation ergeben, jederzeit Widerspruch gegen die Verarbeitung einzulegen. Wir verarbeiten die Daten dann nicht mehr, es sei denn, wir können zwingende schutzwürdige Gründe für die Verarbeitung nachweisen, die Ihre Interessen, Rechte und Freiheiten überwiegen, oder die Verarbeitung dient der Geltendmachung, Ausübung oder Verteidigung von Rechtsansprüchen.</p>
+
+  <h2>10. Beschwerderecht bei der Aufsichtsbehörde</h2>
+  <p>Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbehörde über die Verarbeitung Ihrer personenbezogenen Daten zu beschweren (Art. 77 DSGVO), insbesondere in dem Mitgliedstaat Ihres Aufenthaltsorts, Ihres Arbeitsplatzes oder des Orts des mutmaßlichen Verstoßes. Die für uns zuständige Aufsichtsbehörde ist:</p>
+  <address>
+    {{DATENSCHUTZ_AUFSICHTSBEHOERDE_NAME}}<br>
+    {{DATENSCHUTZ_AUFSICHTSBEHOERDE_ANSCHRIFT}}
+  </address>
+
+  <h2>11. Keine automatisierte Entscheidungsfindung</h2>
+  <p>Eine automatisierte Entscheidungsfindung einschließlich Profiling im Sinne des Art. 22 DSGVO findet nicht statt.</p>
+
+  <p class="stand">Stand: {{STAND_DATUM}}</p>
 </main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <img src="assets/valtix-logo-transparent.png" alt="Valtix Financial Management">
+    <ul class="footer-links">
+      <li><a href="index.html#leistungen">Leistungen</a></li>
+      <li><a href="index.html#ablauf">Ablauf</a></li>
+      <li><a href="index.html#pakete">Pakete</a></li>
+      <li><a href="index.html#kontakt">Kontakt</a></li>
+      <li><a href="impressum.html">Impressum</a></li>
+      <li><a href="datenschutz.html">Datenschutz</a></li>
+    </ul>
+    <p class="footer-copy">© 2026 Valtix Financial Management, Leipzig</p>
+  </div>
+</footer>
 </body>
 </html>
