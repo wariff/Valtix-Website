@@ -3,24 +3,147 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Impressum – Valtix</title>
-<meta name="robots" content="noindex">
+<title>Impressum | Valtix Financial Management</title>
+<meta name="description" content="Impressum und Anbieterkennzeichnung der Valtix Financial Management, Leipzig.">
+<meta name="robots" content="noindex, follow">
+<meta name="theme-color" content="#232941">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <style>
-  body{font-family:"IBM Plex Sans",system-ui,sans-serif;background:#232941;color:#F5EBD0;line-height:1.7;margin:0}
-  main{max-width:720px;margin:0 auto;padding:64px 24px}
-  h1{font-size:2rem;margin-bottom:24px}
-  a{color:#F5EBD0}
-  .hint{background:#2B3250;border:1px solid rgba(245,235,208,.16);border-radius:12px;padding:20px 24px;margin-top:24px}
+  @font-face{font-family:"EB Garamond";font-style:normal;font-weight:600;font-display:swap;src:url("assets/fonts/eb-garamond-latin-600-normal.woff2") format("woff2")}
+  @font-face{font-family:"Lato";font-style:normal;font-weight:400;font-display:swap;src:url("assets/fonts/lato-latin-400-normal.woff2") format("woff2")}
+  @font-face{font-family:"Lato";font-style:normal;font-weight:700;font-display:swap;src:url("assets/fonts/lato-latin-700-normal.woff2") format("woff2")}
+  :root{
+    --navy:#232941;
+    --navy-deep:#1C2136;
+    --navy-card:#2B3250;
+    --cream:#F5EBD0;
+    --cream-dim:rgba(245,235,208,.74);
+    --line-on-navy:rgba(245,235,208,.16);
+    --font-display:"EB Garamond",Georgia,"Times New Roman",serif;
+    --font-body:"Lato",system-ui,-apple-system,sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font-body);background:var(--navy);color:var(--cream);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+  img{max-width:100%;display:block}
+  a{color:var(--cream)}
+  :focus-visible{outline:3px solid var(--cream);outline-offset:3px;border-radius:4px}
+  .skip-link{position:absolute;left:-9999px;top:0;z-index:200;background:var(--cream);color:var(--navy);padding:12px 20px;font-weight:700;border-radius:0 0 8px 0}
+  .skip-link:focus{left:0}
+  .container{width:min(1160px,100% - 48px);margin-inline:auto}
+  @media(max-width:767px){.container{width:calc(100% - 40px)}}
+  .site-header{position:sticky;top:0;z-index:100;background:rgba(35,41,65,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line-on-navy)}
+  .nav{display:flex;align-items:center;justify-content:space-between;min-height:72px;gap:16px}
+  .brand{display:flex;align-items:center;min-height:44px}
+  .brand img{height:34px;width:auto}
+  .nav a.back{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;text-decoration:none;color:var(--cream-dim);font-weight:700;font-size:.95rem;border-radius:8px}
+  .nav a.back:hover{color:var(--cream)}
+  main{max-width:760px;margin-inline:auto;padding:64px 24px 80px;overflow-wrap:break-word}
+  h1{font-family:var(--font-display);font-weight:600;font-size:clamp(2.2rem,5vw,3rem);line-height:1.15;margin-bottom:8px;overflow-wrap:break-word;-webkit-hyphens:auto;hyphens:auto}
+  .lede{color:var(--cream-dim);margin-bottom:40px}
+  h2{font-family:var(--font-display);font-weight:600;font-size:1.55rem;margin:44px 0 12px;overflow-wrap:break-word;-webkit-hyphens:auto;hyphens:auto}
+  h3{font-family:var(--font-display);font-weight:600;font-size:1.2rem;margin:28px 0 8px}
+  p{margin-bottom:14px}
+  address{font-style:normal;margin-bottom:14px}
+  ul{margin:0 0 14px 22px}
+  li{margin-bottom:6px}
+  .note{background:var(--navy-card);border:1px solid var(--line-on-navy);border-radius:6px;padding:16px 20px;font-size:.92rem;color:var(--cream-dim);margin:24px 0}
+  .stand{margin-top:56px;padding-top:20px;border-top:1px solid var(--line-on-navy);color:var(--cream-dim);font-size:.9rem}
+  .site-footer{border-top:1px solid var(--line-on-navy);padding:40px 0;background:var(--navy-deep)}
+  .footer-inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px}
+  .footer-inner img{height:26px;width:auto}
+  .footer-links{display:flex;gap:6px;list-style:none;flex-wrap:wrap;margin:0}
+  .footer-links li{margin:0}
+  .footer-links a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;color:var(--cream-dim);text-decoration:none;font-size:.9rem}
+  .footer-links a:hover{color:var(--cream)}
+  .footer-copy{font-size:.85rem;color:var(--cream-dim)}
 </style>
 </head>
 <body>
-<main>
-  <h1>Impressum</h1>
-  <p><a href="index.html">← Zurück zur Startseite</a></p>
-  <div class="hint">
-    <p><strong>Platzhalter:</strong> Hier müssen die Pflichtangaben nach § 5 DDG ergänzt werden – Name/Firma, Anschrift in Leipzig, Kontaktdaten, ggf. Handelsregister und USt-IdNr.</p>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="index.html" aria-label="Valtix, zur Startseite">
+      <img src="assets/valtix-logo-transparent.png" alt="Valtix Financial Management" width="783" height="298">
+    </a>
+    <a class="back" href="index.html">Zurück zur Startseite</a>
   </div>
+</header>
+
+<main id="main">
+  <h1>Impressum</h1>
+  <p class="lede">Anbieterkennzeichnung nach § 5 Digitale-Dienste-Gesetz (DDG) und § 18 Medienstaatsvertrag (MStV).</p>
+
+  <h2>Diensteanbieter</h2>
+  <address>
+    {{FIRMA_NAME}} {{RECHTSFORM}}<br>
+    {{STRASSE_HAUSNUMMER}}<br>
+    {{PLZ}} {{ORT}}<br>
+    Deutschland
+  </address>
+  <p>Vertreten durch: {{VERTRETUNGSBERECHTIGTE_PERSON}}</p>
+
+  <h2>Kontakt</h2>
+  <p>
+    Telefon: {{TELEFONNUMMER}}<br>
+    E-Mail: {{EMAIL_ADRESSE}}
+  </p>
+
+  <h2>Registereintrag</h2>
+  <p>
+    Registergericht: {{REGISTERGERICHT}}<br>
+    Registernummer: {{REGISTERNUMMER}}
+  </p>
+  <div class="note">Dieser Abschnitt entfällt ersatzlos, wenn kein Registereintrag besteht (z.&nbsp;B. bei Einzelunternehmen ohne Handelsregistereintrag oder GbR).</div>
+
+  <h2>Umsatzsteuer-Identifikationsnummer</h2>
+  <p>Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz: {{UST_IDNR}}</p>
+  <div class="note">Dieser Abschnitt entfällt ersatzlos, wenn keine USt-IdNr. vergeben wurde. Die Steuernummer des Finanzamts gehört nicht ins Impressum.</div>
+
+  <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
+  <address>
+    {{INHALTLICH_VERANTWORTLICHER}}<br>
+    {{STRASSE_HAUSNUMMER}}<br>
+    {{PLZ}} {{ORT}}
+  </address>
+
+  <h2>Berufsrechtliche Angaben</h2>
+  <p>Berufsbezeichnung: {{BERUFSBEZEICHNUNG}}</p>
+  <p>Erlaubnis nach: {{ERLAUBNISNORM}}</p>
+  <p>
+    Zuständige Aufsichtsbehörde / Kammer:<br>
+    {{AUFSICHTSBEHOERDE_NAME}}<br>
+    {{AUFSICHTSBEHOERDE_ANSCHRIFT}}
+  </p>
+  <p>Berufsrechtliche Regelungen: {{BERUFSRECHTLICHE_REGELUNGEN}}</p>
+  <h3>Berufshaftpflichtversicherung</h3>
+  <p>
+    {{BERUFSHAFTPFLICHT_VERSICHERER}}<br>
+    {{BERUFSHAFTPFLICHT_ANSCHRIFT}}<br>
+    Räumlicher Geltungsbereich: {{BERUFSHAFTPFLICHT_GELTUNGSRAUM}}
+  </p>
+  <div class="note">Dieser gesamte Abschnitt gilt nur, wenn die Tätigkeit einer Erlaubnispflicht oder Kammeraufsicht unterliegt (bei gewerblicher Finanzberatung z.&nbsp;B. eine Erlaubnis nach der Gewerbeordnung). Trifft das nicht zu, entfällt der Abschnitt ersatzlos.</div>
+
+  <h2>Verbraucherstreitbeilegung</h2>
+  <p>Wir sind nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle im Sinne des § 36 Verbraucherstreitbeilegungsgesetz (VSBG) teilzunehmen.</p>
+  <div class="note">Die frühere EU-Plattform zur Online-Streitbeilegung (OS-Plattform) wurde zum 20. Juli 2025 eingestellt; ein Verweis darauf ist nicht mehr erforderlich.</div>
+
+  <p class="stand">Stand: {{STAND_DATUM}}</p>
 </main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <img src="assets/valtix-logo-transparent.png" alt="Valtix Financial Management">
+    <ul class="footer-links">
+      <li><a href="index.html#leistungen">Leistungen</a></li>
+      <li><a href="index.html#ablauf">Ablauf</a></li>
+      <li><a href="index.html#pakete">Pakete</a></li>
+      <li><a href="index.html#kontakt">Kontakt</a></li>
+      <li><a href="impressum.html">Impressum</a></li>
+      <li><a href="datenschutz.html">Datenschutz</a></li>
+    </ul>
+    <p class="footer-copy">© 2026 Valtix Financial Management, Leipzig</p>
+  </div>
+</footer>
 </body>
 </html>

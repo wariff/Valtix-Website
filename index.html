@@ -75,10 +75,15 @@
   ]
 }
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/fonts/eb-garamond-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/lato-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+  /* Lokal gehostete Schriften (SIL Open Font License 1.1), keine externen Requests */
+  @font-face{font-family:"EB Garamond";font-style:normal;font-weight:500;font-display:swap;src:url("assets/fonts/eb-garamond-latin-500-normal.woff2") format("woff2")}
+  @font-face{font-family:"EB Garamond";font-style:italic;font-weight:500;font-display:swap;src:url("assets/fonts/eb-garamond-latin-500-italic.woff2") format("woff2")}
+  @font-face{font-family:"EB Garamond";font-style:normal;font-weight:600;font-display:swap;src:url("assets/fonts/eb-garamond-latin-600-normal.woff2") format("woff2")}
+  @font-face{font-family:"Lato";font-style:normal;font-weight:400;font-display:swap;src:url("assets/fonts/lato-latin-400-normal.woff2") format("woff2")}
+  @font-face{font-family:"Lato";font-style:normal;font-weight:700;font-display:swap;src:url("assets/fonts/lato-latin-700-normal.woff2") format("woff2")}
   :root{
     --navy:#232941;
     --navy-deep:#1C2136;
