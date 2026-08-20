@@ -201,6 +201,26 @@
   .step ul{margin-top:14px;list-style:none;display:flex;flex-direction:column;gap:8px}
   .step ul li{display:flex;gap:10px;align-items:flex-start;font-size:.92rem;color:var(--cream-dim)}
   .step ul svg{flex:none;margin-top:4px}
+  .step-addon{
+    margin-top:20px;
+    border:1.5px dashed rgba(245,235,208,.4);
+    border-radius:var(--radius);
+    padding:34px 28px;
+    display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;
+    background:rgba(245,235,208,.04);
+  }
+  @media(max-width:860px){.step-addon{grid-template-columns:1fr}}
+  .step-addon .badge{
+    display:inline-block;font-size:.72rem;font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;
+    border:1px solid var(--cream);border-radius:999px;
+    padding:4px 12px;margin-bottom:14px;color:var(--cream);
+  }
+  .step-addon h3{font-size:1.45rem;font-weight:600;margin-bottom:10px}
+  .step-addon p{color:var(--cream-dim);font-size:.97rem;max-width:560px}
+  .step-addon ul{margin-top:14px;list-style:none;display:flex;flex-direction:column;gap:8px}
+  .step-addon ul li{display:flex;gap:10px;align-items:flex-start;font-size:.92rem;color:var(--cream-dim)}
+  .step-addon ul svg{flex:none;margin-top:4px}
 
   /* ---------- Warum Valtix ---------- */
   .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
@@ -474,6 +494,19 @@
           </ul>
         </article>
       </div>
+
+      <aside class="step-addon reveal" aria-labelledby="betreuung-title">
+        <div>
+          <span class="badge">Optional</span>
+          <h3 id="betreuung-title">Monatliche Betreuung</h3>
+          <p>Auf Wunsch begleiten wir Sie über den Health Check hinaus. In einem monatlichen Termin gehen wir gemeinsam die Entwicklung Ihrer Kennzahlen durch und arbeiten zusammen an der Umsetzung der Maßnahmen.</p>
+          <ul>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5 11-11"/></svg>Gemeinsame Übersicht der Entwicklung, Monat für Monat</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5 11-11"/></svg>Gemeinsame Arbeit an den Maßnahmen, bis sie wirken</li>
+          </ul>
+        </div>
+        <a class="btn btn-ghost" href="#kontakt">Betreuung anfragen</a>
+      </aside>
     </div>
   </section>
 
