@@ -6,67 +6,100 @@
 <title>Impressum | Valtix Financial Management</title>
 <meta name="description" content="Impressum und Anbieterkennzeichnung der Valtix Financial Management, Leipzig.">
 <meta name="robots" content="noindex, follow">
-<meta name="theme-color" content="#232941">
+<meta name="theme-color" content="#FBF8F2">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <style>
-  @font-face{font-family:"EB Garamond";font-style:normal;font-weight:600;font-display:swap;src:url("assets/fonts/eb-garamond-latin-600-normal.woff2") format("woff2")}
-  @font-face{font-family:"Lato";font-style:normal;font-weight:400;font-display:swap;src:url("assets/fonts/lato-latin-400-normal.woff2") format("woff2")}
-  @font-face{font-family:"Lato";font-style:normal;font-weight:700;font-display:swap;src:url("assets/fonts/lato-latin-700-normal.woff2") format("woff2")}
+  /* Lokal gehostete Schriften (SIL Open Font License 1.1) */
+  @font-face{font-family:"Inter Tight";font-style:normal;font-weight:400;font-display:swap;src:url("assets/fonts/inter-tight-latin-400-normal.woff2") format("woff2")}
+  @font-face{font-family:"Inter Tight";font-style:normal;font-weight:500;font-display:swap;src:url("assets/fonts/inter-tight-latin-500-normal.woff2") format("woff2")}
+  @font-face{font-family:"Inter Tight";font-style:normal;font-weight:600;font-display:swap;src:url("assets/fonts/inter-tight-latin-600-normal.woff2") format("woff2")}
+  @font-face{font-family:"Inter Tight";font-style:normal;font-weight:800;font-display:swap;src:url("assets/fonts/inter-tight-latin-800-normal.woff2") format("woff2")}
   :root{
+    --ink:#232941;
+    --ink-soft:#565D73;
     --navy:#232941;
-    --navy-deep:#1C2136;
-    --navy-card:#2B3250;
+    --navy-deep:#171B2C;
+    --gold:#A6813F;
     --cream:#F5EBD0;
-    --cream-dim:rgba(245,235,208,.74);
-    --line-on-navy:rgba(245,235,208,.16);
-    --font-display:"EB Garamond",Georgia,"Times New Roman",serif;
-    --font-body:"Lato",system-ui,-apple-system,sans-serif;
+    --bg:#FBF8F2;
+    --glass:rgba(255,255,255,.62);
+    --glass-border:rgba(255,255,255,.85);
+    --glass-shadow:0 18px 50px rgba(35,41,65,.13);
+    --hairline:rgba(35,41,65,.12);
+    --font:"Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --r-pill:999px;
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:var(--font-body);background:var(--navy);color:var(--cream);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+  body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
   img{max-width:100%;display:block}
-  a{color:var(--cream)}
-  :focus-visible{outline:3px solid var(--cream);outline-offset:3px;border-radius:4px}
-  .skip-link{position:absolute;left:-9999px;top:0;z-index:200;background:var(--cream);color:var(--navy);padding:12px 20px;font-weight:700;border-radius:0 0 8px 0}
+  a{color:inherit}
+  :focus-visible{outline:3px solid var(--navy);outline-offset:3px;border-radius:6px}
+  .aurora{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+  .aurora span{position:absolute;border-radius:50%;filter:blur(80px);opacity:.5}
+  .a1{width:60vw;height:60vw;max-width:760px;max-height:760px;left:-16vw;top:-20vw;
+      background:radial-gradient(circle,#F0E2C2 0%,rgba(240,226,194,0) 70%)}
+  .a2{width:50vw;height:50vw;max-width:640px;max-height:640px;right:-14vw;top:-8vw;
+      background:radial-gradient(circle,#D3D9E8 0%,rgba(211,217,232,0) 70%)}
+  .glass{
+    background:var(--glass);
+    backdrop-filter:blur(22px) saturate(180%);
+    -webkit-backdrop-filter:blur(22px) saturate(180%);
+    border:1px solid var(--glass-border);
+    box-shadow:var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+    .glass{background:rgba(255,255,255,.94)}
+  }
+  @media(prefers-reduced-transparency:reduce){
+    .glass{background:#fff;backdrop-filter:none;-webkit-backdrop-filter:none}
+  }
+  .skip-link{position:absolute;left:-9999px;top:0;z-index:200;background:var(--navy);color:#fff;padding:12px 20px;font-weight:700;border-radius:0 0 10px 0}
   .skip-link:focus{left:0}
-  .container{width:min(1160px,100% - 48px);margin-inline:auto}
-  @media(max-width:767px){.container{width:calc(100% - 40px)}}
-  .site-header{position:sticky;top:0;z-index:100;background:rgba(35,41,65,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line-on-navy)}
-  .nav{display:flex;align-items:center;justify-content:space-between;min-height:72px;gap:16px}
+  .container{width:min(1180px,100% - 48px);margin-inline:auto}
+  @media(max-width:767px){.container{width:calc(100% - 32px)}}
+  .site-header{position:sticky;top:16px;z-index:100;margin-top:16px}
+  @media(max-width:767px){.site-header{top:10px;margin-top:10px}}
+  .nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 14px 10px 22px;border-radius:var(--r-pill)}
   .brand{display:flex;align-items:center;min-height:44px}
-  .brand img{height:34px;width:auto}
-  .nav a.back{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;text-decoration:none;color:var(--cream-dim);font-weight:700;font-size:.95rem;border-radius:8px}
-  .nav a.back:hover{color:var(--cream)}
-  main{max-width:760px;margin-inline:auto;padding:64px 24px 80px;overflow-wrap:break-word}
-  h1{font-family:var(--font-display);font-weight:600;font-size:clamp(2.2rem,5vw,3rem);line-height:1.15;margin-bottom:8px;overflow-wrap:break-word;-webkit-hyphens:auto;hyphens:auto}
-  .lede{color:var(--cream-dim);margin-bottom:40px}
-  h2{font-family:var(--font-display);font-weight:600;font-size:1.55rem;margin:44px 0 12px;overflow-wrap:break-word;-webkit-hyphens:auto;hyphens:auto}
-  h3{font-family:var(--font-display);font-weight:600;font-size:1.2rem;margin:28px 0 8px}
+  .brand img{height:26px;width:auto}
+  .nav a.back{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;text-decoration:none;color:var(--ink-soft);font-weight:600;font-size:.93rem;border-radius:var(--r-pill);transition:color .2s ease,background .2s ease}
+  .nav a.back:hover{color:var(--ink);background:rgba(255,255,255,.6)}
+  main{max-width:780px;margin-inline:auto;padding:56px 24px 72px;overflow-wrap:break-word}
+  h1{font-weight:800;letter-spacing:-.035em;line-height:1.06;font-size:clamp(2.3rem,5.4vw,3.4rem);margin-bottom:10px}
+  .lede{color:var(--ink-soft);margin-bottom:42px;font-size:1.05rem}
+  h2{font-weight:800;letter-spacing:-.03em;line-height:1.14;font-size:1.5rem;margin:46px 0 12px}
+  h3{font-weight:700;letter-spacing:-.02em;font-size:1.15rem;margin:28px 0 8px}
   p{margin-bottom:14px}
   address{font-style:normal;margin-bottom:14px}
   ul{margin:0 0 14px 22px}
   li{margin-bottom:6px}
-  .note{background:var(--navy-card);border:1px solid var(--line-on-navy);border-radius:6px;padding:16px 20px;font-size:.92rem;color:var(--cream-dim);margin:24px 0}
-  .stand{margin-top:56px;padding-top:20px;border-top:1px solid var(--line-on-navy);color:var(--cream-dim);font-size:.9rem}
-  .site-footer{border-top:1px solid var(--line-on-navy);padding:40px 0;background:var(--navy-deep)}
-  .footer-inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px}
-  .footer-inner img{height:26px;width:auto}
-  .footer-links{display:flex;gap:6px;list-style:none;flex-wrap:wrap;margin:0}
+  .note{border-radius:16px;padding:16px 20px;font-size:.9rem;color:var(--ink-soft);margin:24px 0;
+        background:rgba(255,255,255,.55);border:1px solid var(--glass-border);
+        backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+  .stand{margin-top:56px;padding-top:20px;border-top:1px solid var(--hairline);color:var(--ink-soft);font-size:.9rem}
+  .site-footer{padding:40px 0 48px;border-top:1px solid var(--hairline);margin-top:24px}
+  .footer-inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px}
+  .footer-inner img{height:22px;width:auto;opacity:.85}
+  .footer-links{display:flex;gap:4px;list-style:none;flex-wrap:wrap;margin:0}
   .footer-links li{margin:0}
-  .footer-links a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;color:var(--cream-dim);text-decoration:none;font-size:.9rem}
-  .footer-links a:hover{color:var(--cream)}
-  .footer-copy{font-size:.85rem;color:var(--cream-dim)}
+  .footer-links a{display:inline-flex;align-items:center;min-height:44px;padding:0 11px;color:var(--ink-soft);text-decoration:none;font-size:.89rem}
+  .footer-links a:hover{color:var(--ink)}
+  .footer-copy{font-size:.84rem;color:var(--ink-soft)}
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
 <a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="aurora" aria-hidden="true"><span class="a1"></span><span class="a2"></span></div>
 
 <header class="site-header">
-  <div class="container nav">
-    <a class="brand" href="index.html" aria-label="Valtix, zur Startseite">
-      <img src="assets/valtix-logo-transparent.png" alt="Valtix Financial Management" width="783" height="298">
-    </a>
-    <a class="back" href="index.html">Zurück zur Startseite</a>
+  <div class="container">
+    <nav class="nav glass" aria-label="Seitennavigation">
+      <a class="brand" href="index.html" aria-label="Valtix, zur Startseite">
+        <img src="assets/valtix-logo-navy.png" alt="Valtix Financial Management" width="783" height="298">
+      </a>
+      <a class="back" href="index.html">Zurück zur Startseite</a>
+    </nav>
   </div>
 </header>
 
@@ -127,7 +160,7 @@
 
 <footer class="site-footer">
   <div class="container footer-inner">
-    <img src="assets/valtix-logo-transparent.png" alt="Valtix Financial Management">
+    <img src="assets/valtix-logo-navy.png" alt="Valtix Financial Management">
     <ul class="footer-links">
       <li><a href="index.html#leistungen">Leistungen</a></li>
       <li><a href="index.html#ablauf">Ablauf</a></li>
