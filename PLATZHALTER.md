@@ -10,27 +10,27 @@ Firmenspezifische Angaben in `impressum.html` und `datenschutz.html`, die noch f
 | Firma und Rechtsform | Valtix Financial Management GbR |
 | Vertretungsberechtigte Gesellschafter | Luca Sparhuber, Sharif Ibrahim |
 | Verantwortlich für Inhalte nach § 18 Abs. 2 MStV | Sharif Ibrahim |
+| Anschrift | Straße des 18. Oktober 11, 04103 Leipzig |
 | Telefon | +49 176 22930394 |
 | E-Mail | sekretariat@valtixfm.de (auch auf der Startseite eingesetzt) |
 | Zuständige Datenschutz-Aufsichtsbehörde | Sächsische Datenschutz- und Transparenzbeauftragte, Maternistraße 17, 01067 Dresden |
 | Berufsrechtliche Angaben | Entfallen: erlaubnisfreies Gewerbe. Ersetzt durch den Abschnitt "Tätigkeit und Umfang der Beratung" |
+| Stand-Datum | 20.08.2026 |
 
 ## Offene Platzhalter
 
+Alle Pflichtangaben sind eingesetzt. Offen sind nur noch optionale Felder aus Block 3
+(Register und Steuern), die je nach Situation entweder befüllt oder samt Abschnitt
+gelöscht werden.
+
 | Platzhalter | Bedeutung | Beispielformat | Vorkommen (Datei:Zeile) | Pflicht/Optional |
 |---|---|---|---|---|
-| `{{STRASSE_HAUSNUMMER}}` | Ladungsfähige Anschrift, Straße und Hausnummer (kein Postfach) | Musterstraße 1 | impressum.html:80, impressum.html:106, datenschutz.html:82 | Pflicht |
-| `{{PLZ}}` | Postleitzahl | 04109 | impressum.html:81, impressum.html:107, datenschutz.html:83 | Pflicht |
-| `{{ORT}}` | Ort | Leipzig | impressum.html:81, impressum.html:107, datenschutz.html:83 | Pflicht |
 | `{{REGISTERGERICHT}}` | Registergericht | Amtsgericht Leipzig | impressum.html:94 | Optional, nur bei eingetragener GbR (eGbR) |
 | `{{REGISTERNUMMER}}` | Registernummer | GsR 1234 | impressum.html:95 | Optional, nur bei eingetragener GbR (eGbR) |
 | `{{UST_IDNR}}` | Umsatzsteuer-Identifikationsnummer nach § 27a UStG | DE123456789 | impressum.html:100 | Optional, nur falls vergeben |
-| `{{STAND_DATUM}}` | Datum des Rechtsstands der Seite | 20.08.2026 | impressum.html:119, datenschutz.html:146 | Pflicht |
 
 ## Zusätzlich zu prüfen (keine Platzhalter, aber Entscheidungen/Fakten)
 
-- **Anschrift:** Die ladungsfähige Anschrift ist nach § 5 DDG zwingend. Ohne sie sollte die
-  Seite nicht öffentlich beworben werden.
 - **GbR und Registereintrag:** Eine klassische GbR hat keinen Registereintrag; der Abschnitt
   "Registereintrag" entfällt dann ersatzlos, ebenso der zugehörige Hinweiskasten. Seit dem
   MoPeG (2024) kann eine GbR freiwillig als eingetragene GbR (eGbR) im Gesellschaftsregister
