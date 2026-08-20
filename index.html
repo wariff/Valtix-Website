@@ -162,7 +162,8 @@
   .stat{padding:36px 24px;text-align:center;border-left:1px solid var(--line-on-navy)}
   .stat:first-child{border-left:none}
   .stat b{display:block;font-family:var(--font-display);font-weight:600;font-size:clamp(1.9rem,3.8vw,2.6rem);margin-bottom:6px}
-  .stat span{font-size:.9rem;color:var(--cream-dim)}
+  .stat > span{font-size:.9rem;color:var(--cream-dim)}
+  .stat b span{font-size:inherit;color:inherit}
   @media(max-width:767px){
     .stats-inner{grid-template-columns:1fr 1fr}
     .stat:nth-child(3){border-left:none}
@@ -459,10 +460,10 @@
   <section class="stats" aria-label="Valtix in Zahlen">
     <div class="container">
       <div class="stats-inner">
-        <div class="stat reveal"><b>20+</b><span>Kennzahlen im Health Check</span></div>
-        <div class="stat reveal"><b>3</b><span>Schritte bis zum Maßnahmenplan</span></div>
-        <div class="stat reveal"><b>14 Tage</b><span>bis zum Ergebnisbericht</span></div>
-        <div class="stat reveal"><b>100 %</b><span>unabhängig &amp; vertraulich</span></div>
+        <div class="stat reveal"><b aria-label="Über 5 Jahre"><span data-count="5" data-suffix="+" aria-hidden="true">5+</span></b><span>Jahre Erfahrung im Team</span></div>
+        <div class="stat reveal"><b aria-label="Über 20"><span data-count="20" data-suffix="+" aria-hidden="true">20+</span></b><span>zufriedene Mandanten</span></div>
+        <div class="stat reveal"><b aria-label="14 Tage"><span data-count="14" aria-hidden="true">14</span> Tage</b><span>bis zum Ergebnisbericht</span></div>
+        <div class="stat reveal"><b aria-label="100 Prozent"><span data-count="100" aria-hidden="true">100</span> %</b><span>unabhängig &amp; vertraulich</span></div>
       </div>
     </div>
   </section>
@@ -620,7 +621,7 @@
           </li>
           <li class="reveal">
             <span class="check" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5 11-11"/></svg></span>
-            <div><b>Aus Leipzig, für die Region und darüber hinaus</b><p>Persönlich vor Ort in Mitteldeutschland, digital deutschlandweit.</p></div>
+            <div><b>Aus Leipzig, für die Region und darüber hinaus</b><p>Gegründet 2025 in Leipzig. Persönlich vor Ort in Mitteldeutschland, digital deutschlandweit.</p></div>
           </li>
         </ul>
       </div>
@@ -687,17 +688,43 @@
 <script>
   (function(){
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var supported = 'IntersectionObserver' in window;
+
     var els = document.querySelectorAll('.reveal');
-    if (reduced || !('IntersectionObserver' in window)) {
+    if (reduced || !supported) {
       els.forEach(function(el){ el.classList.add('visible'); });
-      return;
+    } else {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.15 });
+      els.forEach(function(el){ io.observe(el); });
     }
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
-        if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.15 });
-    els.forEach(function(el){ io.observe(el); });
+
+    // Zaehler im Stats-Band: zaehlen beim ersten Sichtbarwerden hoch
+    var counters = document.querySelectorAll('[data-count]');
+    if (reduced || !supported) return; // statische Endwerte stehen bereits im HTML
+    counters.forEach(function(el){
+      var target = parseInt(el.getAttribute('data-count'), 10);
+      var suffix = el.getAttribute('data-suffix') || '';
+      var cio = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (!e.isIntersecting) return;
+          cio.unobserve(el);
+          var start = null, dur = 1300;
+          function step(ts){
+            if (!start) start = ts;
+            var p = Math.min((ts - start) / dur, 1);
+            var eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.round(target * eased) + (p === 1 ? suffix : '');
+            if (p < 1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        });
+      }, { threshold: 0.6 });
+      cio.observe(el);
+    });
   })();
 </script>
 </body>
