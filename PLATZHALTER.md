@@ -7,8 +7,9 @@ Firmenspezifische Angaben in `impressum.html` und `datenschutz.html`, die noch f
 
 | Angabe | Wert |
 |---|---|
-| Firma und Rechtsform | Valtix Financial Management GbR |
-| Vertretungsberechtigte Gesellschafter | Luca Sparhuber, Sharif Ibrahim |
+| Rechtliche Bezeichnung | Luca Sparhuber und Sharif Ibrahim GbR |
+| Geschäftsbezeichnung (Marke) | Valtix Financial Management |
+| Gesellschafter, gemeinschaftlich vertretungsberechtigt | Luca Sparhuber, Sharif Ibrahim |
 | Verantwortlich für Inhalte nach § 18 Abs. 2 MStV | Sharif Ibrahim |
 | Anschrift | Straße des 18. Oktober 11, 04103 Leipzig |
 | Telefon | +49 176 22930394 |
@@ -25,16 +26,24 @@ gelöscht werden.
 
 | Platzhalter | Bedeutung | Beispielformat | Vorkommen (Datei:Zeile) | Pflicht/Optional |
 |---|---|---|---|---|
-| `{{REGISTERGERICHT}}` | Registergericht | Amtsgericht Leipzig | impressum.html:94 | Optional, nur bei eingetragener GbR (eGbR) |
-| `{{REGISTERNUMMER}}` | Registernummer | GsR 1234 | impressum.html:95 | Optional, nur bei eingetragener GbR (eGbR) |
-| `{{UST_IDNR}}` | Umsatzsteuer-Identifikationsnummer nach § 27a UStG | DE123456789 | impressum.html:100 | Optional, nur falls vergeben |
+| `{{REGISTERGERICHT}}` | Registergericht | Amtsgericht Leipzig | impressum.html:100 | Optional, nur bei eingetragener GbR (eGbR) |
+| `{{REGISTERNUMMER}}` | Registernummer | GsR 1234 | impressum.html:101 | Optional, nur bei eingetragener GbR (eGbR) |
+| `{{UST_IDNR}}` | Umsatzsteuer-Identifikationsnummer nach § 27a UStG | DE123456789 | impressum.html:106 | Optional, nur falls vergeben |
 
 ## Zusätzlich zu prüfen (keine Platzhalter, aber Entscheidungen/Fakten)
 
-- **GbR und Registereintrag:** Eine klassische GbR hat keinen Registereintrag; der Abschnitt
-  "Registereintrag" entfällt dann ersatzlos, ebenso der zugehörige Hinweiskasten. Seit dem
-  MoPeG (2024) kann eine GbR freiwillig als eingetragene GbR (eGbR) im Gesellschaftsregister
-  eingetragen sein. In diesem Fall müssen Registergericht und Registernummer angegeben werden.
+- **Name der GbR und Geschäftsbezeichnung:** Eine nicht eingetragene GbR führt keine Firma im
+  handelsrechtlichen Sinn. Ihr Name setzt sich aus den Namen der Gesellschafter und dem
+  Rechtsformzusatz zusammen ("Luca Sparhuber und Sharif Ibrahim GbR"). "Valtix Financial
+  Management" wird daneben als Geschäftsbezeichnung geführt und darf im Marketing, auf der
+  Website, in E-Mails und auf Rechnungen verwendet werden. Im Impressum, in Verträgen und im
+  Rechtsverkehr muss zusätzlich die rechtliche Bezeichnung mit beiden Gesellschaftern erscheinen.
+- **Registereintrag / eGbR:** Seit dem MoPeG (2024) kann sich eine GbR freiwillig als
+  eingetragene GbR (eGbR) im Gesellschaftsregister eintragen lassen. Eine eGbR darf einen
+  Fantasienamen als offiziellen Namen führen, dann wäre "Valtix Financial Management eGbR"
+  möglich. In diesem Fall müssen Registergericht und Registernummer im Impressum stehen und der
+  Abschnitt "Diensteanbieter" ist auf den eingetragenen Namen umzustellen. Ohne Eintragung
+  entfällt der Abschnitt "Registereintrag" samt Hinweiskasten ersatzlos.
 - **Umsatzsteuer:** Bei Kleinunternehmerregelung nach § 19 UStG gibt es keine USt-IdNr.; der
   Abschnitt entfällt dann ersatzlos. Die Steuernummer des Finanzamts gehört nicht ins Impressum.
 - **Tätigkeitsbeschreibung (impressum.html):** Der Abschnitt "Tätigkeit und Umfang der Beratung"
