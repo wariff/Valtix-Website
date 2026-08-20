@@ -11,6 +11,7 @@ Es wurden bewusst keine Beispiel- oder Fantasiewerte eingetragen.
 | Firma und Rechtsform | Valtix Financial Management GbR |
 | Vertretungsberechtigte Gesellschafter | Luca Sparhuber, Sharif Ibrahim |
 | Verantwortlich für Inhalte nach § 18 Abs. 2 MStV | Sharif Ibrahim |
+| Zuständige Datenschutz-Aufsichtsbehörde | Sächsische Datenschutz- und Transparenzbeauftragte, Maternistraße 17, 01067 Dresden |
 
 ## Offene Platzhalter
 
@@ -32,9 +33,7 @@ Es wurden bewusst keine Beispiel- oder Fantasiewerte eingetragen.
 | `{{BERUFSHAFTPFLICHT_VERSICHERER}}` | Name des Berufshaftpflichtversicherers | Versicherung AG | impressum.html:121 | Optional, nur falls vorhanden/vorgeschrieben |
 | `{{BERUFSHAFTPFLICHT_ANSCHRIFT}}` | Anschrift des Versicherers | Straße, PLZ Ort | impressum.html:122 | Optional, nur falls vorhanden/vorgeschrieben |
 | `{{BERUFSHAFTPFLICHT_GELTUNGSRAUM}}` | Räumlicher Geltungsbereich der Versicherung | Deutschland / EU | impressum.html:123 | Optional, nur falls vorhanden/vorgeschrieben |
-| `{{DATENSCHUTZ_AUFSICHTSBEHOERDE_NAME}}` | Zuständige Landesdatenschutzbehörde (richtet sich nach dem Sitz) | Bei Sitz in Sachsen: Sächsische Datenschutz- und Transparenzbeauftragte | datenschutz.html:138 | Pflicht |
-| `{{DATENSCHUTZ_AUFSICHTSBEHOERDE_ANSCHRIFT}}` | Anschrift der Datenschutzbehörde | Straße, PLZ Ort | datenschutz.html:139 | Pflicht |
-| `{{STAND_DATUM}}` | Datum des Rechtsstands der Seite | 20.08.2026 | impressum.html:131, datenschutz.html:145 | Pflicht |
+| `{{STAND_DATUM}}` | Datum des Rechtsstands der Seite | 20.08.2026 | impressum.html:131, datenschutz.html:146 | Pflicht |
 
 ## Zusätzlich zu prüfen (keine Platzhalter, aber Entscheidungen/Fakten)
 
