@@ -345,6 +345,39 @@
   .quote footer{margin-top:22px;color:var(--ink-soft);font-size:.9rem;display:flex;align-items:center;gap:11px}
   .quote footer::before{content:"";width:22px;height:2px;background:var(--accent);border-radius:2px}
 
+  /* ---------- Ratgeber-Anriss ---------- */
+  .reads{padding:0 0 76px}
+  @media(max-width:767px){.reads{padding-bottom:52px}}
+  .reads-card{border-radius:var(--r-lg);padding:30px 32px}
+  @media(max-width:600px){.reads-card{padding:24px 22px}}
+  .reads-top{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+  .reads-top h2{font-size:1.32rem;margin:0}
+  .reads-all{
+    font-size:.9rem;font-weight:600;text-decoration:none;color:var(--gold-deep);
+    display:inline-flex;align-items:center;gap:6px;min-height:44px;
+  }
+  .reads-all:hover{text-decoration:underline;text-underline-offset:3px}
+  .reads-list{list-style:none;display:flex;flex-direction:column}
+  .reads-list li{border-top:1px solid var(--hairline)}
+  .reads-list li:first-child{border-top:none}
+  .reads-list a{
+    display:flex;align-items:center;gap:16px;padding:15px 0;
+    text-decoration:none;transition:color .2s ease;
+  }
+  .reads-list .cat{
+    flex:none;width:130px;font-size:.72rem;font-weight:700;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--gold-deep);
+  }
+  .reads-list .ttl{flex:1;font-weight:600;font-size:1rem;letter-spacing:-.015em}
+  .reads-list a:hover .ttl{color:var(--gold-deep)}
+  .reads-list .arr{flex:none;color:var(--ink-soft);transition:transform .2s ease}
+  .reads-list a:hover .arr{transform:translateX(3px);color:var(--gold-deep)}
+  @media(max-width:600px){
+    .reads-list a{flex-wrap:wrap;gap:4px 12px;padding:14px 0}
+    .reads-list .cat{width:auto;flex-basis:100%}
+    .reads-list .ttl{font-size:.97rem;flex:1}
+  }
+
   /* ---------- Kontakt ---------- */
   .contact{
     border-radius:34px;padding:clamp(38px,6vw,74px);
@@ -717,6 +750,43 @@
     </div>
   </section>
 
+  <!-- ============ RATGEBER-ANRISS ============ -->
+  <section class="reads" aria-labelledby="reads-title">
+    <div class="container">
+      <div class="reads-card glass reveal">
+        <div class="reads-top">
+          <h2 id="reads-title">Aus dem Ratgeber</h2>
+          <a class="reads-all" href="ratgeber.html">Alle Beiträge
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+        <ul class="reads-list">
+          <li>
+            <a href="ratgeber/zahlungsschwierigkeiten-handwerk.html">
+              <span class="cat">Handwerk &amp; Bau</span>
+              <span class="ttl">Zahlungsschwierigkeiten im Handwerksbetrieb: die ersten Schritte</span>
+              <svg class="arr" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </li>
+          <li>
+            <a href="ratgeber/agentur-geld-schneller-einnehmen.html">
+              <span class="cat">Agentur</span>
+              <span class="ttl">Wie Sie Ihr Geld schneller hereinbekommen</span>
+              <svg class="arr" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </li>
+          <li>
+            <a href="ratgeber/restaurant-ertrag-steigern.html">
+              <span class="cat">Gastronomie</span>
+              <span class="ttl">Mehr verdienen im Restaurant: an welchen Zahlen es liegt</span>
+              <svg class="arr" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ KONTAKT ============ -->
   <section id="kontakt" aria-labelledby="kontakt-title">
     <div class="container">
@@ -873,10 +943,13 @@
               status.className = 'form-status ok';
               status.textContent = 'Vielen Dank. Ihre Anfrage ist bei uns eingegangen.';
             } else {
-              throw new Error('nicht erfolgreich');
+              // Antwort des Versanddienstes fuer die Fehlersuche festhalten
+              console.error('Formularversand abgelehnt:', data);
+              throw new Error((data && data.message) || 'nicht erfolgreich');
             }
           })
-          .catch(function(){
+          .catch(function(err){
+            console.error('Formularversand fehlgeschlagen:', err);
             status.className = 'form-status err';
             status.textContent = 'Das hat leider nicht geklappt. Bitte schreiben Sie uns an sekretariat@valtixfm.de.';
           })
