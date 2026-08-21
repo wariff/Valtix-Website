@@ -17,6 +17,7 @@ Firmenspezifische Angaben in `impressum.html` und `datenschutz.html`, die noch f
 | Zuständige Datenschutz-Aufsichtsbehörde | Sächsische Datenschutz- und Transparenzbeauftragte, Maternistraße 17, 01067 Dresden |
 | Berufsrechtliche Angaben | Entfallen: erlaubnisfreies Gewerbe. Ersetzt durch den Abschnitt "Tätigkeit und Umfang der Beratung" |
 | Stand-Datum | 20.08.2026 |
+| Formularversand | Web3Forms, Zustellung an sharifibr@icloud.com |
 
 ## Offene Platzhalter
 
@@ -29,7 +30,6 @@ gelöscht werden.
 | `{{REGISTERGERICHT}}` | Registergericht | Amtsgericht Leipzig | impressum.html:100 | Optional, nur bei eingetragener GbR (eGbR) |
 | `{{REGISTERNUMMER}}` | Registernummer | GsR 1234 | impressum.html:101 | Optional, nur bei eingetragener GbR (eGbR) |
 | `{{UST_IDNR}}` | Umsatzsteuer-Identifikationsnummer nach § 27a UStG | DE123456789 | impressum.html:106 | Optional, nur falls vergeben |
-| `{{WEB3FORMS_ACCESS_KEY}}` | Zugriffsschlüssel für den Formularversand, kostenlos auf web3forms.com anzufordern | 1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d | index.html (Kontaktformular) | Pflicht, sonst funktioniert das Kontaktformular nicht |
 
 ## Zusätzlich zu prüfen (keine Platzhalter, aber Entscheidungen/Fakten)
 

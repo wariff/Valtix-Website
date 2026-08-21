@@ -737,15 +737,16 @@
           <p class="form-intro">Wir melden uns in der Regel innerhalb eines Werktags.</p>
 
           <form id="kontaktformular" action="https://api.web3forms.com/submit" method="POST" novalidate>
-            <input type="hidden" name="access_key" value="{{WEB3FORMS_ACCESS_KEY}}">
+            <input type="hidden" name="access_key" value="9ca529d8-ff58-4b0d-9198-10b18387570d">
             <input type="hidden" name="subject" value="Neue Anfrage über valtixfm.de">
             <input type="hidden" name="from_name" value="Valtix Website">
+            <input type="hidden" name="replyto" value="email">
             <input type="checkbox" name="botcheck" class="gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
 
             <div class="field-row">
               <div class="field">
                 <label for="f-name">Name</label>
-                <input type="text" id="f-name" name="Name" required autocomplete="name">
+                <input type="text" id="f-name" name="name" required autocomplete="name">
               </div>
               <div class="field">
                 <label for="f-firma">Unternehmen <span class="opt">(optional)</span></label>
@@ -784,7 +785,7 @@
             <div class="field-row">
               <div class="field">
                 <label for="f-mail">Ihre E-Mail</label>
-                <input type="email" id="f-mail" name="E-Mail" required autocomplete="email">
+                <input type="email" id="f-mail" name="email" required autocomplete="email">
               </div>
               <div class="field">
                 <label for="f-tel">Telefon <span class="opt">(optional)</span></label>
