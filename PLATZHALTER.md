@@ -29,6 +29,7 @@ gelöscht werden.
 | `{{REGISTERGERICHT}}` | Registergericht | Amtsgericht Leipzig | impressum.html:100 | Optional, nur bei eingetragener GbR (eGbR) |
 | `{{REGISTERNUMMER}}` | Registernummer | GsR 1234 | impressum.html:101 | Optional, nur bei eingetragener GbR (eGbR) |
 | `{{UST_IDNR}}` | Umsatzsteuer-Identifikationsnummer nach § 27a UStG | DE123456789 | impressum.html:106 | Optional, nur falls vergeben |
+| `{{WEB3FORMS_ACCESS_KEY}}` | Zugriffsschlüssel für den Formularversand, kostenlos auf web3forms.com anzufordern | 1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d | index.html (Kontaktformular) | Pflicht, sonst funktioniert das Kontaktformular nicht |
 
 ## Zusätzlich zu prüfen (keine Platzhalter, aber Entscheidungen/Fakten)
 
@@ -59,6 +60,9 @@ gelöscht werden.
   sollten vor dem Livegang entfernt werden.
 - **GitHub Pages / Data Privacy Framework (datenschutz.html, Abschnitt 2):** Die Zertifizierung
   von GitHub unter dem EU-US Data Privacy Framework vor Livegang im DPF-Register gegenprüfen.
+- **Auftragsverarbeitung für das Kontaktformular:** Abschnitt 7 der Datenschutzerklärung nennt
+  einen Vertrag zur Auftragsverarbeitung nach Art. 28 DSGVO mit dem Formulardienst. Dieser
+  Vertrag muss mit dem Anbieter tatsächlich abgeschlossen werden, sonst ist die Angabe unzutreffend.
 
 ## Hinweis
 
