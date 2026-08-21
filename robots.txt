@@ -3,4 +3,4 @@ Allow: /
 Disallow: /impressum.html
 Disallow: /datenschutz.html
 
-Sitemap: https://wariff.github.io/Valtix-Website/sitemap.xml
+Sitemap: https://valtixfm.de/sitemap.xml
