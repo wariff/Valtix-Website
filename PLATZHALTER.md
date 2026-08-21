@@ -13,7 +13,7 @@ Firmenspezifische Angaben in `impressum.html` und `datenschutz.html`, die noch f
 | Verantwortlich für Inhalte nach § 18 Abs. 2 MStV | Sharif Ibrahim |
 | Anschrift | Straße des 18. Oktober 11, 04103 Leipzig |
 | Telefon | +49 176 22930394 |
-| E-Mail | sekretariat@valtixfm.de (auch auf der Startseite eingesetzt) |
+| E-Mail | info@valtixfm.de (auch auf der Startseite eingesetzt) |
 | Zuständige Datenschutz-Aufsichtsbehörde | Sächsische Datenschutz- und Transparenzbeauftragte, Maternistraße 17, 01067 Dresden |
 | Berufsrechtliche Angaben | Entfallen: erlaubnisfreies Gewerbe. Ersetzt durch den Abschnitt "Tätigkeit und Umfang der Beratung" |
 | Stand-Datum | 20.08.2026 |
