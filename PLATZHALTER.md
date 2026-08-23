@@ -17,7 +17,7 @@ Firmenspezifische Angaben in `impressum.html` und `datenschutz.html`, die noch f
 | Zuständige Datenschutz-Aufsichtsbehörde | Sächsische Datenschutz- und Transparenzbeauftragte, Maternistraße 17, 01067 Dresden |
 | Berufsrechtliche Angaben | Entfallen: erlaubnisfreies Gewerbe. Ersetzt durch den Abschnitt "Tätigkeit und Umfang der Beratung" |
 | Stand-Datum | 20.08.2026 |
-| Formularversand | Web3Forms, Zustellung an sharifibr@icloud.com |
+| Formularversand | Web3Forms, Zustellung an info@valtixfm.de |
 
 ## Offene Platzhalter
 
