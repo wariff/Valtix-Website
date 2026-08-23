@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Import und Export außerhalb der EU: was es mit Ihrer Liquidität macht | Valtix</title>
+<meta name="description" content="Landed Cost, Einfuhrumsatzsteuer, Incoterms und Währungsrisiko: welche Kosten beim Handel mit Drittländern nicht auf der Lieferantenrechnung stehen und wie lange das Geld gebunden ist.">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#FBF8F2">
+<link rel="canonical" href="https://valtixfm.de/ratgeber/import-export-ausserhalb-eu.html">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="de_DE">
+<meta property="og:title" content="Import und Export außerhalb der EU: was es mit Ihrer Liquidität macht">
+<meta property="og:description" content="Landed Cost, Einfuhrumsatzsteuer, Incoterms und Währungsrisiko: welche Kosten beim Handel mit Drittländern nicht auf der Lieferantenrechnung stehen und wie lange das Geld gebunden ist.">
+<meta property="og:url" content="https://valtixfm.de/ratgeber/import-export-ausserhalb-eu.html">
+<meta property="og:image" content="https://valtixfm.de/assets/valtix-logo.png">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Import und Export außerhalb der EU: was es mit Ihrer Liquidität macht",
+  "description": "Landed Cost, Einfuhrumsatzsteuer, Incoterms und Währungsrisiko: welche Kosten beim Handel mit Drittländern nicht auf der Lieferantenrechnung stehen und wie lange das Geld gebunden ist.",
+  "author": {
+    "@type": "Organization",
+    "name": "Valtix Financial Management"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Valtix Financial Management",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://valtixfm.de/assets/valtix-logo.png"
+    }
+  },
+  "mainEntityOfPage": "https://valtixfm.de/ratgeber/import-export-ausserhalb-eu.html",
+  "inLanguage": "de-DE"
+}
+</script>
+<style>
+  @font-face{font-family:"Inter Tight";font-style:normal;font-weight:400;font-display:swap;src:url("/assets/fonts/inter-tight-latin-400-normal.woff2") format("woff2")}
+  @font-face{font-family:"Inter Tight";font-style:normal;font-weight:500;font-display:swap;src:url("/assets/fonts/inter-tight-latin-500-normal.woff2") format("woff2")}
+  @font-face{font-family:"Inter Tight";font-style:normal;font-weight:600;font-display:swap;src:url("/assets/fonts/inter-tight-latin-600-normal.woff2") format("woff2")}
+  @font-face{font-family:"Inter Tight";font-style:normal;font-weight:800;font-display:swap;src:url("/assets/fonts/inter-tight-latin-800-normal.woff2") format("woff2")}
+  :root{
+    --ink:#232941;--ink-soft:#565D73;--navy:#232941;--navy-deep:#171B2C;
+    --gold:#A6813F;--gold-deep:#7A6238;--cream:#F5EBD0;--bg:#FBF8F2;
+    --glass:rgba(255,255,255,.62);--glass-border:rgba(255,255,255,.85);
+    --glass-shadow:0 18px 50px rgba(35,41,65,.13);--hairline:rgba(35,41,65,.12);
+    --font:"Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --r-pill:999px;--r-lg:22px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:100px}
+  body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:16px;line-height:1.68;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  img{max-width:100%;display:block}
+  a{color:inherit}
+  :focus-visible{outline:3px solid var(--navy);outline-offset:3px;border-radius:6px}
+  .aurora{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+  .aurora span{position:absolute;border-radius:50%;filter:blur(80px);opacity:.5}
+  .a1{width:60vw;height:60vw;max-width:760px;max-height:760px;left:-16vw;top:-20vw;
+      background:radial-gradient(circle,#F0E2C2 0%,rgba(240,226,194,0) 70%)}
+  .a2{width:50vw;height:50vw;max-width:640px;max-height:640px;right:-14vw;top:-8vw;
+      background:radial-gradient(circle,#D3D9E8 0%,rgba(211,217,232,0) 70%)}
+  .glass{
+    background:var(--glass);
+    backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);
+    border:1px solid var(--glass-border);
+    box-shadow:var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+    .glass{background:rgba(255,255,255,.94)}
+  }
+  @media(prefers-reduced-transparency:reduce){
+    .glass{background:#fff;backdrop-filter:none;-webkit-backdrop-filter:none}
+  }
+  .skip-link{position:absolute;left:-9999px;top:0;z-index:200;background:var(--navy);color:#fff;padding:12px 20px;font-weight:700;border-radius:0 0 10px 0}
+  .skip-link:focus{left:0}
+  .container{width:min(1180px,100% - 48px);margin-inline:auto}
+  @media(max-width:767px){.container{width:calc(100% - 32px)}}
+  .site-header{position:sticky;top:16px;z-index:100;margin-top:16px}
+  @media(max-width:767px){.site-header{top:10px;margin-top:10px}}
+  .nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 10px 10px 22px;border-radius:var(--r-pill)}
+  .brand{display:flex;align-items:center;min-height:44px}
+  .brand img{height:26px;width:auto}
+  .nav-links{display:flex;align-items:center;gap:2px;list-style:none}
+  .nav-links a{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;text-decoration:none;color:var(--ink-soft);font-weight:500;font-size:.94rem;border-radius:var(--r-pill);transition:color .2s ease,background .2s ease}
+  .nav-links a:hover{color:var(--ink);background:rgba(255,255,255,.6)}
+  .nav-links a.btn-primary,.nav-links a.btn-primary:hover{color:#fff;background:linear-gradient(180deg,var(--navy) 0%,var(--navy-deep) 100%)}
+  @media(max-width:900px){.nav-links li:not(.nav-cta){display:none}}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:9px;
+    min-height:46px;padding:0 22px;border-radius:var(--r-pill);
+    font-family:var(--font);font-weight:600;font-size:.96rem;letter-spacing:-.01em;
+    text-decoration:none;cursor:pointer;border:1px solid transparent;white-space:nowrap;
+    transition:transform .2s ease,box-shadow .2s ease,background .2s ease;
+  }
+  .btn svg{flex:none}
+  .btn-primary{background:linear-gradient(180deg,var(--navy) 0%,var(--navy-deep) 100%);color:#fff;
+    box-shadow:0 8px 20px rgba(35,41,65,.32), inset 0 1px 0 rgba(255,255,255,.2)}
+  .btn-primary:hover{transform:translateY(-2px)}
+  .btn-cream{background:var(--cream);color:var(--navy);box-shadow:0 8px 20px rgba(0,0,0,.18)}
+  .btn-cream:hover{transform:translateY(-2px);background:#FAF4E3}
+  .btn-lg{min-height:54px;padding:0 30px;font-size:1.02rem}
+  h1,h2,h3{font-weight:800;letter-spacing:-.032em;line-height:1.1;overflow-wrap:break-word}
+  .site-footer{padding:40px 0 48px;border-top:1px solid var(--hairline);margin-top:40px}
+  .footer-inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px}
+  .footer-inner img{height:22px;width:auto;opacity:.85}
+  .footer-links{display:flex;gap:4px;list-style:none;flex-wrap:wrap;margin:0}
+  .footer-links li{margin:0}
+  .footer-links a{display:inline-flex;align-items:center;min-height:44px;padding:0 11px;color:var(--ink-soft);text-decoration:none;font-size:.89rem}
+  .footer-links a:hover{color:var(--ink)}
+  .footer-copy{font-size:.84rem;color:var(--ink-soft)}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
+
+  main{max-width:720px;margin-inline:auto;padding:48px 24px 24px}
+  .crumb{font-size:.86rem;color:var(--ink-soft);margin-bottom:26px}
+  .crumb a{text-decoration:none}
+  .crumb a:hover{text-decoration:underline;text-underline-offset:3px}
+  .tag{display:inline-block;font-size:.74rem;font-weight:700;letter-spacing:.1em;
+        text-transform:uppercase;color:var(--gold-deep);background:rgba(166,129,63,.13);
+        padding:5px 13px;border-radius:var(--r-pill);margin-bottom:18px}
+  article h1{font-size:clamp(2rem,4.6vw,2.9rem);line-height:1.08;margin-bottom:14px}
+  .byline{font-size:.88rem;color:var(--ink-soft);display:flex;gap:16px;flex-wrap:wrap;
+           padding-bottom:26px;border-bottom:1px solid var(--hairline);margin-bottom:32px}
+  article .lede{font-size:1.12rem;color:var(--ink-soft);margin-bottom:26px}
+  article h2{font-size:1.5rem;margin:42px 0 12px}
+  article p{margin-bottom:16px}
+  article ul,article ol{margin:0 0 18px 22px}
+  article li{margin-bottom:9px}
+  article strong{font-weight:600}
+  .cta-box{margin:44px 0 0;padding:32px 30px;border-radius:var(--r-lg);color:#fff;
+            background:linear-gradient(152deg,#2E3552 0%,#1A1F33 100%);
+            box-shadow:0 24px 60px rgba(23,27,44,.28)}
+  .cta-box h2{font-size:1.4rem;margin:0 0 10px;color:#fff}
+  .cta-box p{color:rgba(255,255,255,.78);font-size:.97rem;margin-bottom:22px}
+  .more{margin:52px 0 0;padding-top:26px;border-top:1px solid var(--hairline)}
+  .more h2{font-size:1.15rem;margin:0 0 14px}
+  .more ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+  .more a{text-decoration:none;font-weight:600;font-size:.97rem}
+  .more a:hover{color:var(--gold-deep)}
+  .more span{display:block;font-weight:400;font-size:.88rem;color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="aurora" aria-hidden="true"><span class="a1"></span><span class="a2"></span></div>
+
+<header class="site-header">
+  <div class="container">
+    <nav class="nav glass" aria-label="Hauptnavigation">
+      <a class="brand" href="/" aria-label="Valtix, zur Startseite">
+        <img src="/assets/valtix-logo-navy.png" alt="Valtix Financial Management" width="783" height="298">
+      </a>
+      <ul class="nav-links">
+        <li><a href="/#leistungen">Leistungen</a></li>
+        <li><a href="/#ablauf">Ablauf</a></li>
+        <li><a href="/#pakete">Pakete</a></li>
+        <li><a href="/ratgeber.html">Ratgeber</a></li>
+        <li class="nav-cta"><a class="btn btn-primary" href="/#kontakt">Erstgespräch →</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <p class="crumb"><a href="/">Start</a> › <a href="/ratgeber.html">Ratgeber</a> › Handel &amp; Import</p>
+  <article>
+    <span class="tag">Handel &amp; Import</span>
+    <h1>Import und Export außerhalb der EU: was es mit Ihrer Liquidität macht</h1>
+    <p class="byline"><span>Valtix Financial Management</span><span>Lesezeit 8 Minuten</span></p>
+    <p class="lede">Wer zum ersten Mal außerhalb der EU einkauft oder verkauft, unterschätzt fast immer dieselbe Sache. Nicht den Papierkram, den erledigt irgendwann ein Spediteur. Sondern die Zeit, in der das Geld weg ist, und die Kosten, die auf keiner Lieferantenrechnung stehen. Innerhalb der EU ist der Warenverkehr frei, es gibt keinen Zoll und die Umsatzsteuer läuft über das Reverse-Charge-Verfahren. Sobald eine Grenze zum Drittland dazwischenliegt, ändert sich beides.</p>
+
+<h2>Die Geldbindung verlängert sich erheblich</h2>
+<p>Nehmen wir einen Händler, der Ware in Asien einkauft. Der Ablauf sieht typischerweise so aus:</p>
+<ul>
+  <li>30 Prozent Anzahlung bei Auftragserteilung</li>
+  <li>vier bis sechs Wochen Produktion</li>
+  <li>Restzahlung gegen Kopie des Konnossements, also bei Verladung</li>
+  <li>fünf bis sieben Wochen Seeweg nach Hamburg oder Rotterdam</li>
+  <li>ein bis zwei Wochen Zollabfertigung und Nachlauf ins eigene Lager</li>
+  <li>danach erst Verkauf, und der Kunde zahlt nach 30 Tagen</li>
+</ul>
+<p>Vom ersten Euro bis zum Zahlungseingang vergehen so leicht vier bis fünf Monate. Bei einem Wareneinsatz von 100.000 Euro pro Bestellung und drei Bestellungen im Jahr sind dauerhaft rund 120.000 Euro gebunden, die weder auf dem Konto noch in der Bilanz als Gewinn sichtbar sind.</p>
+<p>Genau daran scheitern wachsende Importeure. Das Geschäft trägt sich rechnerisch, das Konto aber nicht. Wer die Bestellmengen erhöht, verschärft die Lücke, weil jede zusätzliche Bestellung zuerst Geld verbraucht.</p>
+
+<h2>Was die Ware wirklich kostet</h2>
+<p>Der Einkaufspreis ist selten der Preis. Die Größe, auf die es ankommt, heißt Landed Cost: alle Kosten bis zur eigenen Rampe. Eine Beispielrechnung für eine Sendung mit 4.000 Stück:</p>
+<ul>
+  <li>Warenwert ab Hafen Verschiffungsland: 40.000 Euro</li>
+  <li>Seefracht: 2.800 Euro</li>
+  <li>Transportversicherung: 200 Euro</li>
+  <li>Zoll, hier 4,7 Prozent auf den Zollwert von 43.000 Euro: 2.020 Euro</li>
+  <li>Nachlauf vom Hafen ins Lager: 600 Euro</li>
+  <li>Terminalgebühren, Zollanmeldung, Verzollungsdienstleister: 450 Euro</li>
+</ul>
+<p>Summe: <strong>46.070 Euro</strong>. Der Stückpreis steigt damit von 10,00 auf 11,52 Euro, also um gut 15 Prozent. Wer mit dem reinen Einkaufspreis kalkuliert und darauf seine übliche Marge legt, verkauft die halbe Marge weg, ohne es zu merken.</p>
+<p>Der Zollsatz hängt an der Warentarifnummer. Dieselbe Ware kann je nach Einreihung zwischen null und über zehn Prozent kosten. Bei einem Sortiment lohnt es sich, die tatsächlichen Sätze für die wichtigsten Artikel einmal sauber festzuhalten und in die Kalkulation zu übernehmen.</p>
+
+<h2>Die Einfuhrumsatzsteuer ist kein Kostenfaktor, aber ein Liquiditätsfaktor</h2>
+<p>Zusätzlich fallen 19 Prozent Einfuhrumsatzsteuer auf den Zollwert zuzüglich Zoll und Beförderungskosten bis zum Bestimmungsort an. Im Beispiel oben sind das rund 8.670 Euro.</p>
+<p>Dieses Geld ist für einen vorsteuerabzugsberechtigten Betrieb kein Aufwand, es kommt über die Umsatzsteuervoranmeldung zurück. Bezahlen muss man es trotzdem zuerst, und zwischen Zahlung und Erstattung liegen je nach Meldezeitraum mehrere Wochen. Bei sechs Sendungen im Jahr sind das schnell 50.000 Euro, die permanent unterwegs sind.</p>
+<p>Zwei Dinge entschärfen das. Ein Aufschubkonto beim Zoll verschiebt die Fälligkeit, statt bei jeder Abfertigung sofort zu zahlen. Für die Einfuhrumsatzsteuer gilt dabei eine eigene, längere Frist, die den Abstand zur Erstattung deutlich verkürzt. Ob sich das im Einzelfall lohnt und welche Sicherheiten der Zoll verlangt, klärt man mit dem Steuerberater und dem zuständigen Hauptzollamt.</p>
+
+<h2>Incoterms entscheiden, wer wann zahlt</h2>
+<p>Die Incoterms regeln, bis wohin der Verkäufer Kosten und Risiko trägt. Sie sind kein Formalismus, sondern verändern den Preis erheblich.</p>
+<p><strong>EXW</strong> bedeutet, dass die Ware im Werk des Lieferanten bereitsteht und ab dort alles Ihre Sache ist, inklusive Ausfuhrabfertigung im Herkunftsland.</p>
+<p><strong>FOB</strong> heißt, der Lieferant bringt die Ware an Bord des Schiffes, ab da tragen Sie Fracht und Risiko.</p>
+<p><strong>CIF</strong> schließt Fracht und Versicherung bis zum Bestimmungshafen ein, aber nicht Zoll und Einfuhrabgaben.</p>
+<p><strong>DDP</strong> bedeutet frei Haus verzollt, der Lieferant übernimmt alles.</p>
+<p>Der teuerste Fehler beim Einkauf ist, Angebote mit unterschiedlichen Klauseln direkt zu vergleichen. Ein EXW-Preis von 9,20 Euro und ein DDP-Preis von 11,00 Euro sehen nach einer klaren Sache aus, bis die Fracht dazukommt. Verlangen Sie Angebote immer mit derselben Klausel, oder rechnen Sie alles auf Landed Cost um.</p>
+<p>Wichtig ist außerdem der Gefahrübergang. Bei FOB liegt das Risiko für einen Wasserschaden auf See bei Ihnen, nicht beim Lieferanten. Ohne eigene Transportversicherung ist das ein offener Posten.</p>
+
+<h2>Währungsrisiko</h2>
+<p>Rechnungen in US-Dollar sind im Import die Regel. Zwischen Bestellung und Zahlung liegen oft drei Monate, und in dieser Zeit bewegt sich der Kurs.</p>
+<p>Ein Beispiel: Eine Rechnung über 40.000 US-Dollar entspricht bei einem Kurs von 1,10 rund 36.360 Euro. Fällt der Kurs bis zur Zahlung auf 1,04, kostet dieselbe Rechnung 38.460 Euro. Die Differenz von 2.100 Euro ist bei einer Handelsspanne von zwölf Prozent fast die Hälfte des Rohertrags dieser Sendung.</p>
+<p>Drei Wege, damit umzugehen. Der einfachste ist, in Euro zu verhandeln; viele Lieferanten machen das mit, verlangen dafür aber einen Aufschlag. Der zweite ist ein Devisentermingeschäft über die Hausbank, das den Kurs für den Zahlungszeitpunkt festschreibt. Der dritte ist eine natürliche Absicherung, wenn Sie selbst in Dollar fakturieren und Ein- und Auszahlungen sich teilweise ausgleichen.</p>
+<p>Für kleinere Beträge ist der Aufwand oft nicht gerechtfertigt. Ab einem Volumen, bei dem eine Kursbewegung von fünf Prozent das Jahresergebnis spürbar verändert, gehört das Thema auf den Tisch.</p>
+
+<h2>Export: erst die Zahlung sichern, dann liefern</h2>
+<p>Beim Verkauf in Drittländer dreht sich das Problem um. Die Ware ist weg, und eine offene Forderung in einem Land ohne europäisches Mahnverfahren einzutreiben, ist teuer und langwierig.</p>
+<p>Üblich sind vier Absicherungen, in absteigender Sicherheit: Vorkasse, Akkreditiv, Exportkreditversicherung und Zahlung gegen Dokumente. Ein Akkreditiv kostet Gebühren und verlangt formal exakte Papiere, gibt aber bei Neukunden in schwierigen Märkten die nötige Sicherheit. Bei wiederkehrenden Kunden mit guter Zahlungshistorie reicht meist eine Kreditversicherung.</p>
+<p>Steuerlich ist die Ausfuhrlieferung in ein Drittland umsatzsteuerfrei. Diese Befreiung hängt allerdings am Nachweis, in der Regel am Ausgangsvermerk aus dem elektronischen Ausfuhrverfahren. Fehlt er bei einer Prüfung, wird die Lieferung nachträglich steuerpflichtig, und die Umsatzsteuer wird aus dem vereinbarten Betrag herausgerechnet. Bei einer Rechnung über 100.000 Euro sind das knapp 16.000 Euro, die nachträglich abzuführen sind und die beim Kunden meist nicht mehr einzutreiben sind. Die Ausfuhrnachweise gehören deshalb genauso systematisch abgelegt wie die Rechnungen selbst.</p>
+
+<h2>Was sich in Kalkulation und Planung ändern muss</h2>
+<p><strong>Landed Cost statt Einkaufspreis.</strong> Hinterlegen Sie für jeden Artikel den Vollkostensatz bis zur eigenen Rampe, nicht den Rechnungsbetrag des Lieferanten. Ohne das stimmt keine Margenrechnung.</p>
+<p><strong>Liquiditätsplanung mit den richtigen Terminen.</strong> Anzahlung, Restzahlung, Zoll und Einfuhrumsatzsteuer fallen zu unterschiedlichen Zeitpunkten an und meist nicht dann, wenn die Buchhaltung sie erwartet. Eine rollierende Planung über 13 Wochen mit diesen Terminen zeigt den Engpass, bevor er entsteht.</p>
+<p><strong>Lagerreichweite bewusst steuern.</strong> Lange Lieferzeiten zwingen zu größeren Beständen. Jede Woche zusätzliche Reichweite kostet gebundenes Kapital. Rechnen Sie einmal aus, was ein Monat Lagerbestand in Euro bedeutet, dann wird die Diskussion über Bestellmengen konkreter.</p>
+<p><strong>Mindestbestellmengen gegen Kapitalbindung abwägen.</strong> Ein Rabatt von drei Prozent auf die doppelte Menge klingt gut, ist aber teuer, wenn die Ware acht Monate liegt und die Kontokorrentlinie dafür herhalten muss.</p>
+
+<h2>Drei Fragen vor dem ersten Container</h2>
+<ol>
+  <li>Wie hoch ist die Landed Cost pro Stück, und trägt der geplante Verkaufspreis diese Kalkulation noch?</li>
+  <li>Wie viel Geld ist wie lange gebunden, und reicht die vorhandene Liquidität für zwei parallel laufende Bestellungen?</li>
+  <li>Was passiert, wenn die Sendung sich um vier Wochen verzögert oder der Kurs um fünf Prozent läuft?</li>
+</ol>
+<p>Wer diese drei Zahlen kennt, trifft die Entscheidung auf einer belastbaren Grundlage. Wer sie nicht kennt, erfährt sie sechs Monate später aus dem Kontoauszug.</p>
+
+<h2>Wo unsere Arbeit endet</h2>
+<p>Wir rechnen die betriebswirtschaftliche Seite: Landed Cost, Kapitalbindung, Liquiditätsplanung, Bestellpolitik und die Frage, ob das Geschäftsmodell die Finanzierung des Warenkreislaufs trägt.</p>
+<p>Die zolltarifliche Einreihung einer Ware, Ursprungs- und Präferenzregeln, Ausfuhrgenehmigungen, Sanktions- und Embargofragen sowie die umsatzsteuerliche Beurteilung im Einzelfall gehören zu einer Zollberatung oder zum Steuerberater. Wir sind Betriebswirte und nehmen keine rechtliche Bewertung vor.</p>
+
+    <div class="cta-box">
+      <h2>Wie steht Ihr Betrieb da?</h2>
+      <p>Im Financial Health Check prüfen wir Ihre Kennzahlen und zeigen Ihnen, wo Liquidität gebunden ist. Das Erstgespräch ist kostenlos und unverbindlich.</p>
+      <a class="btn btn-cream btn-lg" href="/#kontakt">Erstgespräch vereinbaren
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+    <nav class="more" aria-label="Weitere Beiträge">
+      <h2>Weitere Beiträge</h2>
+      <ul>
+        <li><a href="/ratgeber/zahlungsschwierigkeiten-handwerk.html">Zahlungsschwierigkeiten im Handwerksbetrieb: die ersten Schritte<span>Handwerk &amp; Bau</span></a></li>
+        <li><a href="/ratgeber/agentur-geld-schneller-einnehmen.html">Agenturen: Wie Sie Ihr Geld schneller hereinbekommen<span>Agentur &amp; Dienstleistung</span></a></li>
+        <li><a href="/ratgeber/restaurant-ertrag-steigern.html">Mehr verdienen im Restaurant: an welchen Zahlen es liegt<span>Gastronomie</span></a></li>
+      </ul>
+    </nav>
+  </article>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <img src="/assets/valtix-logo-navy.png" alt="Valtix Financial Management">
+    <ul class="footer-links">
+      <li><a href="/#leistungen">Leistungen</a></li>
+      <li><a href="/#ablauf">Ablauf</a></li>
+      <li><a href="/#pakete">Pakete</a></li>
+      <li><a href="/ratgeber.html">Ratgeber</a></li>
+      <li><a href="/#kontakt">Kontakt</a></li>
+      <li><a href="/impressum.html">Impressum</a></li>
+      <li><a href="/datenschutz.html">Datenschutz</a></li>
+    </ul>
+    <p class="footer-copy">© 2026 Valtix Financial Management, Leipzig</p>
+  </div>
+</footer>
+</body>
+</html>
