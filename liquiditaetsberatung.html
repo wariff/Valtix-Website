@@ -37,7 +37,10 @@
           "addressCountry": "DE"
         }
       },
-      "areaServed": "Deutschland",
+      "areaServed": {
+        "@type": "Country",
+        "name": "Deutschland"
+      },
       "url": "https://valtixfm.de/liquiditaetsberatung.html"
     },
     {
@@ -170,6 +173,9 @@
   .footer-links li{margin:0}
   .footer-links a{display:inline-flex;align-items:center;min-height:44px;padding:0 11px;color:var(--ink-soft);text-decoration:none;font-size:.89rem}
   .footer-links a:hover{color:var(--ink)}
+  .footer-standorte{flex-basis:100%;font-size:.84rem;color:var(--ink-soft)}
+  .footer-standorte a{color:var(--gold-deep);font-weight:600;text-decoration:none}
+  .footer-standorte a:hover{text-decoration:underline;text-underline-offset:3px}
   .footer-copy{font-size:.84rem;color:var(--ink-soft)}
   @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
 
@@ -324,6 +330,7 @@
       <li><a href="/impressum.html">Impressum</a></li>
       <li><a href="/datenschutz.html">Datenschutz</a></li>
     </ul>
+    <p class="footer-standorte">Beratung vor Ort in <a href="/unternehmensberatung-leipzig.html">Leipzig</a>, <a href="/unternehmensberatung-ulm.html">Ulm</a> und <a href="/unternehmensberatung-mannheim.html">Mannheim</a></p>
     <p class="footer-copy">© 2026 Valtix Financial Management, Leipzig</p>
   </div>
 </footer>
