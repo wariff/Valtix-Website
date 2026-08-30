@@ -18,6 +18,7 @@
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="application/rss+xml" title="Valtix Ratgeber" href="/feed.xml">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -36,6 +37,8 @@
       "url": "https://valtixfm.de/assets/valtix-logo.png"
     }
   },
+  "datePublished": "2026-08-23",
+  "dateModified": "2026-08-23",
   "mainEntityOfPage": "https://valtixfm.de/ratgeber/stundensatz-richtig-kalkulieren.html",
   "inLanguage": "de-DE"
 }
@@ -157,6 +160,29 @@
   .more a{text-decoration:none;font-weight:600;font-size:.97rem}
   .more a:hover{color:var(--gold-deep)}
   .more span{display:block;font-weight:400;font-size:.88rem;color:var(--ink-soft)}
+
+  /* ---------- Newsletter ---------- */
+  .nl{margin:44px 0 0;padding:30px 28px;border-radius:var(--r-lg)}
+  .nl h2{font-size:1.3rem;margin:0 0 8px}
+  .nl-intro{color:var(--ink-soft);font-size:.95rem;margin-bottom:20px}
+  .nl-row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:16px}
+  .nl-label{flex-basis:100%;font-size:.84rem;font-weight:600;margin-bottom:-2px}
+  .nl-row input[type=email]{
+    flex:1 1 240px;min-width:0;font-family:var(--font);font-size:.97rem;color:var(--ink);
+    background:#fff;border:1px solid rgba(35,41,65,.22);border-radius:12px;
+    padding:12px 14px;min-height:48px;transition:border-color .2s ease,box-shadow .2s ease}
+  .nl-row input[type=email]:focus{outline:none;border-color:var(--navy);
+    box-shadow:0 0 0 3px rgba(35,41,65,.14)}
+  .nl-row .btn{flex:0 0 auto;min-height:48px}
+  @media(max-width:520px){.nl-row .btn{flex:1 1 100%}}
+  .nl-consent{display:flex;gap:11px;align-items:flex-start;
+    font-size:.85rem;color:var(--ink-soft);cursor:pointer}
+  .nl-consent input{flex:none;width:19px;height:19px;margin-top:2px;
+    accent-color:var(--navy);cursor:pointer}
+  .nl-consent a{color:var(--gold-deep);font-weight:600}
+  .nl-fine{margin-top:16px;font-size:.8rem;color:var(--ink-soft)}
+  .gotcha{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+
 </style>
 </head>
 <body>
@@ -185,7 +211,7 @@
   <article>
     <span class="tag">Handwerk &amp; Dienstleistung</span>
     <h1>Stundensatz kalkulieren: warum 60 Euro oft nicht reichen</h1>
-    <p class="byline"><span>Valtix Financial Management</span><span>Lesezeit 7 Minuten</span></p>
+    <p class="byline"><span>Valtix Financial Management</span><span><time datetime="2026-08-23">23. August 2026</time></span><span>Lesezeit 7 Minuten</span></p>
     <p class="lede">Der Stundensatz ist die meistunterschätzte Zahl im Handwerk und in vielen Dienstleistungsbetrieben. Er wird selten sauber berechnet, sondern am Wettbewerb abgelesen oder über Jahre fortgeschrieben. Das Ergebnis ist ein Betrieb, der ausgelastet ist, jede Rechnung bezahlt bekommt und am Jahresende trotzdem kaum etwas übrig hat.</p>
 
 <h2>Der Denkfehler steckt in den Stunden</h2>
@@ -239,6 +265,8 @@
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
     </div>
+
+
 
     <nav class="more" aria-label="Weitere Beiträge">
       <h2>Weitere Beiträge</h2>

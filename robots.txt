@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /impressum.html
 Disallow: /datenschutz.html
+Disallow: /newsletter-danke.html
 
 Sitemap: https://valtixfm.de/sitemap.xml
