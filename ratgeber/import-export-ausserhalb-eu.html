@@ -134,6 +134,17 @@
   article p{margin-bottom:16px}
   article ul,article ol{margin:0 0 18px 22px}
   article li{margin-bottom:9px}
+  /* Tabellen scrollen in ihrem eigenen Kasten, damit die Seite nie quer laeuft */
+  .tbl-wrap{overflow-x:auto;margin:22px 0;-webkit-overflow-scrolling:touch}
+  article table{border-collapse:collapse;width:100%;min-width:420px;font-size:.92rem}
+  article th,article td{padding:10px 14px;text-align:left;white-space:nowrap;
+    border-bottom:1px solid var(--hairline)}
+  article th{font-weight:600;font-size:.78rem;text-transform:uppercase;
+    letter-spacing:.06em;color:var(--ink-soft)}
+  article th.num,article td.num{text-align:right}
+  article tbody tr:last-child td{border-bottom:none;font-weight:600}
+  .tbl-hint{font-size:.82rem;color:var(--ink-soft);margin:-12px 0 20px}
+  @media(min-width:700px){.tbl-hint{display:none}}
   article strong{font-weight:600}
   .cta-box{margin:44px 0 0;padding:32px 30px;border-radius:var(--r-lg);color:#fff;
             background:linear-gradient(152deg,#2E3552 0%,#1A1F33 100%);
