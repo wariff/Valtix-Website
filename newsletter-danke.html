@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fast geschafft | Valtix Financial Management</title>
+<meta name="robots" content="noindex, follow">
+<meta name="theme-color" content="#FBF8F2">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<style>
+  @font-face{font-family:"Inter Tight";font-style:normal;font-weight:400;font-display:swap;src:url("/assets/fonts/inter-tight-latin-400-normal.woff2") format("woff2")}
+  @font-face{font-family:"Inter Tight";font-style:normal;font-weight:600;font-display:swap;src:url("/assets/fonts/inter-tight-latin-600-normal.woff2") format("woff2")}
+  @font-face{font-family:"Inter Tight";font-style:normal;font-weight:800;font-display:swap;src:url("/assets/fonts/inter-tight-latin-800-normal.woff2") format("woff2")}
+  :root{
+    --ink:#232941;
+    --ink-soft:#565D73;
+    --navy:#232941;
+    --navy-deep:#171B2C;
+    --bg:#FBF8F2;
+    --glass:rgba(255,255,255,.62);
+    --glass-border:rgba(255,255,255,.85);
+    --hairline:rgba(35,41,65,.12);
+    --font:"Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh}
+  img{max-width:100%;display:block}
+  :focus-visible{outline:3px solid var(--navy);outline-offset:3px;border-radius:4px}
+  .container{width:min(1160px,100% - 48px);margin-inline:auto}
+  @media(max-width:767px){.container{width:calc(100% - 40px)}}
+  .site-header{padding-top:16px}
+  .nav-wrap{width:min(1180px,100% - 48px);margin-inline:auto;
+    background:var(--glass);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);
+    border:1px solid var(--glass-border);border-radius:999px;padding:10px 22px;
+    box-shadow:0 18px 50px rgba(35,41,65,.13), inset 0 1px 0 rgba(255,255,255,.9)}
+  .aurora{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+  .aurora span{position:absolute;border-radius:50%;filter:blur(80px);opacity:.5}
+  .a1{width:60vw;height:60vw;max-width:760px;max-height:760px;left:-16vw;top:-20vw;
+      background:radial-gradient(circle,#F0E2C2 0%,rgba(240,226,194,0) 70%)}
+  .a2{width:50vw;height:50vw;max-width:640px;max-height:640px;right:-14vw;top:-8vw;
+      background:radial-gradient(circle,#D3D9E8 0%,rgba(211,217,232,0) 70%)}
+  .nav{display:flex;align-items:center;min-height:72px}
+  .brand{display:flex;align-items:center;min-height:44px}
+  .brand img{height:34px;width:auto}
+  main{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 24px}
+  h1{font-weight:800;letter-spacing:-.035em;line-height:1.05;font-size:clamp(2.4rem,6.4vw,4rem);margin-bottom:14px}
+  main p{color:var(--ink-soft);max-width:440px;margin:0 auto 32px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 28px;border-radius:999px;font-weight:600;font-size:1rem;text-decoration:none;background:linear-gradient(180deg,#232941 0%,#171B2C 100%);color:#fff;box-shadow:0 8px 20px rgba(35,41,65,.3), inset 0 1px 0 rgba(255,255,255,.2);transition:transform .2s ease}
+  .btn:hover{transform:translateY(-2px)}
+  .site-footer{border-top:1px solid var(--hairline);padding:40px 0 46px}
+  .footer-inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px}
+  .footer-inner img{height:26px;width:auto}
+  .footer-links{display:flex;gap:6px;list-style:none;flex-wrap:wrap;margin:0}
+  .footer-links a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;color:var(--ink-soft);text-decoration:none;font-size:.9rem}
+  .footer-links a:hover{color:var(--ink)}
+  .footer-standorte{flex-basis:100%;font-size:.84rem;color:var(--ink-soft)}
+  .footer-standorte a{color:var(--gold-deep);font-weight:600;text-decoration:none}
+  .footer-standorte a:hover{text-decoration:underline;text-underline-offset:3px}
+  .footer-copy{font-size:.85rem;color:var(--ink-soft)}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><span class="a1"></span><span class="a2"></span></div>
+<header class="site-header">
+  <div class="nav-wrap nav">
+    <a class="brand" href="/" aria-label="Valtix, zur Startseite">
+      <img src="/assets/valtix-logo-navy.png" alt="Valtix Financial Management" width="783" height="298">
+    </a>
+  </div>
+</header>
+
+<main>
+  <div>
+    <h1>Fast geschafft</h1>
+    <p>Wir haben Ihnen eine E-Mail geschickt. Bitte klicken Sie darin auf den Bestätigungslink, dann sind Sie angemeldet. Ohne diesen Klick nehmen wir Sie nicht in den Verteiler auf.</p>
+    <p>Falls die E-Mail nicht innerhalb weniger Minuten ankommt, schauen Sie bitte im Spam-Ordner nach.</p>
+    <a class="btn" href="/ratgeber.html">Zurück zum Ratgeber</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <img src="/assets/valtix-logo-navy.png" alt="Valtix Financial Management">
+    <ul class="footer-links">
+      <li><a href="/index.html#leistungen">Leistungen</a></li>
+      <li><a href="/index.html#ablauf">Ablauf</a></li>
+      <li><a href="/index.html#pakete">Pakete</a></li>
+      <li><a href="/ratgeber.html">Ratgeber</a></li>
+      <li><a href="/index.html#kontakt">Kontakt</a></li>
+      <li><a href="/impressum.html">Impressum</a></li>
+      <li><a href="/datenschutz.html">Datenschutz</a></li>
+    </ul>
+    <p class="footer-standorte">Beratung vor Ort in <a href="/unternehmensberatung-leipzig.html">Leipzig</a>, <a href="/unternehmensberatung-ulm.html">Ulm</a> und <a href="/unternehmensberatung-mannheim.html">Mannheim</a></p>
+    <p class="footer-copy">© 2026 Valtix Financial Management, Leipzig</p>
+  </div>
+</footer>
+</body>
+</html>
