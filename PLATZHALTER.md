@@ -21,15 +21,14 @@ Firmenspezifische Angaben in `impressum.html` und `datenschutz.html`, die noch f
 
 ## Offene Platzhalter
 
-Alle Pflichtangaben sind eingesetzt. Offen sind nur noch optionale Felder aus Block 3
-(Register und Steuern), die je nach Situation entweder befüllt oder samt Abschnitt
-gelöscht werden.
+Keine. Die Abschnitte "Registereintrag" und "Umsatzsteuer-Identifikationsnummer"
+wurden am 04.09.2026 ersatzlos entfernt, weil die Gesellschaft nicht als eGbR
+eingetragen ist und keine USt-IdNr. vergeben wurde. Beide Abschnitte sind nur
+anzugeben, wenn die Werte tatsächlich existieren.
 
-| Platzhalter | Bedeutung | Beispielformat | Vorkommen (Datei:Zeile) | Pflicht/Optional |
-|---|---|---|---|---|
-| `{{REGISTERGERICHT}}` | Registergericht | Amtsgericht Leipzig | impressum.html:100 | Optional, nur bei eingetragener GbR (eGbR) |
-| `{{REGISTERNUMMER}}` | Registernummer | GsR 1234 | impressum.html:101 | Optional, nur bei eingetragener GbR (eGbR) |
-| `{{UST_IDNR}}` | Umsatzsteuer-Identifikationsnummer nach § 27a UStG | DE123456789 | impressum.html:106 | Optional, nur falls vergeben |
+Falls sich das ändert, also bei Eintragung als eGbR oder bei Vergabe einer
+USt-IdNr., müssen die Abschnitte wieder aufgenommen werden. Bei einer eGbR ist
+zusätzlich der Abschnitt "Diensteanbieter" auf den eingetragenen Namen umzustellen.
 
 ## Zusätzlich zu prüfen (keine Platzhalter, aber Entscheidungen/Fakten)
 
