@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://valtixfm.de/</loc>
-    <lastmod>2026-08-23</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -44,9 +44,15 @@
   </url>
   <url>
     <loc>https://valtixfm.de/ratgeber.html</loc>
-    <lastmod>2026-08-23</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://valtixfm.de/ratgeber/zahlungsschwierigkeiten-handwerk.html</loc>
+    <lastmod>2026-08-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://valtixfm.de/ratgeber/agentur-geld-schneller-einnehmen.html</loc>
@@ -61,8 +67,20 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://valtixfm.de/ratgeber/bwa-richtig-lesen.html</loc>
+    <lastmod>2026-08-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://valtixfm.de/ratgeber/liquiditaetsplanung-13-wochen.html</loc>
     <lastmod>2026-08-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://valtixfm.de/ratgeber/kundenerlebnis-schuhgeschaeft.html</loc>
+    <lastmod>2026-08-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -75,6 +93,24 @@
   <url>
     <loc>https://valtixfm.de/ratgeber/preiserhoehung-durchsetzen.html</loc>
     <lastmod>2026-08-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://valtixfm.de/ratgeber/kontokorrent-dauerhaft-ausgeschoepft.html</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://valtixfm.de/ratgeber/import-export-ausserhalb-eu.html</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://valtixfm.de/ratgeber/social-media-agentur-rentabilitaet.html</loc>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
