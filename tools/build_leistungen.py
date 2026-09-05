@@ -347,6 +347,7 @@ def seite(s):
     graph = [
       {"@type":"Service","name":s["service"],"description":s["beschreibung"],
        "provider":{"@type":"ProfessionalService","name":"Valtix Financial Management",
+                   "sameAs":["https://www.linkedin.com/company/valtixfm"],
                    "address":{"@type":"PostalAddress","streetAddress":"Straße des 18. Oktober 11",
                               "postalCode":"04103","addressLocality":"Leipzig","addressCountry":"DE"}},
        "areaServed":({"@type":"City","name":s["gebiet"]} if s.get("gebiet")

@@ -746,6 +746,7 @@ def artikel_seite(a):
         "publisher": {
             "@type": "Organization",
             "name": "Valtix Financial Management",
+            "sameAs": ["https://www.linkedin.com/company/valtixfm"],
             "logo": {"@type": "ImageObject", "url": "https://valtixfm.de/assets/valtix-logo.png"},
         },
         "datePublished": a["datum"],
@@ -862,6 +863,7 @@ def uebersicht():
          "inLanguage":"de-DE",
          "publisher":{"@type":"Organization","name":"Valtix Financial Management",
                       "url":"https://valtixfm.de/",
+                      "sameAs":["https://www.linkedin.com/company/valtixfm"],
                       "logo":{"@type":"ImageObject",
                               "url":"https://valtixfm.de/assets/valtix-logo.png"}},
          "blogPost":[{"@type":"BlogPosting",
