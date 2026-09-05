@@ -75,6 +75,10 @@ Branch `main`, der Workflow spiegelt nach `gh-pages`. Zusätzlich auf
 
 ## LinkedIn
 
+Unternehmensseite: https://www.linkedin.com/company/valtixfm
+Sie ist in der Fusszeile aller Seiten verlinkt und als sameAs in den
+strukturierten Daten der Startseite hinterlegt.
+
 Es gibt keine Anbindung. Beiträge werden als Text geliefert, der Nutzer kopiert sie.
 Format: Aufhänger in der ersten Zeile, dann eine konkrete Rechnung, am Ende eine
 Frage oder der Verweis auf den Ratgeberbeitrag. Keine Hashtag-Wolken, drei bis vier

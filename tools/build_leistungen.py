@@ -6,12 +6,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys_path = os.path.join(ROOT, 'ratgeber')
 
 # Gemeinsames CSS und Bausteine aus dem Ratgeber-Generator uebernehmen
-import importlib.util
-spec = importlib.util.spec_from_file_location(
-    "rg", "/tmp/claude-0/-home-user-intro/faeb7073-b3db-556d-81bd-c942bd78d164/scratchpad/build_ratgeber.py")
-
-# Nur die Konstanten lesen, ohne das Skript auszufuehren
-src = open("/tmp/claude-0/-home-user-intro/faeb7073-b3db-556d-81bd-c942bd78d164/scratchpad/build_ratgeber.py").read()
+# Nur die Konstanten aus dem Ratgeber-Generator lesen, ohne ihn auszufuehren.
+# Pfad relativ zu dieser Datei, damit es in jeder Arbeitskopie funktioniert.
+_HIER = os.path.dirname(os.path.abspath(__file__))
+src = open(os.path.join(_HIER, 'build_ratgeber.py')).read()
 SHARED_CSS = re.search(r"SHARED_CSS = '''(.*?)'''", src, re.S).group(1)
 HEADER = re.search(r"HEADER = '''(.*?)'''", src, re.S).group(1)
 FOOTER = re.search(r"FOOTER = '''(.*?)'''", src, re.S).group(1)
@@ -443,7 +441,7 @@ for s in SEITEN:
 
 # Sitemap komplett neu aufbauen
 # Slugs direkt aus build_ratgeber.py lesen, damit die Liste nicht auseinanderlaeuft
-_rg = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'build_ratgeber.py')).read()
+_rg = src
 _start = _rg.index('ARTIKEL = [')
 _end = _rg.index('# ============================ TEMPLATES')
 # Slug und Datum paarweise lesen, damit lastmod je Beitrag stimmt
