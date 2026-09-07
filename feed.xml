@@ -6,7 +6,15 @@
   <atom:link href="https://valtixfm.de/feed.xml" rel="self" type="application/rss+xml"/>
   <description>Beiträge zu Kennzahlen, Liquidität und Ertrag im Mittelstand von Valtix Financial Management, Leipzig.</description>
   <language>de-DE</language>
-  <lastBuildDate>Sun, 30 Aug 2026 09:00:00 +0200</lastBuildDate>
+  <lastBuildDate>Sat, 05 Sep 2026 09:00:00 +0200</lastBuildDate>
+  <item>
+    <title>Benchmarking: warum Ihr Kennzahlenvergleich meistens in die Irre führt</title>
+    <link>https://valtixfm.de/ratgeber/benchmarking-kennzahlen-vergleichen.html</link>
+    <guid isPermaLink="true">https://valtixfm.de/ratgeber/benchmarking-kennzahlen-vergleichen.html</guid>
+    <pubDate>Sat, 05 Sep 2026 09:00:00 +0200</pubDate>
+    <category>Grundlagen</category>
+    <description>Vergleichsgruppe, Bereinigung, Quartile statt Durchschnitt: wie ein belastbarer Kennzahlenvergleich aufgebaut wird und woran die üblichen Vergleiche scheitern.</description>
+  </item>
   <item>
     <title>Social-Media-Agentur: welcher Kunde verdient wirklich Geld?</title>
     <link>https://valtixfm.de/ratgeber/social-media-agentur-rentabilitaet.html</link>
