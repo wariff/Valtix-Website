@@ -2,7 +2,14 @@
 
 Liest die ausgefüllte Eingabevorlage und rechnet das Modell durch.
 
+    # Bericht erzeugen
+    python3 tools/bericht/rendern.py <ausgefuellte_vorlage.xlsx>
+
+    # nur die Kennzahlen auf der Konsole
     python3 tools/bericht/modell.py tools/bericht/beispiel_lueftungstechnik.xlsx
+
+    # Abgleich gegen den veroeffentlichten Bericht
+    python3 tools/bericht/test_abgleich.py
 
 ## Dateien
 
@@ -12,6 +19,9 @@ Liest die ausgefüllte Eingabevorlage und rechnet das Modell durch.
 | `beispiel_erzeugen.py` | füllt die Vorlage mit dem Prüfdatensatz |
 | `beispiel_lueftungstechnik.xlsx` | Prüfdatensatz, erzeugt aus dem obigen Skript |
 | `modell.py` | liest die Datei und berechnet alle Kennzahlen |
+| `diagramme.py` | Ergebnisbrücke, Kostenstruktur, Verlauf, Break-even als Inline-SVG |
+| `rendern.py` | baut daraus den Bericht als HTML im Valtix-Design |
+| `test_abgleich.py` | prüft 20 Größen gegen den Word-Bericht |
 
 ## Warum nicht die Excel-Formeln gelesen werden
 
@@ -50,3 +60,39 @@ Erträge gerechnet. Diese hängen nicht an der Leistungsmenge und dürfen die
 Gewinnschwelle deshalb nicht verschieben. Der ausgewiesene Deckungsbeitrag in
 der GuV enthält sie dagegen, weil er sich auf die Gesamtleistung bezieht. Ohne
 diese Unterscheidung läge die Gewinnschwelle rund 25 Stunden zu niedrig.
+
+## Farbwahl in den Diagrammen
+
+Geprüft mit dem Validator der Datenvisualisierungs-Vorlage gegen den Seitengrund
+`#FBF8F2`. Das Markennavy `#232941` liegt mit OKLCH L=0,287 unterhalb des
+zulässigen Helligkeitsbandes von 0,43 bis 0,77, und sowohl Navy als auch Gold
+unterschreiten die Chroma-Grenze von 0,10. Beide sind als Datenfarben also nicht
+zulässig.
+
+Für Flächen und Linien werden deshalb zwei aufgehellte Nachbarn in denselben
+Farbtönen verwendet:
+
+| Rolle | Wert | Farbton |
+|---|---|---|
+| Reihe A, Zwischen- und Endgrößen, Erlöslinie | `#404D97` | H 273°, wie das Markennavy |
+| Reihe B, Zu- und Abgänge, Kostenlinie | `#B0842A` | H 80°, wie das Markengold |
+
+Das Paar besteht alle sechs Prüfungen: Helligkeitsband, Chroma, Farbfehlsichtigkeit
+(schlechtestes Paar ΔE 26,2), Normalsicht (ΔE 30,4) und Kontrast gegen den Grund.
+Navy und Gold der Marke bleiben Text- und Strukturfarben.
+
+Die Ampel nutzt die reservierten Statusfarben. Gelb liegt auf hellem Grund unter
+3:1 Kontrast; das ist zulässig, weil in derselben Zeile immer der Wortlaut
+(„Grün", „Gelb", „Rot") sowie Ist- und Zielwert stehen. Die Farbe trägt die
+Aussage nie allein.
+
+## Bewusste Festlegungen
+
+- **Kein Dunkelmodus.** Der Bericht ist ein Dokument in Markenfarben, das auch
+  gedruckt und als PDF weitergegeben wird. Alle Farben sind ausdrücklich gesetzt.
+- **Diagramme scrollen auf schmalen Bildschirmen** in ihrem eigenen Rahmen,
+  statt unlesbar zu schrumpfen. Die Seite selbst läuft nie quer.
+- **Keine Zahl an jedem Punkt.** Im Monatsverlauf sind nur erster, letzter,
+  höchster und niedrigster Wert beschriftet.
+- **Werte im Diagramm zusätzlich als Tabelle.** GuV, Monatsverlauf,
+  Vormonatsvergleich und Break-even stehen vollständig als Tabelle im Bericht.

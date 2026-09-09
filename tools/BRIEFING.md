@@ -145,6 +145,13 @@ gegen die ARTIKEL-Liste prüfen, ob sich inzwischen etwas überschneidet.
 Zum verworfenen Vorschlag "Eigenkapitalquote gegen Liquidität": inhaltlich aufgegangen
 im Beitrag zu den Frühwarnsignalen, nicht erneut ansetzen.
 
+## Berichtsgenerator
+
+`tools/bericht/` erzeugt aus der ausgefüllten Eingabevorlage den Monatsbericht
+als HTML. Aufruf und Aufbau stehen in `tools/bericht/README.md`. Vor jeder
+Änderung am Modell `python3 tools/bericht/test_abgleich.py` laufen lassen, der
+prüft 20 Größen gegen den bestehenden Word-Bericht.
+
 ## Offene Punkte (regelmäßig prüfen)
 
 - Postfach info@valtixfm.de bei IONOS anlegen
