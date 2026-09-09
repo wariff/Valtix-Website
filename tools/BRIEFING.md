@@ -104,7 +104,7 @@ Branch `main`, der Workflow spiegelt nach `gh-pages`. Zusätzlich auf
 
 ## LinkedIn
 
-Unternehmensseite: https://www.linkedin.com/company/valtixfm
+Unternehmensseite: https://www.linkedin.com/company/valtix-financial-management
 Sie ist in der Fusszeile aller Seiten verlinkt und als sameAs in den
 strukturierten Daten der Startseite hinterlegt.
 

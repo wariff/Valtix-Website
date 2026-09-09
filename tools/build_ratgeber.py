@@ -114,7 +114,7 @@ FOOTER = '''<footer class="site-footer">
       <li><a href="/#pakete">Pakete</a></li>
       <li><a href="/ratgeber.html">Ratgeber</a></li>
       <li><a href="/#kontakt">Kontakt</a></li>
-      <li><a href="https://www.linkedin.com/company/valtixfm" rel="me noopener" target="_blank">LinkedIn</a></li>
+      <li><a href="https://www.linkedin.com/company/valtix-financial-management" rel="me noopener" target="_blank">LinkedIn</a></li>
       <li><a href="/impressum.html">Impressum</a></li>
       <li><a href="/datenschutz.html">Datenschutz</a></li>
     </ul>
@@ -904,7 +904,7 @@ def artikel_seite(a):
         "publisher": {
             "@type": "Organization",
             "name": "Valtix Financial Management",
-            "sameAs": ["https://www.linkedin.com/company/valtixfm"],
+            "sameAs": ["https://www.linkedin.com/company/valtix-financial-management"],
             "logo": {"@type": "ImageObject", "url": "https://valtixfm.de/assets/valtix-logo.png"},
         },
         "datePublished": a["datum"],
@@ -1021,7 +1021,7 @@ def uebersicht():
          "inLanguage":"de-DE",
          "publisher":{"@type":"Organization","name":"Valtix Financial Management",
                       "url":"https://valtixfm.de/",
-                      "sameAs":["https://www.linkedin.com/company/valtixfm"],
+                      "sameAs":["https://www.linkedin.com/company/valtix-financial-management"],
                       "logo":{"@type":"ImageObject",
                               "url":"https://valtixfm.de/assets/valtix-logo.png"}},
          "blogPost":[{"@type":"BlogPosting",
