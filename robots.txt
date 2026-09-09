@@ -3,5 +3,7 @@ Allow: /
 Disallow: /impressum.html
 Disallow: /datenschutz.html
 Disallow: /newsletter-danke.html
+Disallow: /portal-vorschau.html
+Disallow: /portal-vorschau-bericht.html
 
 Sitemap: https://valtixfm.de/sitemap.xml
