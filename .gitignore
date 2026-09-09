@@ -2,3 +2,5 @@ node_modules/
 tools/bericht/*.html
 tools/bericht/*_ausgefuellt.xlsx
 tools/bericht/KLIMAWERK*
+__pycache__/
+*.pyc
