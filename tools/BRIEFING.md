@@ -86,6 +86,7 @@ der EU, Rentabilität in Social-Media-Agenturen, Benchmarking von Kennzahlen, Fr
 ```
 python3 tools/build_ratgeber.py     # Artikel, Übersicht, feed.xml
 python3 tools/build_leistungen.py   # Leistungsseiten, vollständige sitemap.xml
+python3 tools/build_portal_vorschau.py     # Attrappe portal-vorschau.html
 python3 tools/seo_audit.py          # Titel, Description, H1, Schema, Bilder
 npm i playwright && node tools/check.mjs   # Überlauf, Konsole, tote Links
 ```
@@ -152,9 +153,25 @@ als HTML. Aufruf und Aufbau stehen in `tools/bericht/README.md`. Vor jeder
 Änderung am Modell `python3 tools/bericht/test_abgleich.py` laufen lassen, der
 prüft 20 Größen gegen den bestehenden Word-Bericht.
 
+## Portalvorschau
+
+`portal-vorschau.html` ist eine reine Attrappe zur Ansicht, erzeugt von
+`tools/build_portal_vorschau.py`. Sie holt sich das Aussehen aus dem CSS in
+`portal/app.py`, damit Vorschau und echtes Portal nicht auseinanderlaufen. Es
+gibt keinen Server dahinter, nichts wird gespeichert, alle Namen und Zahlen sind
+erfunden. `portal-vorschau-bericht.html` ist der dazugehörige Musterbericht.
+
+Beide Seiten stehen auf `noindex, nofollow`, sind in `robots.txt` gesperrt und
+gehören nicht in die Sitemap. Der Punkt "Mandantenlogin" in Kopf- und Fußzeile
+zeigt darauf. Sobald ein echtes Portal läuft, muss dieser Link auf die richtige
+Adresse zeigen; solange kein Portal existiert, darf die Vorschau nicht so
+aussehen, als sei sie nutzbar.
+
 ## Offene Punkte (regelmäßig prüfen)
 
 - Postfach info@valtixfm.de bei IONOS anlegen
+- Entscheidung offen, ob das Mandantenportal auf einem eigenen Server laufen
+  soll; bis dahin bleibt "Mandantenlogin" ein Link auf die Attrappe
 - www.valtixfm.de muss ein CNAME auf wariff.github.io sein, nicht A-Records
 - Brevo-Formularadresse fehlt, deshalb ist der Newsletter-Baustein deaktiviert
   (`BREVO_FORM_URL` in `tools/build_ratgeber.py`)

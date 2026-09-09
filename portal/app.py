@@ -82,7 +82,8 @@ a{color:var(--gold-deep)}
                align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .marke{font-weight:800;letter-spacing:-.03em;font-size:1.05rem;text-decoration:none;color:var(--ink)}
 .marke span{font-weight:500;color:var(--ink-soft);margin-left:8px;font-size:.9rem}
-.leiste nav{display:flex;gap:6px;align-items:center;font-size:.9rem}
+.leiste nav{display:flex;gap:6px;align-items:center;font-size:.9rem;
+            flex-wrap:wrap;justify-content:flex-end}
 .leiste nav a,.leiste nav button{padding:8px 14px;border-radius:999px;text-decoration:none;
   color:var(--ink-soft);background:none;border:0;font:inherit;cursor:pointer}
 .leiste nav a:hover{background:rgba(35,41,65,.06);color:var(--ink)}

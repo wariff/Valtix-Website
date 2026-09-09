@@ -6,3 +6,5 @@ __pycache__/
 *.pyc
 *.sqlite3
 portal/portal.sqlite3
+package.json
+package-lock.json

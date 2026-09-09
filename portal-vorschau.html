@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Vorschau Mandantenportal · Valtix Financial Management</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<style>
+:root{--ink:#232941;--ink-soft:#565D73;--gold-deep:#7A6238;--cream:#F5EBD0;
+      --bg:#FBF8F2;--hairline:rgba(35,41,65,.12);--r:16px;
+      --font:"Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);
+     font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--gold-deep)}
+.leiste{border-bottom:1px solid var(--hairline);background:rgba(255,255,255,.7)}
+.leiste .innen{max-width:1000px;margin:0 auto;padding:14px 24px;display:flex;
+               align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.marke{font-weight:800;letter-spacing:-.03em;font-size:1.05rem;text-decoration:none;color:var(--ink)}
+.marke span{font-weight:500;color:var(--ink-soft);margin-left:8px;font-size:.9rem}
+.leiste nav{display:flex;gap:6px;align-items:center;font-size:.9rem;
+            flex-wrap:wrap;justify-content:flex-end}
+.leiste nav a,.leiste nav button{padding:8px 14px;border-radius:999px;text-decoration:none;
+  color:var(--ink-soft);background:none;border:0;font:inherit;cursor:pointer}
+.leiste nav a:hover{background:rgba(35,41,65,.06);color:var(--ink)}
+main{max-width:1000px;margin:0 auto;padding:32px 24px 72px}
+.mitte{max-width:420px;margin:8vh auto;padding:0 24px}
+h1{font-size:1.6rem;font-weight:800;letter-spacing:-.03em;margin-bottom:6px}
+h2{font-size:1.15rem;font-weight:800;letter-spacing:-.025em;margin:32px 0 10px}
+p.lead{color:var(--ink-soft);margin-bottom:22px}
+.karte{background:#fff;border:1px solid var(--hairline);border-radius:var(--r);
+       padding:24px;box-shadow:0 10px 30px rgba(35,41,65,.08)}
+label{display:block;font-size:.84rem;font-weight:600;margin:14px 0 5px}
+input,select{width:100%;font:inherit;font-size:.97rem;color:var(--ink);background:#fff;
+  border:1px solid rgba(35,41,65,.22);border-radius:12px;padding:11px 14px;min-height:46px}
+input:focus,select:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(35,41,65,.14)}
+input[type=file]{padding:9px 12px}
+.knopf{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;
+  padding:0 22px;border-radius:999px;border:0;font:inherit;font-weight:600;cursor:pointer;
+  background:linear-gradient(180deg,#232941,#171B2C);color:#fff;text-decoration:none;
+  box-shadow:0 8px 20px rgba(35,41,65,.28);margin-top:18px}
+.knopf.schmal{min-height:36px;padding:0 14px;font-size:.86rem;margin:0;box-shadow:none}
+.knopf.stumm{background:#fff;color:var(--ink);border:1px solid var(--hairline);box-shadow:none}
+.meldung{padding:12px 16px;border-radius:12px;font-size:.9rem;margin-bottom:16px}
+.fehler{background:#FDECEC;color:#8B1F1F}
+.gut{background:#E9F7EA;color:#155724}
+table{border-collapse:collapse;width:100%;font-size:.9rem;margin-top:8px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--hairline)}
+th{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-soft)}
+td.num,th.num{text-align:right}
+.rahmen{overflow-x:auto}
+.marke-klein{font-size:.78rem;color:var(--ink-soft);margin-top:6px}
+code{background:rgba(35,41,65,.06);padding:2px 6px;border-radius:6px;font-size:.86rem;
+     word-break:break-all}
+.fuss{max-width:1000px;margin:0 auto;padding:0 24px 40px;font-size:.8rem;color:var(--ink-soft)}
+
+/* nur fuer die Vorschau, im echten Portal nicht vorhanden */
+.band{background:var(--ink);color:#fff;font-size:.86rem;line-height:1.5;
+      padding:12px 24px}
+.band .innen{max-width:1000px;margin:0 auto;display:flex;gap:14px;
+             align-items:baseline;flex-wrap:wrap}
+.band b{font-weight:700;letter-spacing:-.01em}
+.band span{color:rgba(255,255,255,.72)}
+.band a{color:var(--cream)}
+.zugang{background:var(--cream);border:1px solid rgba(122,98,56,.28);border-radius:12px;
+        padding:14px 16px;margin-bottom:18px;font-size:.88rem}
+.zugang b{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;
+          color:var(--gold-deep);margin-bottom:8px}
+.zugang dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;
+           align-items:baseline;font-size:.88rem}
+.zugang dt{color:var(--ink-soft)}
+.zugang dd{min-width:0}
+@media(max-width:460px){.zugang dl{grid-template-columns:1fr;gap:2px}
+  .zugang dt{margin-top:6px}}
+.zugang code{background:rgba(35,41,65,.08);word-break:normal;white-space:nowrap}
+.zugang dd code+code{margin-left:2px}
+.zugang p{margin-top:8px;color:var(--ink-soft);font-size:.82rem}
+.schalterband{background:rgba(35,41,65,.05);border-bottom:1px solid var(--hairline)}
+.schalterband .innen{max-width:1000px;margin:0 auto;padding:10px 24px;display:flex;
+                     gap:12px;align-items:center;flex-wrap:wrap}
+.schalter-titel{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;
+                color:var(--ink-soft);font-weight:600}
+.schalter{display:flex;gap:6px;flex-wrap:wrap}
+.schalter button{font:inherit;font-size:.84rem;padding:7px 14px;border-radius:999px;
+  border:1px solid var(--hairline);background:#fff;color:var(--ink-soft);cursor:pointer}
+.schalter button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.leiste nav button.text{color:var(--ink-soft)}
+.leiste nav button.text:hover{background:rgba(35,41,65,.06);color:var(--ink)}
+.mitte{margin:6vh auto}
+.fuss{padding-top:8px}
+@media(max-width:600px){.band{padding:10px 16px}}
+</style></head><body>
+<div class="band"><div class="innen">
+<b>Vorschau</b>
+<span>Attrappe zur Ansicht. Es wird nichts gespeichert und nichts übertragen.
+Alle Namen und Zahlen sind erfunden.</span>
+<a href="index.html">Zurück zur Website</a>
+</div></div>
+<div class="schalterband"><div class="innen"><span class="schalter-titel">Ansicht</span><div class="schalter" role="group" aria-label="Ansicht wechseln"><button type="button" data-ziel="anmelden" aria-pressed="false">Anmeldung</button><button type="button" data-ziel="mandant-start" aria-pressed="false">Mandantenansicht</button><button type="button" data-ziel="admin-start" aria-pressed="false">Adminübersicht</button><button type="button" data-ziel="admin-verwaltung" aria-pressed="false">Verwaltung</button><button type="button" data-ziel="admin-protokoll" aria-pressed="false">Protokoll</button></div></div></div>
+<section class="bildschirm" id="bs-anmelden" hidden><div class="leiste"><div class="innen"><a class="marke" href="#" data-ziel="anmelden">Valtix<span>Mandantenportal</span></a></div></div><div class="mitte">
+  <h1>Anmelden</h1>
+  <p class="lead">Zugang erhalten Mandanten im Rahmen der monatlichen Betreuung.</p>
+  <div class="zugang"><b>Zugangsdaten der Vorschau</b>
+<dl>
+<dt>Administrator</dt><dd><code>admin@vorschau.valtix</code></dd>
+<dt>Mandant</dt><dd><code>mandant@vorschau.valtix</code></dd>
+<dt>Passwort, beide</dt><dd><code>Vorschau2026</code></dd>
+</dl>
+<p>Beide Eingaben werden nur im Browser geprüft. Es gibt keine Datenbank hinter
+dieser Seite und keinen Server, der etwas entgegennimmt.</p></div>
+  <div class="karte">
+    <div class="meldung fehler" id="fehler" hidden></div>
+    <form id="form-anmelden" novalidate>
+      <label for="e">E-Mail-Adresse</label>
+      <input id="e" name="email" type="email" autocomplete="off" value="mandant@vorschau.valtix">
+      <label for="p">Passwort</label>
+      <input id="p" name="passwort" type="password" autocomplete="off" value="Vorschau2026">
+      <button class="knopf" type="submit">Anmelden</button>
+    </form>
+  </div></div></section><section class="bildschirm" id="bs-mandant-start" hidden><div class="leiste"><div class="innen"><a class="marke" href="#" data-ziel="anmelden">Valtix<span>Mandantenportal</span></a><nav><a href="#" data-ziel="mandant-start">Übersicht</a><button class="text" type="button" data-ziel="anmelden">Abmelden</button></nav></div></div><main>
+  <h1>Ihre Berichte</h1>
+  <p class="lead">Angemeldet als Muster Lüftungstechnik GmbH.</p>
+  <div class="rahmen"><table><thead><tr><th>Zeitraum</th><th>Eingestellt</th>
+  <th class="num">&nbsp;</th></tr></thead><tbody><tr><td>Juli 2026</td><td>2026-08-06</td><td class="num"><a class="knopf schmal stumm" href="portal-vorschau-bericht.html">Ansehen</a></td></tr><tr><td>Juni 2026</td><td>2026-07-07</td><td class="num"><a class="knopf schmal stumm" href="portal-vorschau-bericht.html">Ansehen</a></td></tr></tbody></table></div></main></section><section class="bildschirm" id="bs-admin-start" hidden><div class="leiste"><div class="innen"><a class="marke" href="#" data-ziel="anmelden">Valtix<span>Mandantenportal</span></a><nav><a href="#" data-ziel="admin-start">Übersicht</a><a href="#" data-ziel="admin-verwaltung">Verwaltung</a><a href="#" data-ziel="admin-protokoll">Protokoll</a><button class="text" type="button" data-ziel="anmelden">Abmelden</button></nav></div></div><main>
+  <h1>Alle Berichte</h1>
+  <p class="lead">Angemeldet als Administrator.</p>
+  <div class="rahmen"><table><thead><tr><th>Mandant</th><th>Zeitraum</th>
+  <th>Eingestellt</th><th class="num">&nbsp;</th></tr></thead>
+  <tbody><tr><td>Muster Lüftungstechnik GmbH</td><td>Juli 2026</td><td>2026-08-06</td><td class="num"><a class="knopf schmal stumm" href="portal-vorschau-bericht.html">Ansehen</a></td></tr><tr><td>Muster Lüftungstechnik GmbH</td><td>Juni 2026</td><td>2026-07-07</td><td class="num"><a class="knopf schmal stumm" href="portal-vorschau-bericht.html">Ansehen</a></td></tr><tr><td>Beispiel Bau GmbH</td><td>Juli 2026</td><td>2026-08-05</td><td class="num"><a class="knopf schmal stumm" href="portal-vorschau-bericht.html">Ansehen</a></td></tr><tr><td>Beispiel Handel e. K.</td><td>Juli 2026</td><td>2026-08-04</td><td class="num"><a class="knopf schmal stumm" href="portal-vorschau-bericht.html">Ansehen</a></td></tr><tr><td>Beispiel Handel e. K.</td><td>Juni 2026</td><td>2026-07-06</td><td class="num"><a class="knopf schmal stumm" href="portal-vorschau-bericht.html">Ansehen</a></td></tr></tbody></table></div></main></section><section class="bildschirm" id="bs-admin-verwaltung" hidden><div class="leiste"><div class="innen"><a class="marke" href="#" data-ziel="anmelden">Valtix<span>Mandantenportal</span></a><nav><a href="#" data-ziel="admin-start">Übersicht</a><a href="#" data-ziel="admin-verwaltung">Verwaltung</a><a href="#" data-ziel="admin-protokoll">Protokoll</a><button class="text" type="button" data-ziel="anmelden">Abmelden</button></nav></div></div><main>
+  <h1>Verwaltung</h1>
+  <h2>Bericht einstellen</h2>
+  <div class="karte"><form onsubmit="return false">
+    <label for="m">Mandant</label>
+    <select id="m"><option>Muster Lüftungstechnik GmbH</option><option>Beispiel Bau GmbH</option><option>Beispiel Handel e. K.</option></select>
+    <label for="d">Ausgefüllte Eingabevorlage (.xlsx)</label>
+    <input id="d" type="file" accept=".xlsx" disabled>
+    <button class="knopf" type="button" disabled>Hochladen und Bericht erzeugen</button>
+    <p class="marke-klein">In der Vorschau ohne Funktion. Es lässt sich nichts hochladen.</p>
+  </form></div>
+
+  <h2>Mandanten</h2>
+  <div class="rahmen"><table><thead><tr><th>Name</th><th class="num">Berichte</th></tr>
+  </thead><tbody><tr><td>Muster Lüftungstechnik GmbH</td><td class="num">2</td></tr><tr><td>Beispiel Bau GmbH</td><td class="num">1</td></tr><tr><td>Beispiel Handel e. K.</td><td class="num">2</td></tr></tbody></table></div>
+  <div class="karte" style="margin-top:14px"><form onsubmit="return false">
+    <label for="mn">Neuer Mandant</label>
+    <input id="mn" placeholder="Firmenname" disabled>
+    <button class="knopf" type="button" disabled>Anlegen</button>
+  </form></div>
+
+  <h2>Zugänge</h2>
+  <div class="rahmen"><table><thead><tr><th>Name</th><th>E-Mail</th><th>Zugehörigkeit</th>
+  <th>Status</th></tr></thead><tbody><tr><td>Administrator</td><td>admin@vorschau.valtix</td><td>Administrator</td><td>aktiv</td></tr><tr><td>Ansprechpartner Muster</td><td>mandant@vorschau.valtix</td><td>Muster Lüftungstechnik GmbH</td><td>aktiv</td></tr><tr><td>Ansprechpartner Beispiel Bau</td><td>bau@vorschau.valtix</td><td>Beispiel Bau GmbH</td><td>offen</td></tr></tbody></table></div>
+  <div class="karte" style="margin-top:14px"><form onsubmit="return false">
+    <label for="zn">Name</label><input id="zn" disabled>
+    <label for="ze">E-Mail</label><input id="ze" type="email" disabled>
+    <label for="zr">Rolle</label>
+    <select id="zr" disabled><option>Mandant</option><option>Administrator</option></select>
+    <label for="zm">Mandant, nur bei der Rolle Mandant</label>
+    <select id="zm" disabled><option>ohne</option><option>Muster Lüftungstechnik GmbH</option><option>Beispiel Bau GmbH</option><option>Beispiel Handel e. K.</option></select>
+    <button class="knopf" type="button" disabled>Zugang anlegen</button>
+    <p class="marke-klein">Es wird kein Passwort vergeben. Die Person setzt es
+    selbst über einen einmaligen Link.</p>
+  </form></div></main></section><section class="bildschirm" id="bs-admin-protokoll" hidden><div class="leiste"><div class="innen"><a class="marke" href="#" data-ziel="anmelden">Valtix<span>Mandantenportal</span></a><nav><a href="#" data-ziel="admin-start">Übersicht</a><a href="#" data-ziel="admin-verwaltung">Verwaltung</a><a href="#" data-ziel="admin-protokoll">Protokoll</a><button class="text" type="button" data-ziel="anmelden">Abmelden</button></nav></div></div><main>
+  <h1>Protokoll</h1>
+  <p class="lead">Die letzten Ereignisse. Anmeldungen, Zugriffe auf Berichte und
+  Änderungen an Zugängen werden festgehalten.</p>
+  <div class="rahmen"><table><thead><tr><th>Zeitpunkt</th><th>Ereignis</th>
+  <th>E-Mail</th><th>Detail</th></tr></thead><tbody><tr><td>2026-08-06 09:14:02</td><td>anmeldung</td><td>mandant@vorschau.valtix</td><td></td></tr><tr><td>2026-08-06 09:14:11</td><td>bericht_geoeffnet</td><td>mandant@vorschau.valtix</td><td>bericht 5</td></tr><tr><td>2026-08-06 08:52:40</td><td>bericht_eingestellt</td><td>admin@vorschau.valtix</td><td>Muster Lüftungstechnik GmbH, Juli 2026</td></tr><tr><td>2026-08-05 17:30:19</td><td>zugang_angelegt</td><td>admin@vorschau.valtix</td><td>bau@vorschau.valtix</td></tr><tr><td>2026-08-05 17:29:03</td><td>anmeldung_fehlgeschlagen</td><td></td><td>unbekannte Kennung</td></tr></tbody></table></div></main></section>
+<div class="fuss">Valtix Financial Management · Luca Sparhuber und Sharif Ibrahim GbR, Leipzig ·
+Diese Seite dient allein der Ansicht. Sie verarbeitet keine personenbezogenen Daten,
+setzt keine Cookies und sendet nichts an einen Server.</div>
+<script>
+(function(){
+  var zeigen = function(id){
+    document.querySelectorAll('.bildschirm').forEach(function(s){ s.hidden = (s.id !== 'bs-' + id); });
+    document.querySelectorAll('.schalter button').forEach(function(b){
+      b.setAttribute('aria-pressed', String(b.dataset.ziel === id));
+    });
+    window.scrollTo(0,0);
+    if (history.replaceState) history.replaceState(null, '', '#ansicht-' + id);
+  };
+  document.addEventListener('click', function(e){
+    var t = e.target.closest('[data-ziel]');
+    if (!t) return;
+    e.preventDefault();
+    zeigen(t.dataset.ziel);
+  });
+  var f = document.getElementById('form-anmelden');
+  f.addEventListener('submit', function(e){
+    e.preventDefault();
+    var mail = document.getElementById('e').value.trim().toLowerCase();
+    var pw = document.getElementById('p').value;
+    var box = document.getElementById('fehler');
+    if (pw === 'Vorschau2026' && mail === 'admin@vorschau.valtix') { box.hidden = true; zeigen('admin-start'); return; }
+    if (pw === 'Vorschau2026' && mail === 'mandant@vorschau.valtix') { box.hidden = true; zeigen('mandant-start'); return; }
+    box.textContent = 'E-Mail-Adresse oder Passwort stimmen nicht. In der Vorschau gelten nur die oben genannten Zugangsdaten.';
+    box.hidden = false;
+  });
+  var start = location.hash.replace('#ansicht-','').replace('#','');
+  zeigen(document.getElementById('bs-' + start) ? start : 'anmelden');
+})();
+</script>
+</body></html>
