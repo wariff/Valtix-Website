@@ -34,24 +34,37 @@ MEN = {'menge':6, 'kapazitaet':7, 'koepfe':13, 'vzae':14, 'bezahlte_stunden':15,
 LIQ = {'liquide':6, 'forderungen':7, 'kurzfr_verb':8,
        'eigenkapital':13, 'bilanzsumme':14, 'finanzverb':16, 'anlagevermoegen':17}
 
-ZIELE = [  # Zeile, Bezeichnung, Richtung, Einheit
-    (5,  'Umsatzerlöse',            'hoch', 'eur'),
-    (6,  'EBT-Marge',               'hoch', 'proz'),
-    (7,  'Deckungsbeitragsquote',   'hoch', 'proz'),
-    (8,  'Liquide Mittel',          'hoch', 'eur'),
-    (9,  'Eigenkapitalquote',       'hoch', 'proz'),
-    (10, 'Debitorenlaufzeit (DSO)', 'tief', 'tage'),
-    (11, 'Auslastung',              'hoch', 'proz'),
-    (12, 'Aktive Kunden',           'hoch', 'zahl'),
-    (13, 'Neukunden je Monat',      'hoch', 'zahl'),
-]
+# Zeile 5 bis 13 sind feste Kennzahlen, 14 bis 17 nehmen eigene Kennzahlen auf.
+# Beschriftung und Richtung stehen in der Datei, nicht hier: Mandanten benennen
+# Zeilen um und tragen in den freien Zeilen eigene Groessen ein.
+ZIEL_ZEILEN   = range(5, 18)
+ZIEL_STANDARD = {5: 'umsatz', 6: 'ebt_marge', 7: 'db_quote', 8: 'liquide',
+                 9: 'ek_quote', 10: 'dso', 11: 'auslastung',
+                 12: 'aktive_kunden', 13: 'neukunden'}
+ZIEL_EINHEIT  = {5: 'eur', 6: 'proz', 7: 'proz', 8: 'eur', 9: 'proz',
+                 10: 'tage', 11: 'proz', 12: 'zahl', 13: 'zahl'}
+EIGENE_ZEILEN = range(27, 31)   # Blatt 3, eigene Kennzahlen
 
 
 def _z(wert):
-    """Leere Zellen und Text als 0 behandeln, Zahlen als float."""
+    """Fuer Betraege: leer und Text zaehlen als 0."""
     if wert is None or isinstance(wert, str):
         return 0.0
     return float(wert)
+
+
+def _w(wert):
+    """Fuer Kennzahlen: leer bleibt leer. Eine nicht gelieferte Groesse darf im
+    Bericht nicht als Null erscheinen, sonst steht dort eine falsche Aussage."""
+    if wert is None or isinstance(wert, str):
+        return None
+    return float(wert)
+
+
+def _quote(zaehler, nenner, faktor=100.0):
+    if zaehler is None or not nenner:
+        return None
+    return zaehler / nenner * faktor
 
 
 class Bericht:
@@ -77,6 +90,12 @@ class Bericht:
 
     def _monate(self, wb):
         guv, men, liq = wb['2 GuV'], wb['3 Mengen & Operativ'], wb['4 Liquidität & Bilanz']
+        self.op_titel = {k: (men.cell(row=z, column=1).value or k)
+                         for k, z in MEN.items()}
+        self.eigene = [(z, men.cell(row=z, column=1).value)
+                       for z in EIGENE_ZEILEN
+                       if men.cell(row=z, column=1).value
+                       and not str(men.cell(row=z, column=1).value).startswith('Eigene Kennzahl')]
         raus = []
         for i, name in enumerate(MONATE):
             sp = 2 + i
@@ -99,8 +118,9 @@ class Bericht:
             ebit = ebitda - afa
             ebt = ebit - zins
 
-            op  = {k: _z(men.cell(row=z, column=sp).value) for k, z in MEN.items()}
-            fin = {k: _z(liq.cell(row=z, column=sp).value) for k, z in LIQ.items()}
+            op  = {k: _w(men.cell(row=z, column=sp).value) for k, z in MEN.items()}
+            fin = {k: _w(liq.cell(row=z, column=sp).value) for k, z in LIQ.items()}
+            eig = {titel: _w(men.cell(row=z, column=sp).value) for z, titel in self.eigene}
 
             raus.append(dict(
                 monat=name, erloese=erloese, umsatz=umsatz, sonstige=sonst,
@@ -109,24 +129,42 @@ class Bericht:
                 fix=fix, fix_summe=fix_summe, afa=afa, fix_inkl_afa=fix_summe + afa,
                 ebitda=ebitda, ebit=ebit, zins=zins, ebt=ebt,
                 ebt_marge=ebt / umsatz * 100 if umsatz else 0,
-                op=op, fin=fin,
-                auslastung=op['menge'] / op['kapazitaet'] * 100 if op['kapazitaet'] else 0,
-                erloes_je_einheit=umsatz / op['menge'] if op['menge'] else 0,
-                db_je_einheit=(umsatz - var_summe) / op['menge'] if op['menge'] else 0,
-                liq_1=fin['liquide'] / fin['kurzfr_verb'] * 100 if fin['kurzfr_verb'] else 0,
-                dso=fin['forderungen'] / umsatz * 30 if umsatz else 0,
-                ek_quote=fin['eigenkapital'] / fin['bilanzsumme'] * 100 if fin['bilanzsumme'] else 0,
+                op=op, fin=fin, eigene=eig,
+                auslastung=_quote(op['menge'], op['kapazitaet']),
+                erloes_je_einheit=umsatz / op['menge'] if op['menge'] else None,
+                db_je_einheit=(umsatz - var_summe) / op['menge'] if op['menge'] else None,
+                liq_1=_quote(fin['liquide'], fin['kurzfr_verb']),
+                dso=_quote(fin['forderungen'], umsatz, 30.0),
+                ek_quote=_quote(fin['eigenkapital'], fin['bilanzsumme']),
             ))
         return raus
 
     def _ziele(self, ws):
+        """Beschriftung aus Spalte A, Zielwert aus B, Richtung aus C.
+        Zeilen 14 bis 17 verweisen auf eigene Kennzahlen aus Blatt 3."""
+        eigene_titel = [t for _, t in self.eigene]
+        self.hinweise = []
         raus = []
-        for zeile, name, richtung, einheit in ZIELE:
-            wert = ws.cell(row=zeile, column=2).value
-            if wert is None or isinstance(wert, str):
+        for z in ZIEL_ZEILEN:
+            name = ws.cell(row=z, column=1).value
+            ziel = _w(ws.cell(row=z, column=2).value)
+            if not name or ziel is None:
                 continue
-            raus.append(dict(zeile=zeile, name=name, richtung=richtung,
-                             einheit=einheit, ziel=float(wert)))
+            richtungstext = str(ws.cell(row=z, column=3).value or 'höher ist besser')
+            richtung = 'tief' if 'niedriger' in richtungstext else 'hoch'
+            if z in ZIEL_STANDARD:
+                quelle, einheit = ZIEL_STANDARD[z], ZIEL_EINHEIT[z]
+            else:
+                treffer = next((t for t in eigene_titel if t.strip() == str(name).strip()), None)
+                if treffer is None:
+                    self.hinweise.append(
+                        f'Zielwert „{name}" (Blatt 5, Zeile {z}) hat keine Entsprechung '
+                        f'unter den eigenen Kennzahlen in Blatt 3. Zeile bleibt im Bericht weg.')
+                    continue
+                quelle = ('eigene', treffer)
+                einheit = 'proz' if '%' in str(name) else 'zahl'
+            raus.append(dict(name=str(name), ziel=ziel, richtung=richtung,
+                             einheit=einheit, quelle=quelle, zeile=z))
         return raus
 
     # ---------- Auswertungen ----------
@@ -148,23 +186,25 @@ class Bericht:
         if ist <= ziel: return 'gruen'
         return 'gelb' if ist <= ziel * 1.1 else 'rot'
 
-    def ist_wert(self, name):
+    def ist_wert(self, quelle):
+        """Liefert None, wenn die Grundlage fehlt. Der Bericht laesst solche
+        Zeilen dann weg, statt eine Null auszuweisen."""
         m = self.m
-        return {'Umsatzerlöse': m['umsatz'], 'EBT-Marge': m['ebt_marge'],
-                'Deckungsbeitragsquote': m['db_quote'],
-                'Liquide Mittel': m['fin']['liquide'],
-                'Eigenkapitalquote': m['ek_quote'],
-                'Debitorenlaufzeit (DSO)': m['dso'],
-                'Auslastung': m['auslastung'],
-                'Aktive Kunden': m['op']['aktive_kunden'],
-                'Neukunden je Monat': m['op']['neukunden']}.get(name, 0)
+        if isinstance(quelle, tuple):
+            return m['eigene'].get(quelle[1])
+        return {'umsatz': m['umsatz'], 'ebt_marge': m['ebt_marge'],
+                'db_quote': m['db_quote'], 'liquide': m['fin']['liquide'],
+                'ek_quote': m['ek_quote'], 'dso': m['dso'],
+                'auslastung': m['auslastung'],
+                'aktive_kunden': m['op']['aktive_kunden'],
+                'neukunden': m['op']['neukunden']}.get(quelle)
 
     def break_even(self):
         """Fuer die Gewinnschwelle zaehlt nur der mengenabhaengige Teil.
         Sonstige betriebliche Ertraege haengen nicht an der Leistungsmenge und
         bleiben deshalb im Deckungsbeitrag je Einheit aussen vor."""
         m = self.m
-        if not m['op']['menge']:
+        if not m['op'].get('menge'):
             return None
         db_je = (m['umsatz'] - m['var_summe']) / m['op']['menge']
         if db_je <= 0:

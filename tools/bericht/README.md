@@ -96,3 +96,28 @@ Aussage nie allein.
   höchster und niedrigster Wert beschriftet.
 - **Werte im Diagramm zusätzlich als Tabelle.** GuV, Monatsverlauf,
   Vormonatsvergleich und Break-even stehen vollständig als Tabelle im Bericht.
+
+## Was die Vorlage dem Mandanten freistellt
+
+Der erste echte Datensatz hat gezeigt, worauf der Generator gefasst sein muss.
+Er liest deshalb nicht mehr feste Beschriftungen, sondern die aus der Datei.
+
+- **Zeilen werden umbenannt.** Aus „Anzahl Leistungseinheiten" wurde
+  „Verrechenbare Monteurstunden", aus „Aktive Kunden" wurden „Aktive Aufträge".
+  Der Bericht übernimmt die Bezeichnungen des Mandanten.
+- **Eigene Kennzahlen werden genutzt.** Blatt 3, Zeilen 27 bis 30, hier für
+  Reklamationsquote, Angebotsquote und Eigenkapitalquote. Sie erscheinen in der
+  Ampel, wenn in Blatt 5 ein Zielwert mit derselben Bezeichnung steht.
+- **Optionale Blöcke bleiben leer.** Im Beispiel fehlen kurzfristige
+  Verbindlichkeiten und die gesamte Bilanz. Fehlende Größen werden weggelassen,
+  niemals als Null ausgewiesen. Der Bericht nennt am Ende der Ampel, welche
+  Zielwerte deshalb unbewertet bleiben.
+- **Zielzeilen ohne Entsprechung** meldet der Generator auf der Konsole, damit
+  die Eingabedatei nachgebessert werden kann.
+
+## Vertraulichkeit
+
+Ausgefüllte Mandantendateien und erzeugte Berichte gehören **nicht ins
+Repository**. `.gitignore` schließt `tools/bericht/*.html` aus; Eingabedateien
+bitte außerhalb des Projektordners halten. Im Repository liegt nur die leere
+Vorlage und der synthetische Prüfdatensatz.

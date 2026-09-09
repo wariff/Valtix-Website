@@ -118,9 +118,10 @@ def bauen(pfad_in, pfad_out=None):
     t.append(kachel(dg.eur(m['ebt'], 2), f"EBT · Marge {dg.proz(m['ebt_marge'])}",
                     d(m['ebt'], vm['ebt']) if vm and vm['ebt'] else None))
     t.append(kachel(dg.eur(m['db'], 2), f"Deckungsbeitrag · {dg.proz(m['db_quote'])}"))
-    if m['auslastung']:
-        t.append(kachel(dg.proz(m['auslastung']), 'Auslastung'))
-    if m['op']['auftragsbestand']:
+    if m['auslastung'] is not None:
+        t.append(kachel(dg.proz(m['auslastung']), b.op_titel.get('menge', 'Auslastung')
+                                and 'Auslastung'))
+    if m['op'].get('auftragsbestand'):
         t.append(kachel(dg.eur(m['op']['auftragsbestand']), 'Auftragsbestand'))
     t.append('</div>')
 
@@ -217,7 +218,7 @@ def bauen(pfad_in, pfad_out=None):
                 ('EBT', 'ebt', lambda v: dg.eur(v, 2), False),
                 ('Auslastung', 'auslastung', lambda v: dg.proz(v), True)]:
             a, n = vm[sch], m[sch]
-            if not a and not n: continue
+            if a is None or n is None or (not a and not n): continue
             diff = n - a
             dtxt = (f'{"+" if diff>=0 else "−"}{dg.zahl(abs(diff),1)} %-Pkte.' if ist_proz
                     else f'{"+" if diff>=0 else "−"}{dg.eur(abs(diff), 2)}')
@@ -237,8 +238,12 @@ def bauen(pfad_in, pfad_out=None):
               f'<th class="num">Ist {m["monat"][:3]}</th><th class="num">Ziel</th>'
               '<th>Bewertung</th></tr></thead><tbody>']
         wort = {'gruen': 'Grün', 'gelb': 'Gelb', 'rot': 'Rot', 'grau': 'ohne Ziel'}
+        fehlend = []
         for z in b.ziele:
-            ist = b.ist_wert(z['name'])
+            ist = b.ist_wert(z['quelle'])
+            if ist is None:
+                fehlend.append(f"{z['name']} (Blatt 5, Zeile {z['zeile']})")
+                continue
             fmt = {'eur': lambda v: dg.eur(v, 2), 'proz': lambda v: dg.proz(v),
                    'tage': lambda v: dg.zahl(v, 0, 'Tage'), 'zahl': lambda v: dg.zahl(v, 0)}[z['einheit']]
             a = b.ampel(ist, z['ziel'], z['richtung'])
@@ -248,6 +253,10 @@ def bauen(pfad_in, pfad_out=None):
                       f'<td><span class="punkt" style="background:{dg.STATUS[a]}"></span>{wort[a]}</td></tr>')
         rr.append('</tbody></table></div>')
         t.append(''.join(rr))
+        if fehlend:
+            t.append('<p class="hinweis">Für diese Zielwerte wurden keine Ausgangszahlen '
+                     'übermittelt, sie bleiben daher unbewertet: '
+                     + escape('; '.join(fehlend)) + '.</p>')
 
     # ---------- 5 Break-even ----------
     if be:
@@ -311,3 +320,5 @@ if __name__ == '__main__':
         sys.exit('Aufruf: rendern.py <eingabe.xlsx> [ausgabe.html]')
     ziel, b = bauen(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else None)
     print(f"{b.stamm['firma']} · {b.aktuell} · {len(b.monate)} Monate  ->  {ziel}")
+    for h in getattr(b, 'hinweise', []):
+        print('  Hinweis:', h)
