@@ -797,6 +797,80 @@ ARTIKEL = [
 <p>Wer es selbst machen möchte, findet in diesem Beitrag die vollständige Vorgehensweise. Sie funktioniert, sie kostet nur Zeit.</p>
 '''
 },
+{
+ "slug": "fruehwarnsignale-unternehmenskrise",
+ "datum": "2026-09-09",
+ "seo_titel": "Frühwarnsignale erkennen, bevor es eng wird",
+ "branche": "Grundlagen",
+ "titel": "Gute Bilanz, leere Kasse: Frühwarnsignale, die ein Jahresabschluss zu spät zeigt",
+ "beschreibung": "Warum eine Eigenkapitalquote von 33 Prozent nichts über die Zahlungsfähigkeit sagt und welche vier Zahlen deutlich früher warnen als der Jahresabschluss.",
+ "anriss": "Eine Eigenkapitalquote von 33 Prozent klingt solide. Im selben Betrieb reicht das Geld auf dem Konto sechs Tage. Wie beides gleichzeitig stimmen kann.",
+ "lesezeit": "9 Minuten",
+ "inhalt": '''
+<p class="lede">Jeder Jahresabschluss enthält eine Annahme, die niemand ausspricht: dass es das Unternehmen im nächsten Jahr noch gibt. Das Handelsgesetzbuch nennt das in § 252 Abs. 1 Nr. 2 die Fortführung der Unternehmenstätigkeit. Bewertet wird zu Fortführungswerten, solange dem keine tatsächlichen oder rechtlichen Gegebenheiten entgegenstehen. Wer den Abschluss aufstellt, trifft diese Einschätzung also mit, meist ohne darüber nachzudenken.</p>
+<p>Das Problem ist der Zeitpunkt. Ein Jahresabschluss liegt oft erst sechs bis neun Monate nach dem Stichtag vor. Was er zeigt, ist dann bis zu eineinhalb Jahre alt. Die Signale, um die es geht, sind in den Zahlen aber deutlich früher sichtbar, wenn man auf die richtigen schaut.</p>
+
+<h2>Warum die Bilanz allein täuscht</h2>
+<p>Der häufigste Irrtum ist, von der Eigenkapitalquote auf die Zahlungsfähigkeit zu schließen. Beides hat weniger miteinander zu tun, als der Name vermuten lässt. Ein Beispiel aus der Praxis, mit runden Zahlen:</p>
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>Position</th><th class="num">Betrag</th></tr></thead>
+  <tbody>
+    <tr><td>Bilanzsumme</td><td class="num">1.200.000 €</td></tr>
+    <tr><td>Eigenkapital</td><td class="num">396.000 €</td></tr>
+    <tr><td>Vorräte</td><td class="num">310.000 €</td></tr>
+    <tr><td>Forderungen</td><td class="num">245.000 €</td></tr>
+    <tr><td>Kasse und Bank</td><td class="num">18.000 €</td></tr>
+    <tr><td>kurzfristige Verbindlichkeiten</td><td class="num">520.000 €</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="tbl-hint">Die Tabelle lässt sich seitlich scrollen.</p>
+<p>Die <strong>Eigenkapitalquote liegt bei 33,0 Prozent</strong>. Das gilt im Mittelstand als solide, viele Banken sehen ab 30 Prozent keinen Anlass zur Sorge. Ein Blick auf die Liquiditätsgrade ergibt ein anderes Bild:</p>
+<ul>
+  <li><strong>Liquidität 1. Grades: 3,5 Prozent.</strong> Das ist der Anteil der kurzfristigen Schulden, der sofort aus vorhandenem Geld bezahlt werden könnte. Üblich sind 10 bis 30 Prozent.</li>
+  <li><strong>Liquidität 2. Grades: 50,6 Prozent.</strong> Hier kommen die Forderungen dazu. Als Richtwert gilt etwa 100 Prozent.</li>
+  <li><strong>Liquidität 3. Grades: 110,2 Prozent.</strong> Mit den Vorräten. Üblich sind 120 bis 200 Prozent.</li>
+</ul>
+<p>Im Betrieb stecken <strong>555.000 Euro in Vorräten und Forderungen</strong>, auf dem Konto liegen 18.000. Um bei der Liquidität 2. Grades auf 100 Prozent zu kommen, fehlen 257.000 Euro. Die Bilanz sieht gesund aus, weil das Kapital vorhanden ist. Es ist nur nicht verfügbar.</p>
+
+<h2>Die vier Zahlen, die früher warnen</h2>
+
+<p><strong>Cash-Reichweite.</strong> Die wichtigste Zahl überhaupt und die am seltensten berechnete. Vorhandene liquide Mittel geteilt durch die durchschnittlichen monatlichen Auszahlungen. Im Beispiel oben, bei 95.000 Euro monatlichem Abfluss: 18.000 geteilt durch 95.000 ergibt 0,19 Monate, also <strong>rund sechs Tage</strong>. Sechs Tage sind kein Puffer, sondern ein Zustand, in dem jede unerwartete Rechnung zum Ereignis wird. Diese Zahl gehört auf jede Monatsübersicht, ganz oben.</p>
+
+<p><strong>Operativer Cashflow.</strong> Nicht der Gewinn, sondern was aus dem laufenden Geschäft tatsächlich an Geld übrig bleibt. Ein Betrieb kann über Monate Gewinn ausweisen und gleichzeitig negativen operativen Cashflow haben, wenn Vorräte und Forderungen schneller wachsen als der Umsatz. Genau das passiert typischerweise in Wachstumsphasen, und genau dort geraten gesunde Betriebe in Schwierigkeiten.</p>
+
+<p><strong>Debitorenlaufzeit.</strong> Wie viele Tage vergehen im Schnitt zwischen Rechnung und Zahlungseingang. Im Beispiel, bei 1.450.000 Euro Jahresumsatz und 245.000 Euro Forderungen, sind das <strong>62 Tage</strong>. Zehn Tage weniger würden rund <strong>39.700 Euro</strong> freisetzen, ohne einen einzigen zusätzlichen Auftrag. Steigt die Zahl über mehrere Monate, ist das ein Warnsignal, noch bevor es auf dem Konto sichtbar wird.</p>
+
+<p><strong>Fristenkongruenz.</strong> Werden langfristige Anschaffungen mit kurzfristigem Geld finanziert? Eine Maschine, die über zehn Jahre genutzt wird, aber aus dem Kontokorrent bezahlt wurde, erzeugt eine Lücke, die sich nicht von selbst schließt. Das ist einer der Punkte, die in Bankgesprächen regelmäßig als Erstes auffallen.</p>
+
+<h2>Warnzeichen, die in keiner Kennzahl stehen</h2>
+<p>Nicht alles Wichtige lässt sich rechnen. In der Prüfungspraxis werden neben den finanziellen auch betriebliche und sonstige Umstände betrachtet, die Zweifel an der Fortführung begründen können. Der einschlägige Prüfungsstandard IDW PS 270 n. F. befasst sich damit. Für den Alltag im Betrieb sind vor allem diese relevant:</p>
+<ul>
+  <li><strong>Kundenkonzentration.</strong> Wenn ein einzelner Kunde mehr als 20 bis 30 Prozent des Umsatzes ausmacht, hängt der Betrieb an einer Entscheidung, die woanders getroffen wird.</li>
+  <li><strong>Lieferantenabhängigkeit.</strong> Ein wichtiger Lieferant, der auf Vorkasse umstellt, verändert die Liquiditätslage über Nacht.</li>
+  <li><strong>Schlüsselpersonen.</strong> Das Ausscheiden von jemandem, dessen Wissen nirgends dokumentiert ist, wirkt sich mit Verzögerung aus, dafür aber deutlich.</li>
+  <li><strong>Kreditbedingungen.</strong> Vereinbarungen mit der Bank, etwa zu einer Mindest-Eigenkapitalquote, können bei Verletzung zur Kündigung der Linie führen. Viele Unternehmer kennen die eigenen Klauseln nicht.</li>
+  <li><strong>Ausbleibende Anschlussfinanzierung.</strong> Ein auslaufendes Darlehen ohne Zusage für die Verlängerung ist ein Termin, kein Risiko.</li>
+</ul>
+
+<h2>Ein Signal ist kein Befund</h2>
+<p>Das ist der Punkt, an dem in Gesprächen oft die Nerven mitreden. Ein einzelnes Signal bedeutet gar nichts. Ein Monat mit negativem operativem Cashflow kommt in jedem Betrieb vor. Eine gestiegene Debitorenlaufzeit kann an einem einzigen großen Kunden liegen.</p>
+<p>Aussagekräftig wird es, wenn <strong>mehrere Indikatoren gleichzeitig in dieselbe Richtung zeigen</strong> und das über mehrere Monate. Fallende Cash-Reichweite, steigende Debitorenlaufzeit und ein Kontokorrent, der nicht mehr ins Plus kommt, ergeben zusammen ein Bild, das jede der drei Zahlen einzeln nicht liefert.</p>
+<p>Ebenso wichtig ist die Gegenseite: Ob Gegenmaßnahmen vorliegen und wie belastbar sie sind. Eine zugesagte Kapitalerhöhung, ein unterschriebener Rahmenvertrag oder eine schriftliche Stundung verändern die Lage. Für Banken und Gesellschafter zählt weniger, dass es Signale gibt, als ob es einen nachvollziehbaren Plan gibt.</p>
+
+<h2>Was der Monatsrhythmus ändert</h2>
+<p>Alle genannten Zahlen lassen sich aus BWA, Summen- und Saldenliste und der offenen-Posten-Liste ableiten. Der Aufwand liegt nicht in der Berechnung, sondern in der Regelmäßigkeit und darin, die Werte über die Zeit nebeneinanderzustellen.</p>
+<p>Der Unterschied zwischen jährlich und monatlich ist keine Frage der Genauigkeit, sondern des Handlungsspielraums. Wer im September erfährt, dass die Cash-Reichweite seit dem Frühjahr von acht Wochen auf sechs Tage gefallen ist, kann noch mit der Bank sprechen, Zahlungsziele nachverhandeln und Lagerbestände abbauen. Wer es im Mai des Folgejahres aus dem Jahresabschluss erfährt, kann das nicht mehr.</p>
+<p>Praktisch reicht eine Seite: die vier Zahlen oben, jeweils mit dem Wert der letzten zwölf Monate daneben, dazu zwei Sätze zur Einordnung und die Maßnahmen mit Verantwortlichkeit und Frist. Mehr braucht es nicht, und mehr wird ohnehin nicht gelesen.</p>
+
+<h2>Wo unsere Arbeit endet</h2>
+<p>Dieser Beitrag behandelt betriebswirtschaftliche Frühwarnindikatoren. Er ist keine Rechtsberatung und keine Anleitung zur Beurteilung insolvenzrechtlicher Fragen.</p>
+<p>Ob im Einzelfall eine Zahlungsunfähigkeit oder Überschuldung vorliegt, ob und in welcher Frist ein Insolvenzantrag zu stellen ist und wie eine insolvenzrechtliche Fortbestehensprognose zu erstellen ist, sind Rechtsfragen. Sie gehören zu einer Fachanwältin oder einem Fachanwalt für Insolvenzrecht. Die bilanzielle Beurteilung der Fortführungsannahme und ihre Darstellung im Jahresabschluss gehören zum Steuerberater oder zum Abschlussprüfer.</p>
+<p>Wir sind Betriebswirte. Wir bereiten die Zahlen auf, machen die Entwicklung sichtbar und sagen Ihnen, welche Größen sich in welche Richtung bewegen. Die rechtliche Bewertung nehmen wir nicht vor. Wenn sich aus den Zahlen ergibt, dass sie ansteht, sagen wir das deutlich und früh genug, damit noch Zeit bleibt, die richtigen Fachleute einzubeziehen.</p>
+<p>Bei akuter Zahlungsunfähigkeit gilt außerdem: Sozialversicherungsbeiträge für Arbeitnehmer müssen weiter abgeführt werden. Das ist der Posten, an dem nicht gespart werden darf. Mehr dazu im Beitrag zu <a href="/ratgeber/zahlungsschwierigkeiten-handwerk.html">Zahlungsschwierigkeiten im Handwerksbetrieb</a>.</p>
+'''
+},
 ]
 
 # ============================ HILFSFUNKTIONEN ============================

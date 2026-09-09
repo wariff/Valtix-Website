@@ -28,14 +28,43 @@ Anlageberatung. Das gehört bei rechtsnahen Themen in jeden Beitrag.
 - Fachbegriffe beim ersten Auftreten in einem Halbsatz erklären.
 - Keine erfundenen Referenzen, Mandanten, Zahlen oder Zertifikate.
 
+## Rechtliche Leitplanke für Beiträge
+
+Valtix betreibt ein erlaubnisfreies Gewerbe und erbringt weder Rechtsdienstleistungen
+nach dem RDG noch Hilfeleistung in Steuersachen nach dem StBerG. Das steht so im
+Impressum und muss in den Beiträgen durchgehalten werden.
+
+**Erlaubt** ist allgemeine, betriebswirtschaftliche Information: Kennzahlen erklären,
+Zusammenhänge darstellen, Rechenwege zeigen, Größenordnungen benennen. Gesetzesnormen
+dürfen als Kontext genannt werden, wenn sie unstrittig und korrekt zitiert sind
+(z. B. § 252 Abs. 1 Nr. 2 HGB zur Fortführungsannahme).
+
+**Nicht erlaubt** ist alles, was wie eine rechtliche Subsumtion im Einzelfall wirkt:
+ob Zahlungsunfähigkeit oder Überschuldung vorliegt, welche Antragsfristen gelten, wie
+eine insolvenzrechtliche Fortbestehensprognose zu erstellen ist, steuerliche Gestaltung,
+Vertragsauslegung. Solche Themen dürfen erwähnt, aber nicht angeleitet werden.
+
+**Pflicht bei jedem rechtsnahen Beitrag:** ein eigener Schlussabschnitt, der die Grenze
+benennt und an Fachanwältin, Steuerberater oder Abschlussprüfer verweist. Vorbild ist
+der Abschnitt "Wo unsere Arbeit endet" im Beitrag zu den Frühwarnsignalen.
+
+**Quellenangaben:** Normen und Prüfungsstandards nur nennen, wenn die Fundstelle
+gesichert ist. Keine Paragrafen, Randziffern oder Anlagennummern aus dem Gedächtnis
+zitieren. Im Zweifel den Standard beim Namen nennen und auf die genaue Fundstelle
+verzichten. Eine falsche Fundstelle richtet mehr Schaden an als gar keine.
+
+**Zahlen:** keine Branchenstatistiken erfinden. Übliche Erfahrungsbandbreiten sind
+zulässig, müssen aber als solche gekennzeichnet sein. Eigene Rechenbeispiele immer
+mit Python nachrechnen.
+
 ## Bereits veröffentlichte Themen
 
 Vor dem Vorschlag `tools/build_ratgeber.py` öffnen und die Liste `ARTIKEL` lesen.
-Stand September 2026 elf Beiträge zu: Zahlungsschwierigkeiten im Handwerk,
+Stand September 2026 dreizehn Beiträge zu: Zahlungsschwierigkeiten im Handwerk,
 Forderungslaufzeit in Agenturen, Ertrag in der Gastronomie, BWA lesen,
 13-Wochen-Liquiditätsplanung, Kundenerlebnis im Einzelhandel, Stundensatzkalkulation,
 Preiserhöhung durchsetzen, ausgeschöpfter Kontokorrent, Import und Export außerhalb
-der EU, Rentabilität in Social-Media-Agenturen.
+der EU, Rentabilität in Social-Media-Agenturen, Benchmarking von Kennzahlen, Frühwarnsignale einer Unternehmenskrise.
 
 ## Ablauf des wöchentlichen Termins
 
@@ -83,6 +112,38 @@ Es gibt keine Anbindung. Beiträge werden als Text geliefert, der Nutzer kopiert
 Format: Aufhänger in der ersten Zeile, dann eine konkrete Rechnung, am Ende eine
 Frage oder der Verweis auf den Ratgeberbeitrag. Keine Hashtag-Wolken, drei bis vier
 reichen. Länge 900 bis 1.300 Zeichen.
+
+## Themenpipeline
+
+Vorgeprüfte Ideen für kommende Beiträge, in absteigender Priorität. Vor der Ausarbeitung
+gegen die ARTIKEL-Liste prüfen, ob sich inzwischen etwas überschneidet.
+
+1. **Working Capital: fünf Stellschrauben für mehr Liquidität ohne neues Kapital.**
+   Vorräte, Debitoren, Kreditoren, Anzahlungen, Durchlaufzeit. Trägt eine durchgerechnete
+   Gesamtwirkung: was die fünf Hebel zusammen an gebundenem Kapital freisetzen.
+   Anschluss an den Beitrag zur 13-Wochen-Planung und an die Leistungsseite Liquiditätsberatung.
+
+2. **Break-even: wie viele Aufträge Sie wirklich brauchen.** Fixkosten, Deckungsbeitrag
+   je Auftrag, Break-even-Menge, Sicherheitsstrecke. Zielgruppe Handwerk und
+   Dienstleistung. Baut auf dem Stundensatz-Beitrag auf, ohne ihn zu wiederholen.
+
+3. **Anlagendeckung und Fristenkongruenz.** Warum langfristiges Vermögen langfristig
+   finanziert gehört und woran man erkennt, dass es das nicht ist. Ergänzt den Beitrag
+   zu den Frühwarnsignalen um die Bilanzseite. Vorsicht: Überschneidung prüfen.
+
+4. **Kennzahlen-Dashboard statt BI-Werkzeug.** Warum eine Seite mit acht Zahlen mehr
+   bewirkt als ein Auswertungssystem, das niemand öffnet. Auswahl der Kennzahlen,
+   Schwellenwerte, Rhythmus. Führt inhaltlich direkt zum Betreuungspaket.
+
+5. **Kalkulation im Einzelhandel: Handelsspanne, Aufschlag, Abschriften.** Der Unterschied
+   zwischen Aufschlag und Spanne wird regelmäßig verwechselt und kostet Marge.
+
+6. **Wenn die Bank das Rating verschlechtert.** Was in ein Rating einfließt, was der
+   Betrieb selbst beeinflussen kann, wie ein Bankgespräch vorbereitet wird. Rechtsnah
+   nur am Rand, Schwerpunkt bleibt betriebswirtschaftlich.
+
+Zum verworfenen Vorschlag "Eigenkapitalquote gegen Liquidität": inhaltlich aufgegangen
+im Beitrag zu den Frühwarnsignalen, nicht erneut ansetzen.
 
 ## Offene Punkte (regelmäßig prüfen)
 
