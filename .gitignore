@@ -4,3 +4,5 @@ tools/bericht/*_ausgefuellt.xlsx
 tools/bericht/KLIMAWERK*
 __pycache__/
 *.pyc
+*.sqlite3
+portal/portal.sqlite3
