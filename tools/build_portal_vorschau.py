@@ -467,14 +467,14 @@ ANMELDEN = '''<div class="tuer">
     <div class="seiten-marke gross">Valtix<span>Mandantenportal</span></div>
     <h1>Anmelden</h1>
     <p class="lead">Zugang erhalten Mandanten im Rahmen der monatlichen Betreuung.</p>
-    <div class="zugang"><b>Zugangsdaten der Vorschau</b>
+    <div class="zugang"><b>Demonstrationszugang</b>
       <dl>
-        <dt>Administrator</dt><dd><code>admin@vorschau.valtix</code></dd>
-        <dt>Mandant</dt><dd><code>mandant@vorschau.valtix</code></dd>
-        <dt>Passwort, beide</dt><dd><code>Vorschau2026</code></dd>
+        <dt>E-Mail</dt><dd><code>mandant@vorschau.valtix</code></dd>
+        <dt>Passwort</dt><dd><code>Vorschau2026</code></dd>
       </dl>
-      <p>Geprüft wird nur im Browser. Es gibt keine Datenbank hinter dieser Seite
-        und keinen Server, der etwas entgegennimmt.</p>
+      <p>Damit lässt sich die Ansicht eines Mandanten ansehen. Geprüft wird nur im
+        Browser. Es gibt keine Datenbank hinter dieser Seite und keinen Server,
+        der etwas entgegennimmt.</p>
     </div>
     <div class="meldung fehler" id="fehler" hidden></div>
     <form id="form-anmelden" novalidate class="formular">
@@ -498,18 +498,11 @@ BILDSCHIRME = [
 ]
 
 BAND = '''<div class="band"><div class="band-innen">
-  <b>Vorschau</b>
-  <span>Attrappe zur Ansicht. Es wird nichts gespeichert und nichts übertragen.
-    Firma und Zahlen sind erfunden.</span>
+  <b>Demonstration</b>
+  <span>Diese Ansicht dient der Vorführung. Es wird nichts gespeichert und nichts
+    übertragen. Firma und Zahlen sind erfunden.</span>
   <a href="index.html">Zurück zur Website</a>
 </div></div>'''
-
-SCHALTER = ('<div class="schalterband"><div class="band-innen">'
-            '<span class="schalter-titel">Ansicht</span>'
-            '<div class="schalter" role="group" aria-label="Ansicht wechseln">'
-            + ''.join(f'<button type="button" data-ziel="{k}" aria-pressed="false">{t}</button>'
-                      for k, t, _, _ in BILDSCHIRME)
-            + '</div></div></div>')
 
 CSS = '''
 :root{
@@ -537,18 +530,10 @@ h2{font-size:1.02rem;font-weight:700;letter-spacing:-.02em}
 .band b{font-weight:700}
 .band span{color:rgba(255,255,255,.72)}
 .band a{color:var(--cream)}
-.schalterband{background:rgba(35,41,65,.05);border-bottom:1px solid var(--linie)}
-.schalterband .band-innen{padding:9px 22px;align-items:center}
-.schalter-titel{font-size:.68rem;text-transform:uppercase;letter-spacing:.11em;
-                color:var(--ink-soft);font-weight:700}
-.schalter{display:flex;gap:5px;flex-wrap:wrap}
-.schalter button{font:inherit;font-size:.82rem;padding:6px 13px;border-radius:999px;
-  border:1px solid var(--linie);background:#fff;color:var(--ink-soft);cursor:pointer}
-.schalter button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
 
 /* Grundgeruest */
 .bildschirm[hidden]{display:none}
-.huelle{display:flex;min-height:calc(100vh - 96px);max-width:1460px;margin:0 auto;
+.huelle{display:flex;min-height:calc(100vh - 52px);max-width:1460px;margin:0 auto;
         background:var(--bg)}
 
 /* Seitenleiste */
@@ -739,9 +724,6 @@ JS = '''
     document.querySelectorAll('.bildschirm').forEach(function(s){
       s.hidden = (s.id !== 'bs-' + id);
     });
-    document.querySelectorAll('.schalter button').forEach(function(b){
-      b.setAttribute('aria-pressed', String(b.dataset.ziel === id));
-    });
     window.scrollTo(0,0);
     // Das Raster oeffnet beim Berichtsmonat, nicht beim Januar. Sonst muesste
     // man auf schmalen Bildschirmen erst nach rechts schieben.
@@ -773,14 +755,14 @@ JS = '''
     var mail = document.getElementById('e').value.trim().toLowerCase();
     var pw = document.getElementById('p').value;
     var box = document.getElementById('fehler');
-    if (pw === 'Vorschau2026' && mail === 'admin@vorschau.valtix') {
-      box.hidden = true; zeigen('admin-auswertung'); return;
-    }
+    // Ueber die Anmeldung fuehrt nur der Mandantenzugang. Die Verwaltungsansichten
+    // liegen weiterhin in der Seite, aber nicht hinter einem Zugang, der hier
+    // oeffentlich angeboten wird.
     if (pw === 'Vorschau2026' && mail === 'mandant@vorschau.valtix') {
       box.hidden = true; zeigen('mandant-auswertung'); return;
     }
-    box.textContent = 'E-Mail-Adresse oder Passwort stimmen nicht. In der Vorschau '
-      + 'gelten nur die oben genannten Zugangsdaten.';
+    box.textContent = 'E-Mail-Adresse oder Passwort stimmen nicht. Für die '
+      + 'Vorführung gelten die oben genannten Zugangsdaten.';
     box.hidden = false;
   });
   var start = location.hash.replace('#ansicht-','').replace('#','');
@@ -798,11 +780,10 @@ html = f'''<!DOCTYPE html>
 <html lang="de"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Vorschau Mandantenportal · Valtix Financial Management</title>
+<title>Mandantenportal · Valtix Financial Management</title>
 <link rel="icon" href="favicon.ico" sizes="any">
 <style>{CSS}</style></head><body>
 {BAND}
-{SCHALTER}
 {abschnitte}
 <div class="fuss">Valtix Financial Management · Luca Sparhuber und Sharif Ibrahim GbR,
 Leipzig · Diese Seite dient allein der Ansicht. Sie verarbeitet keine personenbezogenen

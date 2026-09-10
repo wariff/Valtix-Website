@@ -174,8 +174,16 @@ Beschriftungen kommen aus der Datei, damit umbenannte Zeilen im Portal so
 heißen, wie der Mandant sie nennt. Prüfen mit
 `python3 tools/bericht/matrix.py <datei.xlsx>`.
 
-Wichtig zum Stand: die Vorschau zeigt den Entwurf. Das laufende Portal unter
-`portal/` hat noch die einfache Listenansicht. Wer die Vorschau als Zusage
+Auf der Seite gibt es nur den Mandantenzugang. Ein Administratorzugang wird
+dort nicht angeboten, weil die Seite öffentlich erreichbar ist. Die
+Verwaltungsansichten liegen weiterhin in der Datei und lassen sich zum Vorführen
+direkt aufrufen:
+`/portal-vorschau.html#ansicht-admin-auswertung`, dazu `#ansicht-admin-mandanten`,
+`#ansicht-admin-zugaenge` und `#ansicht-admin-protokoll`. Navigiert wird sonst
+über die Seitenleiste des Portals.
+
+Wichtig zum Stand: die Seite zeigt den Entwurf. Das laufende Portal unter
+`portal/` hat noch die einfache Listenansicht. Wer die Seite als Zusage
 liest, irrt.
 
 Beide Vorschauseiten stehen auf `noindex, nofollow`, sind in `robots.txt`
