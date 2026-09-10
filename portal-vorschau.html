@@ -9,212 +9,232 @@
   --ink:#232941; --ink-soft:#565D73; --muted:#8A8FA3;
   --gold-deep:#7A6238; --cream:#F5EBD0; --bg:#FBF8F2; --flaeche:#F7F4EC;
   --serie-a:#404D97; --serie-b:#B0842A;
-  --gruen:#0CA30C; --gelb:#FAB219; --rot:#D03B3B;
+  --gruen:#0CA30C; --gruen-text:#0A7A0A;
+  --gelb:#FAB219; --gelb-text:#8A6100;
+  --rot:#D03B3B; --rot-text:#A32C2C;
   --linie:rgba(35,41,65,.11); --linie-stark:rgba(35,41,65,.18);
   --r:14px; --schatten:0 8px 24px rgba(35,41,65,.07);
   --font:"Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font);background:var(--bg);color:var(--ink);
-     font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+     font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
 a{color:var(--gold-deep)}
-h1{font-size:1.55rem;font-weight:800;letter-spacing:-.03em;margin-bottom:4px}
+button,input{font-family:inherit}
+[hidden]{display:none!important}
+h1{font-size:1.5rem;font-weight:800;letter-spacing:-.03em}
 h2{font-size:1.02rem;font-weight:700;letter-spacing:-.02em}
-.nurlesen{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);
-          white-space:nowrap}
 
-/* Vorschauleisten, im echten Portal nicht vorhanden */
 .band{background:var(--ink);color:#fff;font-size:.84rem;padding:11px 22px}
-.band-innen{max-width:1420px;margin:0 auto;display:flex;gap:14px;
+.band-innen{max-width:1220px;margin:0 auto;display:flex;gap:14px;
             align-items:baseline;flex-wrap:wrap}
 .band b{font-weight:700}
 .band span{color:rgba(255,255,255,.72)}
 .band a{color:var(--cream)}
 
-/* Grundgeruest */
-.bildschirm[hidden]{display:none}
-.huelle{display:flex;min-height:calc(100vh - 52px);max-width:1460px;margin:0 auto;
-        background:var(--bg)}
-
-/* Seitenleiste */
-.seitenleiste{width:236px;flex:0 0 236px;border-right:1px solid var(--linie);
-  background:#fff;padding:18px 14px 16px;display:flex;flex-direction:column;gap:4px}
-.seiten-marke{font-weight:800;letter-spacing:-.03em;font-size:1.02rem;padding:0 8px 14px}
-.seiten-marke span{font-weight:500;color:var(--ink-soft);margin-left:7px;font-size:.86rem}
-.wechsler{display:flex;align-items:center;gap:9px;width:100%;text-align:left;
-  background:var(--flaeche);border:1px solid var(--linie);border-radius:12px;
-  padding:9px 10px;font:inherit;cursor:pointer;color:inherit}
-.signet{flex:0 0 30px;height:30px;border-radius:9px;background:var(--ink);color:#fff;
-  display:grid;place-items:center;font-size:.74rem;font-weight:700;letter-spacing:.02em}
-.signet.klein{flex-basis:26px;height:26px;font-size:.68rem;background:var(--gold-deep)}
-.wechsler-text{min-width:0;flex:1}
-.wechsler-text b{display:block;font-size:.82rem;font-weight:700;line-height:1.25;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.wechsler-text span{font-size:.74rem;color:var(--ink-soft)}
-.chevron{color:var(--muted);font-size:.9rem}
-.seiten-kennzahl{margin:10px 0 4px;padding:10px 12px;border-radius:12px;
-  background:var(--cream);border:1px solid rgba(122,98,56,.24)}
-.seiten-kennzahl span{display:block;font-size:.7rem;text-transform:uppercase;
-  letter-spacing:.09em;color:var(--gold-deep);font-weight:700}
-.seiten-kennzahl b{font-size:1.06rem;font-weight:800;letter-spacing:-.03em}
-.nav-titel{font-size:.66rem;text-transform:uppercase;letter-spacing:.12em;
-  color:var(--muted);font-weight:700;padding:14px 8px 6px}
-.seiten-nav{display:flex;flex-direction:column;gap:1px}
-.seiten-nav a{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:10px;
-  text-decoration:none;color:var(--ink-soft);font-size:.88rem}
-.seiten-nav a svg{width:16px;height:16px;flex:0 0 16px;color:var(--muted)}
-.seiten-nav a:hover{background:var(--flaeche);color:var(--ink)}
-.seiten-nav a[aria-current]{background:var(--ink);color:#fff;font-weight:600}
-.seiten-nav a[aria-current] svg{color:var(--cream)}
-.seiten-fuss{margin-top:auto;padding-top:14px;border-top:1px solid var(--linie);
-  display:flex;flex-direction:column;gap:9px}
-.person{display:flex;align-items:center;gap:9px;min-width:0}
-.person b{display:block;font-size:.79rem;font-weight:700;line-height:1.3}
-.person span span{font-size:.72rem;color:var(--ink-soft);word-break:break-all}
-
-/* Arbeitsflaeche */
-.flaeche{flex:1;min-width:0;display:flex;flex-direction:column}
-.werkzeugleiste{display:flex;align-items:center;gap:14px;flex-wrap:wrap;
-  padding:12px 22px;border-bottom:1px solid var(--linie);background:rgba(255,255,255,.6)}
-.wz-links{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-.wz-titel{font-weight:700;letter-spacing:-.02em}
-.wz-zeitraum{font-size:.8rem;color:var(--ink-soft)}
-.monatsleiste{display:flex;gap:2px;margin-left:auto;background:var(--flaeche);
-  border:1px solid var(--linie);border-radius:999px;padding:3px}
-.monat{font:inherit;font-size:.78rem;padding:4px 11px;border-radius:999px;border:0;
-  background:none;color:var(--muted);cursor:default}
-.monat.an{background:#fff;color:var(--ink);font-weight:700;
-  box-shadow:0 1px 3px rgba(35,41,65,.16)}
-.wz-stand{font-size:.76rem;color:var(--ink-soft);white-space:nowrap}
-.inhalt{padding:20px 22px 44px;display:flex;flex-direction:column;gap:16px}
-
-/* Kacheln */
-.kacheln{display:grid;grid-template-columns:repeat(5,1fr);gap:11px}
-@media(max-width:1180px){.kacheln{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:720px){.kacheln{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:420px){.kacheln{grid-template-columns:1fr}}
-.kachel{background:#fff;border:1px solid var(--linie);border-radius:var(--r);
-  padding:13px 15px;box-shadow:var(--schatten)}
-.kachel-titel{display:block;font-size:.74rem;color:var(--ink-soft);margin-bottom:3px}
-.kachel b{display:block;font-size:1.24rem;font-weight:800;letter-spacing:-.035em;
-  line-height:1.18}
-.kachel .marke{margin:6px 6px 0 0}
-.delta{display:inline-block;font-size:.74rem;font-weight:600;margin-top:5px}
-.hoch{color:var(--gruen)} .runter{color:var(--rot)}
-
-/* Karten */
-.karte{background:#fff;border:1px solid var(--linie);border-radius:var(--r);
-  padding:16px 18px;box-shadow:var(--schatten)}
-.karte.flach{padding:16px 0 0}
-.karte.flach .karten-kopf,.karte.flach .formular{padding:0 18px}
-.karten-kopf{display:flex;justify-content:space-between;align-items:baseline;
-  gap:14px;flex-wrap:wrap;margin-bottom:10px}
-.hinweis{font-size:.78rem;color:var(--ink-soft)}
-.quelle{font-size:.78rem;color:var(--ink-soft)}
-.legende{display:flex;gap:14px;flex-wrap:wrap;font-size:.78rem;color:var(--ink-soft)}
-.legende i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
-.legende i.strich{width:16px;height:0;border-top:2px dashed var(--ink);border-radius:0;
-  transform:translateY(-3px)}
-.bildrahmen{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.verlauf{display:block;width:100%;height:auto;min-width:660px}
-
-/* Raster */
-.rasterrahmen{overflow-x:auto;-webkit-overflow-scrolling:touch;border-top:1px solid var(--linie)}
-table{border-collapse:separate;border-spacing:0;width:100%;font-size:.83rem}
-.raster{min-width:940px}
-.liste{min-width:520px}
-th,td{padding:7px 8px;text-align:left;border-bottom:1px solid var(--linie);
-  white-space:nowrap;font-weight:400}
-thead th{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;
-  color:var(--ink-soft);font-weight:700;background:var(--flaeche);
-  position:sticky;top:0;z-index:3}
-td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
-.pos{position:sticky;left:0;background:#fff;z-index:2;
-  min-width:240px;max-width:284px;border-right:1px solid var(--linie)}
-/* Lange Positionsbezeichnungen duerfen umbrechen, sonst schiebt eine einzige
-   Zeile den Berichtsmonat aus dem Bild. */
-.pos .titel{white-space:normal;display:inline-block;vertical-align:top;
-  max-width:230px}
-thead .pos{background:var(--flaeche);z-index:4}
-.blockkopf th{font-size:.68rem;text-transform:uppercase;letter-spacing:.11em;
-  color:var(--gold-deep);font-weight:700;background:var(--flaeche);padding-top:11px;
-  padding-bottom:5px}
-.blockkopf td{background:var(--flaeche)}
-.zeile:hover td,.zeile:hover .pos{background:#FCFAF5}
-.ebene0 .pos .titel,.ebene0 td{font-weight:700}
-.ebene0 td{background:rgba(35,41,65,.028)}
-.ebene0 .pos{background:rgba(252,250,245,1)}
-.ebene2 .titel{color:var(--ink-soft);padding-left:16px}
-.klapp{border:0;background:none;font:inherit;color:var(--muted);cursor:pointer;
-  padding:0 6px 0 0;line-height:1}
-.klapp span[aria-hidden]{display:inline-block;transition:transform .12s ease}
-.klapp[aria-expanded=true] span[aria-hidden]{transform:rotate(90deg)}
-.klapp.leer{display:inline-block;width:13px}
-.funkezelle{width:54px;color:var(--muted);padding-right:0}
-.funke{display:block}
-td.minus{color:var(--gold-deep)}
-td.jetzt,th.jetzt{background:rgba(35,41,65,.05)}
-.ebene0 td.jetzt{background:rgba(35,41,65,.075)}
-thead th.jetzt{color:var(--ink);border-bottom:2px solid var(--ink)}
-td.ziel{color:var(--ink-soft)}
-.marke{display:inline-block;font-size:.68rem;font-weight:700;padding:1px 6px;
-  border-radius:999px;margin-right:7px;vertical-align:1px}
-.marke.gruen{background:rgba(12,163,12,.12);color:#0A7A0A}
-.marke.gelb{background:rgba(250,178,25,.18);color:#8A6100}
-.marke.rot{background:rgba(208,59,59,.12);color:#A32C2C}
-.status{font-size:.74rem;font-weight:600}
-.status.gut{color:#0A7A0A} .status.offen{color:var(--gold-deep)}
-
-/* Formulare und Knoepfe */
-.formular{max-width:460px}
-label{display:block;font-size:.8rem;font-weight:600;margin:12px 0 4px}
-input,select{width:100%;font:inherit;font-size:.92rem;color:var(--ink);background:#fff;
-  border:1px solid var(--linie-stark);border-radius:10px;padding:9px 12px;min-height:42px}
+/* Anmeldung */
+.tuer{padding:6vh 22px 60px}
+.tuer-karte{width:100%;max-width:430px;margin:0 auto;background:#fff;
+  border:1px solid var(--linie);border-radius:18px;padding:30px;
+  box-shadow:var(--schatten)}
+.marke{font-weight:800;letter-spacing:-.03em;font-size:1.06rem}
+.marke span{font-weight:500;color:var(--ink-soft);margin-left:8px;font-size:.9rem}
+.lead{color:var(--ink-soft);margin:6px 0 20px}
+label{display:block;font-size:.86rem;font-weight:600;margin-bottom:6px}
+input[type=email],input[type=password],input[type=text],select{width:100%;
+  min-height:50px;font-size:1rem;color:var(--ink);background:#fff;
+  border:1px solid var(--linie-stark);border-radius:12px;padding:10px 14px}
 input:focus,select:focus{outline:none;border-color:var(--ink);
   box-shadow:0 0 0 3px rgba(35,41,65,.13)}
 input:disabled,select:disabled{background:var(--flaeche);color:var(--muted)}
-.knopf{display:inline-flex;align-items:center;justify-content:center;min-height:42px;
-  padding:0 20px;border-radius:999px;border:0;font:inherit;font-weight:600;cursor:pointer;
-  background:linear-gradient(180deg,#232941,#171B2C);color:#fff;text-decoration:none;
-  box-shadow:0 6px 16px rgba(35,41,65,.24);margin-top:16px}
-.knopf:disabled{opacity:.5;box-shadow:none;cursor:not-allowed}
+.feld{margin-bottom:16px}
+.pw-reihe{display:flex;gap:8px;align-items:stretch}
+.pw-reihe input{flex:1;min-width:0}
+.merken{display:flex;align-items:center;gap:9px;min-height:44px;padding:0 4px;
+  border:0;background:none;cursor:pointer;color:var(--ink);font-size:.9rem}
+.haken{width:22px;height:22px;border-radius:7px;border:1px solid rgba(35,41,65,.28);
+  background:#fff;display:flex;align-items:center;justify-content:center;flex:none}
+.merken[aria-checked=true] .haken{background:var(--ink);border-color:var(--ink);color:#fff}
+.merken[aria-checked=false] .haken svg{display:none}
+.zeile-merken{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.knopf{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:50px;padding:0 22px;border-radius:999px;border:0;font:inherit;
+  font-size:1rem;font-weight:600;cursor:pointer;text-decoration:none;
+  background:linear-gradient(180deg,#232941,#171B2C);color:#fff;
+  box-shadow:0 6px 16px rgba(35,41,65,.24)}
+.knopf.breit{width:100%}
 .knopf.stumm{background:#fff;color:var(--ink);border:1px solid var(--linie);
   box-shadow:none}
-.knopf.schmal{min-height:32px;padding:0 13px;font-size:.8rem;margin:0}
-.meldung{padding:10px 14px;border-radius:10px;font-size:.86rem;margin-bottom:12px}
-.fehler{background:#FDECEC;color:#8B1F1F}
+.knopf.schmal{min-height:40px;padding:0 16px;font-size:.86rem;box-shadow:none}
+.knopf:disabled{opacity:.5;box-shadow:none;cursor:not-allowed}
+.meldung{display:flex;gap:10px;align-items:flex-start;background:#FDECEC;
+  color:#8B1F1F;border-radius:11px;padding:12px 14px;margin-bottom:16px;
+  font-size:.9rem}
+.meldung svg{flex:none;margin-top:2px}
+.demo{background:var(--cream);border:1px solid rgba(122,98,56,.26);
+  border-radius:12px;padding:13px 15px;margin-bottom:16px;font-size:.88rem}
+.demo b{display:block;font-size:.68rem;text-transform:uppercase;
+  letter-spacing:.11em;color:var(--gold-deep);margin-bottom:7px}
+.demo dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;align-items:baseline}
+.demo dt{color:var(--ink-soft)}
+.demo dd{min-width:0;overflow-wrap:anywhere}
+.demo p{margin-top:8px;color:var(--ink-soft);font-size:.8rem}
+code{background:rgba(35,41,65,.08);padding:1px 5px;border-radius:5px;font-size:.86rem}
 
-/* Anmeldung */
-.tuer{padding:6vh 22px 60px;min-height:60vh}
-.tuer-karte{width:100%;max-width:430px;margin:0 auto;background:#fff;border:1px solid var(--linie);
-  border-radius:var(--r);padding:26px;box-shadow:var(--schatten)}
-.tuer-karte .seiten-marke{padding:0 0 16px}
-.lead{color:var(--ink-soft);margin-bottom:16px}
-.zugang{background:var(--cream);border:1px solid rgba(122,98,56,.26);border-radius:11px;
-  padding:13px 15px;margin-bottom:14px;font-size:.85rem}
-.zugang b{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.11em;
-  color:var(--gold-deep);margin-bottom:7px}
-.zugang dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;align-items:baseline}
-.zugang dt{color:var(--ink-soft)}
-.zugang dd{min-width:0;overflow-wrap:anywhere}
-.zugang p{margin-top:8px;color:var(--ink-soft);font-size:.79rem}
-code{background:rgba(35,41,65,.08);padding:1px 5px;border-radius:5px;font-size:.83rem}
-.fuss{max-width:1420px;margin:0 auto;padding:14px 22px 34px;font-size:.76rem;
+/* Portalkopf */
+.kopf{background:#fff;border-bottom:1px solid var(--linie)}
+.kopf-innen{max-width:1220px;margin:0 auto;padding:12px 22px;display:flex;
+  align-items:center;gap:14px;flex-wrap:wrap}
+.wechsler{display:flex;align-items:center;gap:8px;background:var(--flaeche);
+  border:1px solid var(--linie);border-radius:999px;padding:4px;margin:0 auto}
+.pfeil{width:44px;height:44px;border-radius:999px;border:0;background:#fff;
+  color:var(--ink);cursor:pointer;display:flex;align-items:center;
+  justify-content:center;box-shadow:0 1px 3px rgba(35,41,65,.14)}
+.pfeil:disabled{color:#C9CBD4;cursor:default;box-shadow:none;background:transparent}
+.wechsler-text{min-width:150px;text-align:center}
+.wechsler-text b{display:block;font-size:.96rem;font-weight:700;letter-spacing:-.02em}
+.wechsler-text span{font-size:.76rem;color:var(--ink-soft)}
+.nutzer{display:flex;align-items:center;gap:10px}
+.nutzer-text{text-align:right}
+.nutzer-text b{display:block;font-size:.82rem;font-weight:700;line-height:1.3}
+.nutzer-text span{font-size:.76rem;color:var(--ink-soft)}
+.signet{width:36px;height:36px;border-radius:11px;background:var(--gold-deep);
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:.74rem;font-weight:700;flex:none}
+.reiter{background:#fff;border-bottom:1px solid var(--linie);overflow-x:auto}
+.reiter-innen{max-width:1220px;margin:0 auto;padding:0 22px;display:flex;gap:22px}
+.reiter button{border:0;background:none;cursor:pointer;padding:12px 2px;
+  min-height:48px;font-size:.94rem;font-weight:500;color:var(--ink-soft);
+  border-bottom:3px solid transparent;white-space:nowrap}
+.reiter button[aria-selected=true]{color:var(--ink);font-weight:700;
+  border-bottom-color:var(--ink)}
+.flaeche{max-width:1220px;margin:0 auto;padding:20px 22px 48px;
+  display:flex;flex-direction:column;gap:16px}
+
+/* Kommentar */
+.kommentar{display:flex;gap:18px;flex-wrap:wrap;background:#fff;
+  border:1px solid var(--linie);border-left:4px solid var(--gold-deep);
+  border-radius:var(--r);padding:20px 24px;box-shadow:var(--schatten)}
+.kommentar-text{flex:1;min-width:260px}
+.kommentar .kennung{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--gold-deep);font-weight:700;margin-bottom:8px}
+.kommentar p{font-size:1.06rem;line-height:1.5;max-width:74ch;text-wrap:pretty}
+.kommentar-knoepfe{display:flex;flex-direction:column;gap:8px;align-self:center}
+.kommentar-knoepfe .knopf{min-height:44px;white-space:nowrap}
+
+/* Statusgruppen */
+.gruppe{background:#fff;border:1px solid var(--linie);border-radius:var(--r);
+  box-shadow:var(--schatten);overflow:hidden}
+.gruppe-kopf{width:100%;display:flex;align-items:center;gap:10px;padding:13px 20px;
+  min-height:52px;border:0;border-bottom:1px solid var(--linie);cursor:pointer;
+  text-align:left;font-size:.95rem}
+.gruppe-kopf .zeichen{width:22px;height:22px;border-radius:999px;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:.8rem;
+  font-weight:800;flex:none}
+.gruppe-kopf .titel{font-weight:700;letter-spacing:-.02em}
+.gruppe-kopf .anzahl{color:var(--ink-soft);font-size:.84rem}
+.gruppe-kopf .klapp{margin-left:auto;color:var(--ink-soft);font-size:.84rem}
+.g-rot .gruppe-kopf{background:rgba(208,59,59,.07)}
+.g-rot .zeichen{background:var(--rot)} .g-rot .titel{color:var(--rot-text)}
+.g-gelb .gruppe-kopf{background:rgba(250,178,25,.12)}
+.g-gelb .zeichen{background:var(--gelb)} .g-gelb .titel{color:var(--gelb-text)}
+.g-gruen .gruppe-kopf{background:rgba(12,163,12,.08)}
+.g-gruen .zeichen{background:var(--gruen)} .g-gruen .titel{color:var(--gruen-text)}
+.posten{display:grid;grid-template-columns:minmax(0,1fr) 168px 150px 170px;
+  gap:16px;align-items:center;padding:14px 20px;
+  border-bottom:1px solid rgba(35,41,65,.08)}
+.posten:last-child{border-bottom:0}
+.posten .name{font-size:.98rem;font-weight:600;letter-spacing:-.01em}
+.posten .erklaerung{font-size:.82rem;color:var(--ink-soft);margin-top:2px}
+.posten .wert{text-align:right}
+.posten .wert b{display:block;font-size:1.2rem;font-weight:800;
+  letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.posten .wert span{font-size:.78rem;color:var(--ink-soft);
+  font-variant-numeric:tabular-nums}
+.posten .ziel{text-align:right;font-size:.85rem;color:var(--ink-soft);
+  font-variant-numeric:tabular-nums}
+.posten .tat{text-align:right}
+.posten .abstand{font-size:.84rem;font-variant-numeric:tabular-nums}
+.a-gruen{color:var(--gruen-text)} .a-gelb{color:var(--gelb-text)}
+.a-rot{color:var(--rot-text)}
+
+/* Karte, Verlauf */
+.karte{background:#fff;border:1px solid var(--linie);border-radius:var(--r);
+  padding:18px 22px 20px;box-shadow:var(--schatten)}
+.karte.flach{padding:18px 0 0}
+.karte.flach .karten-kopf{padding:0 20px}
+.karten-kopf{display:flex;justify-content:space-between;align-items:baseline;
+  gap:14px;flex-wrap:wrap;margin-bottom:10px}
+.hinweis{font-size:.82rem;color:var(--ink-soft)}
+.saeulen{display:flex;align-items:flex-end;gap:12px;height:190px;padding-top:18px}
+.saeule{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;
+  cursor:pointer;align-self:stretch;justify-content:flex-end;border:0;
+  background:none;padding:0;min-width:0}
+.saeule .zahl{font-size:.8rem;font-weight:600;color:var(--ink);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.saeule .balken{width:100%;background:rgba(64,77,151,.28);border-radius:6px 6px 0 0}
+.saeule .monat{font-size:.8rem;color:var(--muted)}
+.saeule[aria-current] .balken{background:var(--serie-a)}
+.saeule[aria-current] .monat{color:var(--ink);font-weight:700}
+
+/* Detailraster */
+.rahmen{overflow-x:auto;-webkit-overflow-scrolling:touch;
+  border-top:1px solid var(--linie)}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:.88rem;
+  min-width:720px}
+th,td{padding:9px 12px;text-align:left;font-weight:400;
+  border-bottom:1px solid rgba(35,41,65,.08);white-space:nowrap}
+thead th{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--ink-soft);font-weight:700;background:var(--flaeche)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.summe td,tr.summe th{font-weight:700;background:rgba(35,41,65,.028)}
+.pos{min-width:280px;white-space:normal}
+.pos .fach{font-size:.78rem;color:var(--muted);margin-left:7px}
+.kindzeile .pos{padding-left:32px;color:var(--ink-soft)}
+td.minus{color:var(--gold-deep)}
+.oeffnen{min-height:30px;padding:0 11px;border-radius:999px;
+  border:1px solid var(--linie-stark);background:#fff;color:var(--ink-soft);
+  font-size:.76rem;font-weight:600;cursor:pointer;margin-right:9px;
+  white-space:nowrap}
+.hoch{color:var(--gruen-text)} .runter{color:var(--rot-text)}
+
+/* Verwaltung */
+.status.gut{color:var(--gruen-text);font-weight:600;font-size:.86rem}
+.status.offen{color:var(--gold-deep);font-weight:600;font-size:.86rem}
+.formular{max-width:460px;padding:0 20px 20px}
+.formular .knopf{margin-top:16px}
+
+.fuss{max-width:1220px;margin:0 auto;padding:14px 22px 34px;font-size:.78rem;
       color:var(--ink-soft)}
 
-@media(max-width:900px){
-  .huelle{flex-direction:column}
-  .seitenleiste{width:auto;flex:none;border-right:0;border-bottom:1px solid var(--linie);
-    padding:14px}
-  .seiten-nav{flex-direction:row;flex-wrap:wrap}
-  .seiten-fuss{flex-direction:row;align-items:center;justify-content:space-between}
-  .werkzeugleiste{padding:11px 14px}
-  .monatsleiste{margin-left:0;overflow-x:auto}
-  .inhalt{padding:14px 14px 36px}
-  .karte.flach .karten-kopf,.karte.flach .formular{padding:0 14px}
-  .pos{min-width:200px}
-  .tuer{padding:4vh 14px 44px}
-  .tuer-karte{padding:20px}
+@media(max-width:860px){
+  .kopf-innen{padding:10px 14px;gap:10px}
+  .marke{flex:1}
+  .nutzer{order:2;width:100%;gap:10px}
+  .nutzer-text{flex:1;text-align:left;min-width:0}
+  .nutzer-text b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .wechsler{order:3;width:100%;margin:0}
+  .wechsler-text{flex:1}
+  .gruppe-kopf{flex-wrap:wrap;row-gap:2px}
+  .gruppe-kopf .titel{flex:1;min-width:0}
+  .gruppe-kopf .anzahl{width:100%;padding-left:32px;order:4}
+  .reiter-innen,.flaeche{padding-left:14px;padding-right:14px}
+  .kommentar{padding:16px 18px;flex-direction:column;gap:14px}
+  .kommentar p{font-size:1rem}
+  .kommentar-knoepfe{flex-direction:row;flex-wrap:wrap;align-self:stretch}
+  .kommentar-knoepfe .knopf{flex:1}
+  .posten{grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:14px 16px}
+  .posten .name-feld{grid-column:1}
+  .posten .wert{grid-column:2;grid-row:1}
+  .posten .wert span{display:none}
+  .posten .ziel{grid-column:1;text-align:left;grid-row:2}
+  .posten .tat{grid-column:2;grid-row:2}
+  .posten .erklaerung{display:none}
+  .gruppe-kopf{padding:13px 16px}
+  .karte{padding:16px 16px 18px}
+  .karte.flach .karten-kopf{padding:0 16px}
+  .saeulen{height:150px;gap:6px}
+  .saeule .zahl{font-size:.72rem}
 }
 </style></head><body>
 <div class="band"><div class="band-innen">
@@ -223,330 +243,399 @@ code{background:rgba(35,41,65,.08);padding:1px 5px;border-radius:5px;font-size:.
     übertragen. Firma und Zahlen sind erfunden.</span>
   <a href="index.html">Zurück zur Website</a>
 </div></div>
-<section class="bildschirm" id="bs-anmelden" hidden><div class="tuer">
-  <div class="tuer-karte">
-    <div class="seiten-marke gross">Valtix<span>Mandantenportal</span></div>
-    <h1>Anmelden</h1>
-    <p class="lead">Zugang erhalten Mandanten im Rahmen der monatlichen Betreuung.</p>
-    <div class="zugang"><b>Demonstrationszugang</b>
-      <dl>
-        <dt>E-Mail</dt><dd><code>mandant@vorschau.valtix</code></dd>
-        <dt>Passwort</dt><dd><code>Vorschau2026</code></dd>
-      </dl>
-      <p>Damit lässt sich die Ansicht eines Mandanten ansehen. Geprüft wird nur im
-        Browser. Es gibt keine Datenbank hinter dieser Seite und keinen Server,
-        der etwas entgegennimmt.</p>
-    </div>
-    <div class="meldung fehler" id="fehler" hidden></div>
-    <form id="form-anmelden" novalidate class="formular">
-      <label for="e">E-Mail-Adresse</label>
-      <input id="e" type="email" autocomplete="off" value="mandant@vorschau.valtix">
-      <label for="p">Passwort</label>
-      <input id="p" type="password" autocomplete="off" value="Vorschau2026">
-      <button class="knopf" type="submit">Anmelden</button>
-    </form>
+<section id="bs-anmelden"><div class="tuer"><div class="tuer-karte">
+  <div class="marke">Valtix<span>Mandantenportal</span></div>
+  <h1 style="margin-top:18px">Anmelden</h1>
+  <p class="lead">Ihre monatliche Auswertung, jederzeit abrufbar.</p>
+
+  <div class="demo"><b>Demonstrationszugang</b>
+    <dl>
+      <dt>E-Mail</dt><dd><code>mandant@vorschau.valtix</code></dd>
+      <dt>Passwort</dt><dd><code>Vorschau2026</code></dd>
+    </dl>
+    <p>Damit lässt sich die Ansicht eines Mandanten ansehen. Geprüft wird nur im
+      Browser. Es gibt keine Datenbank hinter dieser Seite und keinen Server,
+      der etwas entgegennimmt.</p>
   </div>
-</div></section><section class="bildschirm" id="bs-mandant-auswertung" hidden><div class="huelle"><aside class="seitenleiste">
-      <div class="seiten-marke">Valtix<span>Mandantenportal</span></div>
-      <button type="button" class="wechsler" aria-haspopup="listbox"><span class="signet">ML</span><span class="wechsler-text"><b>Muster Lüftungstechnik GmbH</b><span>Juli 2026</span></span><span class="chevron" aria-hidden="true">⌄</span></button><div class="seiten-kennzahl"><span>Liquide Mittel</span><b>121.560 €</b></div>
-      <p class="nav-titel">Auswertung</p>
-      <nav class="seiten-nav"><a href="#" data-ziel="mandant-auswertung" aria-current="page"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v10M4 7v6M12 6v7"/></svg>Auswertung</a><a href="#" data-ziel="mandant-berichte"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h8v10H4z M6 6h4M6 9h4"/></svg>Berichte</a></nav>
-      
-      <div class="seiten-fuss">
-        <div class="person"><span class="signet klein">AM</span>
-          <span><b>Ansprechpartner Muster</b><span>mandant@vorschau.valtix</span></span></div>
-        <button type="button" class="knopf stumm schmal" data-ziel="anmelden">Abmelden</button>
-      </div>
-    </aside>
-      <main class="flaeche">
-        <div class="werkzeugleiste">
-      <div class="wz-links">
-        <span class="wz-titel">Auswertung</span>
-        <span class="wz-zeitraum">Jan 2026 bis
-          Jul 2026</span>
-      </div>
-      <div class="monatsleiste" role="group" aria-label="Berichtsmonat"><button type="button" class="monat" disabled>Jan</button><button type="button" class="monat" disabled>Feb</button><button type="button" class="monat" disabled>Mär</button><button type="button" class="monat" disabled>Apr</button><button type="button" class="monat" disabled>Mai</button><button type="button" class="monat" disabled>Jun</button><button type="button" class="monat an">Jul</button></div>
-      <span class="wz-stand">Stand Juli 2026</span>
+
+  <div class="meldung" id="fehler" role="alert" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 7v6M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg><span id="fehlertext"></span></div>
+
+  <form id="anmeldung" novalidate>
+    <div class="feld">
+      <label for="mail">E-Mail-Adresse</label>
+      <input id="mail" type="email" autocomplete="username" value="mandant@vorschau.valtix">
     </div>
-        <div class="inhalt">
-          <div class="kacheln"><div class="kachel"><span class="kachel-titel">Umsatzerlöse</span><b>365.058 €</b><span class="marke gruen" title="Zielerreichung. Ziel ≥ 335.000 €">109 %</span><span class="delta hoch">▲ 9,4 % zum Vormonat</span></div><div class="kachel"><span class="kachel-titel">Ergebnis vor Steuern</span><b>33.646 €</b><span class="delta hoch">▲ 81,7 % zum Vormonat</span></div><div class="kachel"><span class="kachel-titel">Deckungsbeitragsquote</span><b>61,1 %</b><span class="marke gruen" title="Zielerreichung. Ziel ≥ 40.0 %">153 %</span></div><div class="kachel"><span class="kachel-titel">Liquide Mittel</span><b>121.560 €</b><span class="marke rot" title="Zielerreichung. Ziel ≥ 150.000 €">81 %</span><span class="delta runter">▼ 3,0 % zum Vormonat</span></div><div class="kachel"><span class="kachel-titel">Auslastung</span><b>81,6 %</b><span class="marke gruen" title="Zielerreichung. Ziel ≥ 78.0 %">105 %</span></div></div>
-          <section class="karte">
-            <div class="karten-kopf">
-              <h2>Gesamtleistung, Kosten und Liquidität</h2>
-              <div class="legende">
-                <span><i style="background:#404D97"></i>Gesamtleistung</span>
-                <span><i style="background:#B0842A"></i>Gesamtkosten</span>
-                <span><i class="strich"></i>Liquide Mittel</span>
-              </div>
-            </div>
-            <div class="bildrahmen"><svg viewBox="0 0 1000 250" role="img" class="verlauf" aria-label="Gesamtleistung, Gesamtkosten und liquide Mittel je Monat"><line x1="74" y1="216.0" x2="982" y2="216.0" stroke="rgba(35,41,65,.09)" stroke-width="1"/><text x="64" y="220.0" text-anchor="end" font-size="11" fill="#8A8FA3">0 €</text><line x1="74" y1="166.5" x2="982" y2="166.5" stroke="rgba(35,41,65,.09)" stroke-width="1"/><text x="64" y="170.5" text-anchor="end" font-size="11" fill="#8A8FA3">100.000 €</text><line x1="74" y1="117.0" x2="982" y2="117.0" stroke="rgba(35,41,65,.09)" stroke-width="1"/><text x="64" y="121.0" text-anchor="end" font-size="11" fill="#8A8FA3">200.000 €</text><line x1="74" y1="67.5" x2="982" y2="67.5" stroke="rgba(35,41,65,.09)" stroke-width="1"/><text x="64" y="71.5" text-anchor="end" font-size="11" fill="#8A8FA3">300.000 €</text><line x1="74" y1="18.0" x2="982" y2="18.0" stroke="rgba(35,41,65,.09)" stroke-width="1"/><text x="64" y="22.0" text-anchor="end" font-size="11" fill="#8A8FA3">400.000 €</text><rect x="852.3" y="10" width="129.7" height="206" fill="rgba(35,41,65,.045)"/><rect x="110.9" y="83.7" width="26.0" height="132.3" rx="3" fill="#404D97"><title>Januar: 267.251 €</title></rect><rect x="140.9" y="82.7" width="26.0" height="133.3" rx="3" fill="#B0842A"><title>Januar: 269.261 €</title></rect><text x="138.9" y="238" text-anchor="middle" font-size="11.5" fill="#565D73">Jan</text><rect x="240.6" y="79.5" width="26.0" height="136.5" rx="3" fill="#404D97"><title>Februar: 275.718 €</title></rect><rect x="270.6" y="81.3" width="26.0" height="134.7" rx="3" fill="#B0842A"><title>Februar: 272.162 €</title></rect><text x="268.6" y="238" text-anchor="middle" font-size="11.5" fill="#565D73">Feb</text><rect x="370.3" y="66.4" width="26.0" height="149.6" rx="3" fill="#404D97"><title>März: 302.304 €</title></rect><rect x="400.3" y="73.7" width="26.0" height="142.3" rx="3" fill="#B0842A"><title>März: 287.515 €</title></rect><text x="398.3" y="238" text-anchor="middle" font-size="11.5" fill="#565D73">Mär</text><rect x="500.0" y="67.7" width="26.0" height="148.3" rx="3" fill="#404D97"><title>April: 299.566 €</title></rect><rect x="530.0" y="74.0" width="26.0" height="142.0" rx="3" fill="#B0842A"><title>April: 286.934 €</title></rect><text x="528.0" y="238" text-anchor="middle" font-size="11.5" fill="#565D73">Apr</text><rect x="629.7" y="62.7" width="26.0" height="153.3" rx="3" fill="#404D97"><title>Mai: 309.788 €</title></rect><rect x="659.7" y="67.4" width="26.0" height="148.6" rx="3" fill="#B0842A"><title>Mai: 300.106 €</title></rect><text x="657.7" y="238" text-anchor="middle" font-size="11.5" fill="#565D73">Mai</text><rect x="759.4" y="50.8" width="26.0" height="165.2" rx="3" fill="#404D97"><title>Juni: 333.812 €</title></rect><rect x="789.4" y="61.2" width="26.0" height="154.8" rx="3" fill="#B0842A"><title>Juni: 312.680 €</title></rect><text x="787.4" y="238" text-anchor="middle" font-size="11.5" fill="#565D73">Jun</text><rect x="889.1" y="34.1" width="26.0" height="181.9" rx="3" fill="#404D97"><title>Juli: 367.404 €</title></rect><rect x="919.1" y="52.1" width="26.0" height="163.9" rx="3" fill="#B0842A"><title>Juli: 331.190 €</title></rect><text x="917.1" y="238" text-anchor="middle" font-size="11.5" fill="#565D73">Jul</text><polyline points="138.9,142.6 268.6,146.1 398.3,147.8 528.0,150.5 657.7,152.2 787.4,154.0 917.1,155.8" fill="none" stroke="#232941" stroke-width="1.8" stroke-dasharray="4 4" stroke-linecap="round"/><circle cx="917.1" cy="155.8" r="4" fill="#232941" stroke="#FBF8F2" stroke-width="2"/></svg></div>
-            <p class="hinweis">Auf schmalen Bildschirmen lässt sich das Diagramm
-              seitlich schieben.</p>
-          </section>
-          <section class="karte flach">
-            <div class="karten-kopf">
-              <h2>Alle Positionen je Monat</h2>
-              <p class="hinweis">Zeilen mit Pfeil lassen sich aufklappen. Die Prozentmarke
-                im Berichtsmonat zeigt die Zielerreichung.</p>
-            </div>
-            <div class="rasterrahmen"><table class="raster"><thead><tr><th class="pos">Position</th><th class="funkezelle">Verlauf</th><th class="num">Jan 26</th><th class="num">Feb 26</th><th class="num">Mär 26</th><th class="num">Apr 26</th><th class="num">Mai 26</th><th class="num">Jun 26</th><th class="num jetzt">Jul 26</th><th class="num ziel">Ziel</th></tr></thead><tbody><tr class="blockkopf"><th scope="rowgroup" class="pos">Ergebnisrechnung</th><td colspan="9"></td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><button type="button" class="klapp" data-gruppe="umsatz" aria-expanded="false"><span aria-hidden="true">›</span><span class="nurlesen">Positionen anzeigen</span></button><span class="titel">Umsatzerlöse</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.8 15.3,11.0 23.0,11.4 30.7,9.9 38.3,6.5 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">267.251 €</td><td class="num">275.718 €</td><td class="num">302.304 €</td><td class="num">299.566 €</td><td class="num">309.788 €</td><td class="num">333.812 €</td><td class="num jetzt"><span class="marke gruen" title="Zielerreichung. Ziel ≥ 335.000 €">109 %</span>365.058 €</td><td class="num ziel">≥ 335.000 €</td></tr><tr class="zeile ebene2 kind zu-umsatz" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Erlöse Hauptleistung</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.8 15.3,11.0 23.0,11.4 30.7,9.9 38.3,6.5 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">167.032 €</td><td class="num">172.324 €</td><td class="num">188.940 €</td><td class="num">187.229 €</td><td class="num">193.618 €</td><td class="num">208.633 €</td><td class="num jetzt">228.196 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-umsatz" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Warenverkauf / weiterberechnetes Material</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.8 15.3,11.0 23.0,11.4 30.7,9.9 38.3,6.5 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">100.219 €</td><td class="num">103.394 €</td><td class="num">113.364 €</td><td class="num">112.337 €</td><td class="num">116.170 €</td><td class="num">125.180 €</td><td class="num jetzt">136.862 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Sonstige betriebliche Erträge</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,16.0 15.3,16.0 23.0,16.0 30.7,16.0 38.3,16.0 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">0 €</td><td class="num">0 €</td><td class="num">0 €</td><td class="num">0 €</td><td class="num">0 €</td><td class="num">0 €</td><td class="num jetzt">2.346 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene0"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Gesamtleistung</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.8 15.3,11.1 23.0,11.5 30.7,10.1 38.3,6.7 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">267.251 €</td><td class="num">275.718 €</td><td class="num">302.304 €</td><td class="num">299.566 €</td><td class="num">309.788 €</td><td class="num">333.812 €</td><td class="num jetzt">367.404 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><button type="button" class="klapp" data-gruppe="variabel" aria-expanded="false"><span aria-hidden="true">›</span><span class="nurlesen">Positionen anzeigen</span></button><span class="titel">Variable Kosten</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.2 15.3,12.2 23.0,12.7 30.7,11.0 38.3,6.0 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−98.454 €</td><td class="num minus">−100.982 €</td><td class="num minus">−110.630 €</td><td class="num minus">−109.034 €</td><td class="num minus">−114.409 €</td><td class="num minus">−130.109 €</td><td class="num jetzt minus">−142.904 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-variabel" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Wareneinsatz / Materialaufwand</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.2 15.3,12.2 23.0,12.7 30.7,11.0 38.3,6.0 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−80.171 €</td><td class="num minus">−82.230 €</td><td class="num minus">−90.086 €</td><td class="num minus">−88.786 €</td><td class="num minus">−93.163 €</td><td class="num minus">−105.948 €</td><td class="num jetzt minus">−116.346 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-variabel" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Fremdleistungen / Subunternehmer</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.2 15.3,12.2 23.0,12.7 30.7,11.0 38.3,6.0 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−11.805 €</td><td class="num minus">−12.108 €</td><td class="num minus">−13.265 €</td><td class="num minus">−13.073 €</td><td class="num minus">−13.718 €</td><td class="num minus">−15.600 €</td><td class="num jetzt minus">−17.143 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-variabel" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Sonstige variable Kosten</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.2 15.3,12.2 23.0,12.7 30.7,11.0 38.3,6.1 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−6.478 €</td><td class="num minus">−6.645 €</td><td class="num minus">−7.279 €</td><td class="num minus">−7.174 €</td><td class="num minus">−7.528 €</td><td class="num minus">−8.561 €</td><td class="num jetzt minus">−9.415 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene0"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Deckungsbeitrag</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.5 15.3,10.3 23.0,10.5 30.7,9.3 38.3,7.2 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">168.797 €</td><td class="num">174.736 €</td><td class="num">191.674 €</td><td class="num">190.532 €</td><td class="num">195.379 €</td><td class="num">203.703 €</td><td class="num jetzt">224.500 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Deckungsbeitragsquote</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,4.4 7.7,3.2 15.3,3.1 23.0,2.0 30.7,4.9 38.3,16.0 46.0,15.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="15.6" r="1.9" fill="currentColor"/></svg></td><td class="num">63,2 %</td><td class="num">63,4 %</td><td class="num">63,4 %</td><td class="num">63,6 %</td><td class="num">63,1 %</td><td class="num">61,0 %</td><td class="num jetzt"><span class="marke gruen" title="Zielerreichung. Ziel ≥ 40.0 %">153 %</span>61,1 %</td><td class="num ziel">≥ 40,0 %</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><button type="button" class="klapp" data-gruppe="fix" aria-expanded="false"><span aria-hidden="true">›</span><span class="nurlesen">Positionen anzeigen</span></button><span class="titel">Fixkosten</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.7 15.3,11.1 23.0,10.3 30.7,4.1 38.3,6.6 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−164.126 €</td><td class="num minus">−164.499 €</td><td class="num minus">−170.204 €</td><td class="num minus">−171.219 €</td><td class="num minus">−179.016 €</td><td class="num minus">−175.890 €</td><td class="num jetzt minus">−181.606 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-fix" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Personalaufwand (inkl. Arbeitgeberanteil)</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.7 15.3,11.1 23.0,10.3 30.7,4.1 38.3,6.6 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−128.379 €</td><td class="num minus">−128.671 €</td><td class="num minus">−133.134 €</td><td class="num minus">−133.928 €</td><td class="num minus">−140.026 €</td><td class="num minus">−137.581 €</td><td class="num jetzt minus">−142.062 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-fix" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Miete & Nebenkosten</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.7 15.3,11.2 23.0,10.3 30.7,4.1 38.3,6.6 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−10.603 €</td><td class="num minus">−10.627 €</td><td class="num minus">−10.995 €</td><td class="num minus">−11.061 €</td><td class="num minus">−11.564 €</td><td class="num minus">−11.362 €</td><td class="num jetzt minus">−11.737 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-fix" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Fahrzeuge / Fuhrpark</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.7 15.3,11.2 23.0,10.4 30.7,4.2 38.3,6.7 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−10.045 €</td><td class="num minus">−10.067 €</td><td class="num minus">−10.416 €</td><td class="num minus">−10.479 €</td><td class="num minus">−10.956 €</td><td class="num minus">−10.764 €</td><td class="num jetzt minus">−11.124 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-fix" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Versicherungen & Beiträge (inkl. Berufsgenossenschaft)</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.7 15.3,11.1 23.0,10.2 30.7,3.9 38.3,6.4 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−4.957 €</td><td class="num minus">−4.968 €</td><td class="num minus">−5.140 €</td><td class="num minus">−5.171 €</td><td class="num minus">−5.406 €</td><td class="num minus">−5.312 €</td><td class="num jetzt minus">−5.476 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-fix" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">IT, Software & Kommunikation</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.7 15.3,11.1 23.0,10.3 30.7,4.0 38.3,6.5 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−2.117 €</td><td class="num minus">−2.122 €</td><td class="num minus">−2.196 €</td><td class="num minus">−2.209 €</td><td class="num minus">−2.309 €</td><td class="num minus">−2.269 €</td><td class="num jetzt minus">−2.341 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-fix" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Marketing & Vertrieb</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.7 15.3,11.3 23.0,10.5 30.7,4.4 38.3,6.9 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−2.692 €</td><td class="num minus">−2.698 €</td><td class="num minus">−2.791 €</td><td class="num minus">−2.808 €</td><td class="num minus">−2.936 €</td><td class="num minus">−2.885 €</td><td class="num jetzt minus">−2.988 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-fix" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Sonstige betriebliche Aufwendungen</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.7 15.3,10.9 23.0,10.1 30.7,3.5 38.3,6.1 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−5.334 €</td><td class="num minus">−5.346 €</td><td class="num minus">−5.532 €</td><td class="num minus">−5.565 €</td><td class="num minus">−5.818 €</td><td class="num minus">−5.716 €</td><td class="num jetzt minus">−5.877 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene0"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">EBITDA</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.0 15.3,9.8 23.0,10.6 30.7,11.7 38.3,7.5 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">4.671 €</td><td class="num">10.237 €</td><td class="num">21.470 €</td><td class="num">19.313 €</td><td class="num">16.363 €</td><td class="num">27.813 €</td><td class="num jetzt">42.894 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Abschreibungen (AfA)</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,16.0 15.3,16.0 23.0,16.0 30.7,16.0 38.3,16.0 46.0,16.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="16.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−6.681 €</td><td class="num minus">−6.681 €</td><td class="num minus">−6.681 €</td><td class="num minus">−6.681 €</td><td class="num minus">−6.681 €</td><td class="num minus">−6.681 €</td><td class="num jetzt minus">−6.681 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene0"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">EBIT</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.0 15.3,9.8 23.0,10.6 30.7,11.7 38.3,7.5 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">-2.010 €</td><td class="num">3.556 €</td><td class="num">14.789 €</td><td class="num">12.632 €</td><td class="num">9.682 €</td><td class="num">21.132 €</td><td class="num jetzt">36.213 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Zinsergebnis</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,2.0 7.7,4.3 15.3,6.7 23.0,9.1 30.7,11.4 38.3,13.7 46.0,16.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="16.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−2.845 €</td><td class="num minus">−2.799 €</td><td class="num minus">−2.751 €</td><td class="num minus">−2.705 €</td><td class="num minus">−2.658 €</td><td class="num minus">−2.613 €</td><td class="num jetzt minus">−2.567 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene0"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">EBT</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.0 15.3,9.9 23.0,10.6 30.7,11.7 38.3,7.5 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">-4.855 €</td><td class="num">757 €</td><td class="num">12.038 €</td><td class="num">9.927 €</td><td class="num">7.024 €</td><td class="num">18.520 €</td><td class="num jetzt">33.646 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">EBT-Marge</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,13.3 15.3,8.6 23.0,9.5 30.7,10.8 38.3,6.7 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">-1,8 %</td><td class="num">0,3 %</td><td class="num">4,0 %</td><td class="num">3,3 %</td><td class="num">2,3 %</td><td class="num">5,5 %</td><td class="num jetzt"><span class="marke gruen" title="Zielerreichung. Ziel ≥ 8.0 %">115 %</span>9,2 %</td><td class="num ziel">≥ 8,0 %</td></tr></tbody><tbody><tr class="blockkopf"><th scope="rowgroup" class="pos">Menge und Betrieb</th><td colspan="9"></td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Monteurstunden</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,12.4 15.3,7.9 23.0,10.2 30.7,14.6 38.3,5.7 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">2.500,3</td><td class="num">2.579,6</td><td class="num">2.679,4</td><td class="num">2.627,8</td><td class="num">2.531,3</td><td class="num">2.727,7</td><td class="num jetzt">2.810,3</td><td class="num ziel">–</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Kapazität</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,16.0 15.3,16.0 23.0,16.0 30.7,16.0 38.3,16.0 46.0,16.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="16.0" r="1.9" fill="currentColor"/></svg></td><td class="num">3.444</td><td class="num">3.444</td><td class="num">3.444</td><td class="num">3.444</td><td class="num">3.444</td><td class="num">3.444</td><td class="num jetzt">3.444</td><td class="num ziel">–</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Auslastung</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,12.4 15.3,7.9 23.0,10.2 30.7,14.6 38.3,5.7 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">72,6 %</td><td class="num">74,9 %</td><td class="num">77,8 %</td><td class="num">76,3 %</td><td class="num">73,5 %</td><td class="num">79,2 %</td><td class="num jetzt"><span class="marke gruen" title="Zielerreichung. Ziel ≥ 78.0 %">105 %</span>81,6 %</td><td class="num ziel">≥ 78,0 %</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Ø Erlös je Monteurstunde</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,16.0 15.3,12.4 23.0,11.7 30.7,6.6 38.3,6.6 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">107 €</td><td class="num">107 €</td><td class="num">113 €</td><td class="num">114 €</td><td class="num">122 €</td><td class="num">122 €</td><td class="num jetzt">130 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Deckungsbeitrag je Monteurstunde</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.7 15.3,11.1 23.0,9.9 30.7,4.3 38.3,7.3 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">68 €</td><td class="num">68 €</td><td class="num">72 €</td><td class="num">73 €</td><td class="num">77 €</td><td class="num">75 €</td><td class="num jetzt">79 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Mitarbeitende (Köpfe)</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,16.0 15.3,16.0 23.0,16.0 30.7,16.0 38.3,16.0 46.0,16.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="16.0" r="1.9" fill="currentColor"/></svg></td><td class="num">24</td><td class="num">24</td><td class="num">24</td><td class="num">24</td><td class="num">24</td><td class="num">24</td><td class="num jetzt">24</td><td class="num ziel">–</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Vollzeitäquivalente (VZÄ)</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,16.0 15.3,16.0 23.0,16.0 30.7,16.0 38.3,16.0 46.0,16.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="16.0" r="1.9" fill="currentColor"/></svg></td><td class="num">22,5</td><td class="num">22,5</td><td class="num">22,5</td><td class="num">22,5</td><td class="num">22,5</td><td class="num">22,5</td><td class="num jetzt">22,5</td><td class="num ziel">–</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Aktive Kunden / Objekte / Mandate</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,12.5 15.3,9.0 23.0,7.2 30.7,5.5 38.3,3.8 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">41</td><td class="num">43</td><td class="num">45</td><td class="num">46</td><td class="num">47</td><td class="num">48</td><td class="num jetzt"><span class="marke gruen" title="Zielerreichung. Ziel ≥ 40">123 %</span>49</td><td class="num ziel">≥ 40</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Neukunden bzw. Neuaufträge im Monat</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,9.0 7.7,16.0 15.3,2.0 23.0,12.5 30.7,5.5 38.3,9.0 46.0,12.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="12.5" r="1.9" fill="currentColor"/></svg></td><td class="num">7</td><td class="num">5</td><td class="num">9</td><td class="num">6</td><td class="num">8</td><td class="num">7</td><td class="num jetzt"><span class="marke rot" title="Zielerreichung. Ziel ≥ 8">75 %</span>6</td><td class="num ziel">≥ 8</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Auftragsbestand / Vertragsvolumen</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.5 15.3,12.0 23.0,10.2 30.7,8.9 38.3,7.0 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">512.000 €</td><td class="num">534.800 €</td><td class="num">571.400 €</td><td class="num">598.200 €</td><td class="num">616.900 €</td><td class="num">645.230 €</td><td class="num jetzt">718.561 €</td><td class="num ziel">–</td></tr></tbody><tbody><tr class="blockkopf"><th scope="rowgroup" class="pos">Liquidität und Bilanz</th><td colspan="9"></td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Liquide Mittel (Bank + Kasse)</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,2.0 7.7,5.7 15.3,7.5 23.0,10.3 30.7,12.2 38.3,14.0 46.0,16.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="16.0" r="1.9" fill="currentColor"/></svg></td><td class="num">148.300 €</td><td class="num">141.200 €</td><td class="num">137.800 €</td><td class="num">132.400 €</td><td class="num">128.900 €</td><td class="num">125.300 €</td><td class="num jetzt"><span class="marke rot" title="Zielerreichung. Ziel ≥ 150.000 €">81 %</span>121.560 €</td><td class="num ziel">≥ 150.000 €</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Offene Forderungen</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.1 15.3,12.4 23.0,11.4 30.7,10.3 38.3,7.3 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">392.000 €</td><td class="num">404.500 €</td><td class="num">441.000 €</td><td class="num">455.000 €</td><td class="num">470.000 €</td><td class="num">512.000 €</td><td class="num jetzt">584.093 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Debitorenlaufzeit</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,15.2 7.7,15.2 15.3,16.0 23.0,10.0 30.7,10.2 38.3,8.6 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">44 Tage</td><td class="num">44 Tage</td><td class="num">44 Tage</td><td class="num">46 Tage</td><td class="num">46 Tage</td><td class="num">46 Tage</td><td class="num jetzt"><span class="marke rot" title="Zielerreichung. Ziel ≤ 40 Tage">83 %</span>48 Tage</td><td class="num ziel">≤ 40 Tage</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Kurzfristige Verbindlichkeiten</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.4 15.3,12.0 23.0,10.4 30.7,8.7 38.3,5.8 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−498.000 €</td><td class="num minus">−505.000 €</td><td class="num minus">−516.000 €</td><td class="num minus">−523.000 €</td><td class="num minus">−531.000 €</td><td class="num minus">−544.000 €</td><td class="num jetzt minus">−561.000 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Eigenkapital</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.6 15.3,11.8 23.0,9.4 30.7,7.8 38.3,3.5 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">742.000 €</td><td class="num">748.000 €</td><td class="num">760.000 €</td><td class="num">770.000 €</td><td class="num">777.000 €</td><td class="num">795.000 €</td><td class="num jetzt">801.400 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Eigenkapitalquote</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,13.7 15.3,9.6 23.0,6.3 30.7,4.8 38.3,2.0 46.0,10.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="10.5" r="1.9" fill="currentColor"/></svg></td><td class="num">35,4 %</td><td class="num">35,6 %</td><td class="num">35,9 %</td><td class="num">36,2 %</td><td class="num">36,3 %</td><td class="num">36,5 %</td><td class="num jetzt"><span class="marke gruen" title="Zielerreichung. Ziel ≥ 35.0 %">102 %</span>35,8 %</td><td class="num ziel">≥ 35,0 %</td></tr></tbody></table></div>
-          </section>
-          <p class="quelle">Grundlage ist die ausgefüllte Eingabevorlage. Der vollständige
-            Bericht als Dokument liegt unter
-            <a href="portal-vorschau-bericht.html">Berichte</a>.</p>
-        </div>
-      </main></div></section><section class="bildschirm" id="bs-mandant-berichte" hidden><div class="huelle"><aside class="seitenleiste">
-      <div class="seiten-marke">Valtix<span>Mandantenportal</span></div>
-      <button type="button" class="wechsler" aria-haspopup="listbox"><span class="signet">ML</span><span class="wechsler-text"><b>Muster Lüftungstechnik GmbH</b><span>Juli 2026</span></span><span class="chevron" aria-hidden="true">⌄</span></button><div class="seiten-kennzahl"><span>Liquide Mittel</span><b>121.560 €</b></div>
-      <p class="nav-titel">Auswertung</p>
-      <nav class="seiten-nav"><a href="#" data-ziel="mandant-auswertung"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v10M4 7v6M12 6v7"/></svg>Auswertung</a><a href="#" data-ziel="mandant-berichte" aria-current="page"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h8v10H4z M6 6h4M6 9h4"/></svg>Berichte</a></nav>
-      
-      <div class="seiten-fuss">
-        <div class="person"><span class="signet klein">AM</span>
-          <span><b>Ansprechpartner Muster</b><span>mandant@vorschau.valtix</span></span></div>
-        <button type="button" class="knopf stumm schmal" data-ziel="anmelden">Abmelden</button>
+    <div class="feld">
+      <label for="pw">Passwort</label>
+      <div class="pw-reihe">
+        <input id="pw" type="password" autocomplete="current-password" value="Vorschau2026">
+        <button class="knopf stumm" id="sichtbar" type="button">Anzeigen</button>
       </div>
-    </aside>
-      <main class="flaeche">
-        <div class="werkzeugleiste">
-      <div class="wz-links">
-        <span class="wz-titel">Berichte</span>
-        <span class="wz-zeitraum">Jan 2026 bis
-          Jul 2026</span>
-      </div>
-      <div class="monatsleiste" role="group" aria-label="Berichtsmonat"><button type="button" class="monat" disabled>Jan</button><button type="button" class="monat" disabled>Feb</button><button type="button" class="monat" disabled>Mär</button><button type="button" class="monat" disabled>Apr</button><button type="button" class="monat" disabled>Mai</button><button type="button" class="monat" disabled>Jun</button><button type="button" class="monat an">Jul</button></div>
-      <span class="wz-stand">Stand Juli 2026</span>
     </div>
-        <div class="inhalt">
-          <section class="karte flach">
-            <div class="karten-kopf"><h2>Monatsberichte</h2>
-              <p class="hinweis">Jeder Bericht bleibt in der Fassung erhalten, in der
-                er eingestellt wurde.</p></div>
-            <div class="rasterrahmen"><table class="liste"><thead><tr>
-              <th>Zeitraum</th><th>Eingestellt</th><th class="num">&nbsp;</th>
-            </tr></thead><tbody><tr><td>Juli 2026</td><td>06.08.2026</td><td class="num"><a class="knopf stumm schmal" href="portal-vorschau-bericht.html">Ansehen</a></td></tr><tr><td>Juni 2026</td><td>07.07.2026</td><td class="num"><a class="knopf stumm schmal" href="portal-vorschau-bericht.html">Ansehen</a></td></tr><tr><td>Mai 2026</td><td>05.06.2026</td><td class="num"><a class="knopf stumm schmal" href="portal-vorschau-bericht.html">Ansehen</a></td></tr></tbody></table></div>
-          </section>
-        </div>
-      </main></div></section><section class="bildschirm" id="bs-admin-auswertung" hidden><div class="huelle"><aside class="seitenleiste">
-      <div class="seiten-marke">Valtix<span>Mandantenportal</span></div>
-      <button type="button" class="wechsler" aria-haspopup="listbox"><span class="signet">ML</span><span class="wechsler-text"><b>Muster Lüftungstechnik GmbH</b><span>Juli 2026</span></span><span class="chevron" aria-hidden="true">⌄</span></button><div class="seiten-kennzahl"><span>Liquide Mittel</span><b>121.560 €</b></div>
-      <p class="nav-titel">Auswertung</p>
-      <nav class="seiten-nav"><a href="#" data-ziel="admin-auswertung" aria-current="page"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v10M4 7v6M12 6v7"/></svg>Auswertung</a><a href="#" data-ziel="admin-berichte"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h8v10H4z M6 6h4M6 9h4"/></svg>Berichte</a></nav>
-      <p class="nav-titel">Verwaltung</p><nav class="seiten-nav"><a href="#" data-ziel="admin-mandanten"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13v-1a3 3 0 013-3h4a3 3 0 013 3v1M8 3a2.5 2.5 0 110 5 2.5 2.5 0 010-5"/></svg>Mandanten</a><a href="#" data-ziel="admin-zugaenge"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7V5a2 2 0 114 0v2M4 7h8v6H4z"/></svg>Zugänge</a><a href="#" data-ziel="admin-protokoll"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h8v10H4z M6 6h4M6 9h3"/></svg>Protokoll</a></nav>
-      <div class="seiten-fuss">
-        <div class="person"><span class="signet klein">A</span>
-          <span><b>Administrator</b><span>admin@vorschau.valtix</span></span></div>
-        <button type="button" class="knopf stumm schmal" data-ziel="anmelden">Abmelden</button>
-      </div>
-    </aside>
-      <main class="flaeche">
-        <div class="werkzeugleiste">
-      <div class="wz-links">
-        <span class="wz-titel">Auswertung</span>
-        <span class="wz-zeitraum">Jan 2026 bis
-          Jul 2026</span>
-      </div>
-      <div class="monatsleiste" role="group" aria-label="Berichtsmonat"><button type="button" class="monat" disabled>Jan</button><button type="button" class="monat" disabled>Feb</button><button type="button" class="monat" disabled>Mär</button><button type="button" class="monat" disabled>Apr</button><button type="button" class="monat" disabled>Mai</button><button type="button" class="monat" disabled>Jun</button><button type="button" class="monat an">Jul</button></div>
-      <span class="wz-stand">Stand Juli 2026</span>
+    <div class="zeile-merken">
+      <button class="merken" id="merken" type="button" role="checkbox" aria-checked="true">
+        <span class="haken"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>Angemeldet bleiben</button>
+      <span style="flex-grow:1"></span>
+      <a href="#" style="font-size:.88rem;text-decoration:none">Passwort vergessen?</a>
     </div>
-        <div class="inhalt">
-          <div class="kacheln"><div class="kachel"><span class="kachel-titel">Umsatzerlöse</span><b>365.058 €</b><span class="marke gruen" title="Zielerreichung. Ziel ≥ 335.000 €">109 %</span><span class="delta hoch">▲ 9,4 % zum Vormonat</span></div><div class="kachel"><span class="kachel-titel">Ergebnis vor Steuern</span><b>33.646 €</b><span class="delta hoch">▲ 81,7 % zum Vormonat</span></div><div class="kachel"><span class="kachel-titel">Deckungsbeitragsquote</span><b>61,1 %</b><span class="marke gruen" title="Zielerreichung. Ziel ≥ 40.0 %">153 %</span></div><div class="kachel"><span class="kachel-titel">Liquide Mittel</span><b>121.560 €</b><span class="marke rot" title="Zielerreichung. Ziel ≥ 150.000 €">81 %</span><span class="delta runter">▼ 3,0 % zum Vormonat</span></div><div class="kachel"><span class="kachel-titel">Auslastung</span><b>81,6 %</b><span class="marke gruen" title="Zielerreichung. Ziel ≥ 78.0 %">105 %</span></div></div>
-          <section class="karte">
-            <div class="karten-kopf">
-              <h2>Gesamtleistung, Kosten und Liquidität</h2>
-              <div class="legende">
-                <span><i style="background:#404D97"></i>Gesamtleistung</span>
-                <span><i style="background:#B0842A"></i>Gesamtkosten</span>
-                <span><i class="strich"></i>Liquide Mittel</span>
-              </div>
-            </div>
-            <div class="bildrahmen"><svg viewBox="0 0 1000 250" role="img" class="verlauf" aria-label="Gesamtleistung, Gesamtkosten und liquide Mittel je Monat"><line x1="74" y1="216.0" x2="982" y2="216.0" stroke="rgba(35,41,65,.09)" stroke-width="1"/><text x="64" y="220.0" text-anchor="end" font-size="11" fill="#8A8FA3">0 €</text><line x1="74" y1="166.5" x2="982" y2="166.5" stroke="rgba(35,41,65,.09)" stroke-width="1"/><text x="64" y="170.5" text-anchor="end" font-size="11" fill="#8A8FA3">100.000 €</text><line x1="74" y1="117.0" x2="982" y2="117.0" stroke="rgba(35,41,65,.09)" stroke-width="1"/><text x="64" y="121.0" text-anchor="end" font-size="11" fill="#8A8FA3">200.000 €</text><line x1="74" y1="67.5" x2="982" y2="67.5" stroke="rgba(35,41,65,.09)" stroke-width="1"/><text x="64" y="71.5" text-anchor="end" font-size="11" fill="#8A8FA3">300.000 €</text><line x1="74" y1="18.0" x2="982" y2="18.0" stroke="rgba(35,41,65,.09)" stroke-width="1"/><text x="64" y="22.0" text-anchor="end" font-size="11" fill="#8A8FA3">400.000 €</text><rect x="852.3" y="10" width="129.7" height="206" fill="rgba(35,41,65,.045)"/><rect x="110.9" y="83.7" width="26.0" height="132.3" rx="3" fill="#404D97"><title>Januar: 267.251 €</title></rect><rect x="140.9" y="82.7" width="26.0" height="133.3" rx="3" fill="#B0842A"><title>Januar: 269.261 €</title></rect><text x="138.9" y="238" text-anchor="middle" font-size="11.5" fill="#565D73">Jan</text><rect x="240.6" y="79.5" width="26.0" height="136.5" rx="3" fill="#404D97"><title>Februar: 275.718 €</title></rect><rect x="270.6" y="81.3" width="26.0" height="134.7" rx="3" fill="#B0842A"><title>Februar: 272.162 €</title></rect><text x="268.6" y="238" text-anchor="middle" font-size="11.5" fill="#565D73">Feb</text><rect x="370.3" y="66.4" width="26.0" height="149.6" rx="3" fill="#404D97"><title>März: 302.304 €</title></rect><rect x="400.3" y="73.7" width="26.0" height="142.3" rx="3" fill="#B0842A"><title>März: 287.515 €</title></rect><text x="398.3" y="238" text-anchor="middle" font-size="11.5" fill="#565D73">Mär</text><rect x="500.0" y="67.7" width="26.0" height="148.3" rx="3" fill="#404D97"><title>April: 299.566 €</title></rect><rect x="530.0" y="74.0" width="26.0" height="142.0" rx="3" fill="#B0842A"><title>April: 286.934 €</title></rect><text x="528.0" y="238" text-anchor="middle" font-size="11.5" fill="#565D73">Apr</text><rect x="629.7" y="62.7" width="26.0" height="153.3" rx="3" fill="#404D97"><title>Mai: 309.788 €</title></rect><rect x="659.7" y="67.4" width="26.0" height="148.6" rx="3" fill="#B0842A"><title>Mai: 300.106 €</title></rect><text x="657.7" y="238" text-anchor="middle" font-size="11.5" fill="#565D73">Mai</text><rect x="759.4" y="50.8" width="26.0" height="165.2" rx="3" fill="#404D97"><title>Juni: 333.812 €</title></rect><rect x="789.4" y="61.2" width="26.0" height="154.8" rx="3" fill="#B0842A"><title>Juni: 312.680 €</title></rect><text x="787.4" y="238" text-anchor="middle" font-size="11.5" fill="#565D73">Jun</text><rect x="889.1" y="34.1" width="26.0" height="181.9" rx="3" fill="#404D97"><title>Juli: 367.404 €</title></rect><rect x="919.1" y="52.1" width="26.0" height="163.9" rx="3" fill="#B0842A"><title>Juli: 331.190 €</title></rect><text x="917.1" y="238" text-anchor="middle" font-size="11.5" fill="#565D73">Jul</text><polyline points="138.9,142.6 268.6,146.1 398.3,147.8 528.0,150.5 657.7,152.2 787.4,154.0 917.1,155.8" fill="none" stroke="#232941" stroke-width="1.8" stroke-dasharray="4 4" stroke-linecap="round"/><circle cx="917.1" cy="155.8" r="4" fill="#232941" stroke="#FBF8F2" stroke-width="2"/></svg></div>
-            <p class="hinweis">Auf schmalen Bildschirmen lässt sich das Diagramm
-              seitlich schieben.</p>
-          </section>
-          <section class="karte flach">
-            <div class="karten-kopf">
-              <h2>Alle Positionen je Monat</h2>
-              <p class="hinweis">Zeilen mit Pfeil lassen sich aufklappen. Die Prozentmarke
-                im Berichtsmonat zeigt die Zielerreichung.</p>
-            </div>
-            <div class="rasterrahmen"><table class="raster"><thead><tr><th class="pos">Position</th><th class="funkezelle">Verlauf</th><th class="num">Jan 26</th><th class="num">Feb 26</th><th class="num">Mär 26</th><th class="num">Apr 26</th><th class="num">Mai 26</th><th class="num">Jun 26</th><th class="num jetzt">Jul 26</th><th class="num ziel">Ziel</th></tr></thead><tbody><tr class="blockkopf"><th scope="rowgroup" class="pos">Ergebnisrechnung</th><td colspan="9"></td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><button type="button" class="klapp" data-gruppe="umsatz" aria-expanded="false"><span aria-hidden="true">›</span><span class="nurlesen">Positionen anzeigen</span></button><span class="titel">Umsatzerlöse</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.8 15.3,11.0 23.0,11.4 30.7,9.9 38.3,6.5 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">267.251 €</td><td class="num">275.718 €</td><td class="num">302.304 €</td><td class="num">299.566 €</td><td class="num">309.788 €</td><td class="num">333.812 €</td><td class="num jetzt"><span class="marke gruen" title="Zielerreichung. Ziel ≥ 335.000 €">109 %</span>365.058 €</td><td class="num ziel">≥ 335.000 €</td></tr><tr class="zeile ebene2 kind zu-umsatz" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Erlöse Hauptleistung</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.8 15.3,11.0 23.0,11.4 30.7,9.9 38.3,6.5 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">167.032 €</td><td class="num">172.324 €</td><td class="num">188.940 €</td><td class="num">187.229 €</td><td class="num">193.618 €</td><td class="num">208.633 €</td><td class="num jetzt">228.196 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-umsatz" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Warenverkauf / weiterberechnetes Material</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.8 15.3,11.0 23.0,11.4 30.7,9.9 38.3,6.5 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">100.219 €</td><td class="num">103.394 €</td><td class="num">113.364 €</td><td class="num">112.337 €</td><td class="num">116.170 €</td><td class="num">125.180 €</td><td class="num jetzt">136.862 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Sonstige betriebliche Erträge</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,16.0 15.3,16.0 23.0,16.0 30.7,16.0 38.3,16.0 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">0 €</td><td class="num">0 €</td><td class="num">0 €</td><td class="num">0 €</td><td class="num">0 €</td><td class="num">0 €</td><td class="num jetzt">2.346 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene0"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Gesamtleistung</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.8 15.3,11.1 23.0,11.5 30.7,10.1 38.3,6.7 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">267.251 €</td><td class="num">275.718 €</td><td class="num">302.304 €</td><td class="num">299.566 €</td><td class="num">309.788 €</td><td class="num">333.812 €</td><td class="num jetzt">367.404 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><button type="button" class="klapp" data-gruppe="variabel" aria-expanded="false"><span aria-hidden="true">›</span><span class="nurlesen">Positionen anzeigen</span></button><span class="titel">Variable Kosten</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.2 15.3,12.2 23.0,12.7 30.7,11.0 38.3,6.0 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−98.454 €</td><td class="num minus">−100.982 €</td><td class="num minus">−110.630 €</td><td class="num minus">−109.034 €</td><td class="num minus">−114.409 €</td><td class="num minus">−130.109 €</td><td class="num jetzt minus">−142.904 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-variabel" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Wareneinsatz / Materialaufwand</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.2 15.3,12.2 23.0,12.7 30.7,11.0 38.3,6.0 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−80.171 €</td><td class="num minus">−82.230 €</td><td class="num minus">−90.086 €</td><td class="num minus">−88.786 €</td><td class="num minus">−93.163 €</td><td class="num minus">−105.948 €</td><td class="num jetzt minus">−116.346 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-variabel" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Fremdleistungen / Subunternehmer</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.2 15.3,12.2 23.0,12.7 30.7,11.0 38.3,6.0 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−11.805 €</td><td class="num minus">−12.108 €</td><td class="num minus">−13.265 €</td><td class="num minus">−13.073 €</td><td class="num minus">−13.718 €</td><td class="num minus">−15.600 €</td><td class="num jetzt minus">−17.143 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-variabel" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Sonstige variable Kosten</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.2 15.3,12.2 23.0,12.7 30.7,11.0 38.3,6.1 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−6.478 €</td><td class="num minus">−6.645 €</td><td class="num minus">−7.279 €</td><td class="num minus">−7.174 €</td><td class="num minus">−7.528 €</td><td class="num minus">−8.561 €</td><td class="num jetzt minus">−9.415 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene0"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Deckungsbeitrag</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.5 15.3,10.3 23.0,10.5 30.7,9.3 38.3,7.2 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">168.797 €</td><td class="num">174.736 €</td><td class="num">191.674 €</td><td class="num">190.532 €</td><td class="num">195.379 €</td><td class="num">203.703 €</td><td class="num jetzt">224.500 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Deckungsbeitragsquote</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,4.4 7.7,3.2 15.3,3.1 23.0,2.0 30.7,4.9 38.3,16.0 46.0,15.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="15.6" r="1.9" fill="currentColor"/></svg></td><td class="num">63,2 %</td><td class="num">63,4 %</td><td class="num">63,4 %</td><td class="num">63,6 %</td><td class="num">63,1 %</td><td class="num">61,0 %</td><td class="num jetzt"><span class="marke gruen" title="Zielerreichung. Ziel ≥ 40.0 %">153 %</span>61,1 %</td><td class="num ziel">≥ 40,0 %</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><button type="button" class="klapp" data-gruppe="fix" aria-expanded="false"><span aria-hidden="true">›</span><span class="nurlesen">Positionen anzeigen</span></button><span class="titel">Fixkosten</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.7 15.3,11.1 23.0,10.3 30.7,4.1 38.3,6.6 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−164.126 €</td><td class="num minus">−164.499 €</td><td class="num minus">−170.204 €</td><td class="num minus">−171.219 €</td><td class="num minus">−179.016 €</td><td class="num minus">−175.890 €</td><td class="num jetzt minus">−181.606 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-fix" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Personalaufwand (inkl. Arbeitgeberanteil)</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.7 15.3,11.1 23.0,10.3 30.7,4.1 38.3,6.6 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−128.379 €</td><td class="num minus">−128.671 €</td><td class="num minus">−133.134 €</td><td class="num minus">−133.928 €</td><td class="num minus">−140.026 €</td><td class="num minus">−137.581 €</td><td class="num jetzt minus">−142.062 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-fix" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Miete & Nebenkosten</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.7 15.3,11.2 23.0,10.3 30.7,4.1 38.3,6.6 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−10.603 €</td><td class="num minus">−10.627 €</td><td class="num minus">−10.995 €</td><td class="num minus">−11.061 €</td><td class="num minus">−11.564 €</td><td class="num minus">−11.362 €</td><td class="num jetzt minus">−11.737 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-fix" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Fahrzeuge / Fuhrpark</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.7 15.3,11.2 23.0,10.4 30.7,4.2 38.3,6.7 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−10.045 €</td><td class="num minus">−10.067 €</td><td class="num minus">−10.416 €</td><td class="num minus">−10.479 €</td><td class="num minus">−10.956 €</td><td class="num minus">−10.764 €</td><td class="num jetzt minus">−11.124 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-fix" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Versicherungen & Beiträge (inkl. Berufsgenossenschaft)</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.7 15.3,11.1 23.0,10.2 30.7,3.9 38.3,6.4 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−4.957 €</td><td class="num minus">−4.968 €</td><td class="num minus">−5.140 €</td><td class="num minus">−5.171 €</td><td class="num minus">−5.406 €</td><td class="num minus">−5.312 €</td><td class="num jetzt minus">−5.476 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-fix" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">IT, Software & Kommunikation</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.7 15.3,11.1 23.0,10.3 30.7,4.0 38.3,6.5 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−2.117 €</td><td class="num minus">−2.122 €</td><td class="num minus">−2.196 €</td><td class="num minus">−2.209 €</td><td class="num minus">−2.309 €</td><td class="num minus">−2.269 €</td><td class="num jetzt minus">−2.341 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-fix" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Marketing & Vertrieb</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.7 15.3,11.3 23.0,10.5 30.7,4.4 38.3,6.9 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−2.692 €</td><td class="num minus">−2.698 €</td><td class="num minus">−2.791 €</td><td class="num minus">−2.808 €</td><td class="num minus">−2.936 €</td><td class="num minus">−2.885 €</td><td class="num jetzt minus">−2.988 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2 kind zu-fix" hidden><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Sonstige betriebliche Aufwendungen</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.7 15.3,10.9 23.0,10.1 30.7,3.5 38.3,6.1 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−5.334 €</td><td class="num minus">−5.346 €</td><td class="num minus">−5.532 €</td><td class="num minus">−5.565 €</td><td class="num minus">−5.818 €</td><td class="num minus">−5.716 €</td><td class="num jetzt minus">−5.877 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene0"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">EBITDA</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.0 15.3,9.8 23.0,10.6 30.7,11.7 38.3,7.5 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">4.671 €</td><td class="num">10.237 €</td><td class="num">21.470 €</td><td class="num">19.313 €</td><td class="num">16.363 €</td><td class="num">27.813 €</td><td class="num jetzt">42.894 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Abschreibungen (AfA)</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,16.0 15.3,16.0 23.0,16.0 30.7,16.0 38.3,16.0 46.0,16.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="16.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−6.681 €</td><td class="num minus">−6.681 €</td><td class="num minus">−6.681 €</td><td class="num minus">−6.681 €</td><td class="num minus">−6.681 €</td><td class="num minus">−6.681 €</td><td class="num jetzt minus">−6.681 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene0"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">EBIT</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.0 15.3,9.8 23.0,10.6 30.7,11.7 38.3,7.5 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">-2.010 €</td><td class="num">3.556 €</td><td class="num">14.789 €</td><td class="num">12.632 €</td><td class="num">9.682 €</td><td class="num">21.132 €</td><td class="num jetzt">36.213 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Zinsergebnis</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,2.0 7.7,4.3 15.3,6.7 23.0,9.1 30.7,11.4 38.3,13.7 46.0,16.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="16.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−2.845 €</td><td class="num minus">−2.799 €</td><td class="num minus">−2.751 €</td><td class="num minus">−2.705 €</td><td class="num minus">−2.658 €</td><td class="num minus">−2.613 €</td><td class="num jetzt minus">−2.567 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene0"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">EBT</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.0 15.3,9.9 23.0,10.6 30.7,11.7 38.3,7.5 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">-4.855 €</td><td class="num">757 €</td><td class="num">12.038 €</td><td class="num">9.927 €</td><td class="num">7.024 €</td><td class="num">18.520 €</td><td class="num jetzt">33.646 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">EBT-Marge</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,13.3 15.3,8.6 23.0,9.5 30.7,10.8 38.3,6.7 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">-1,8 %</td><td class="num">0,3 %</td><td class="num">4,0 %</td><td class="num">3,3 %</td><td class="num">2,3 %</td><td class="num">5,5 %</td><td class="num jetzt"><span class="marke gruen" title="Zielerreichung. Ziel ≥ 8.0 %">115 %</span>9,2 %</td><td class="num ziel">≥ 8,0 %</td></tr></tbody><tbody><tr class="blockkopf"><th scope="rowgroup" class="pos">Menge und Betrieb</th><td colspan="9"></td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Monteurstunden</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,12.4 15.3,7.9 23.0,10.2 30.7,14.6 38.3,5.7 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">2.500,3</td><td class="num">2.579,6</td><td class="num">2.679,4</td><td class="num">2.627,8</td><td class="num">2.531,3</td><td class="num">2.727,7</td><td class="num jetzt">2.810,3</td><td class="num ziel">–</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Kapazität</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,16.0 15.3,16.0 23.0,16.0 30.7,16.0 38.3,16.0 46.0,16.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="16.0" r="1.9" fill="currentColor"/></svg></td><td class="num">3.444</td><td class="num">3.444</td><td class="num">3.444</td><td class="num">3.444</td><td class="num">3.444</td><td class="num">3.444</td><td class="num jetzt">3.444</td><td class="num ziel">–</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Auslastung</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,12.4 15.3,7.9 23.0,10.2 30.7,14.6 38.3,5.7 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">72,6 %</td><td class="num">74,9 %</td><td class="num">77,8 %</td><td class="num">76,3 %</td><td class="num">73,5 %</td><td class="num">79,2 %</td><td class="num jetzt"><span class="marke gruen" title="Zielerreichung. Ziel ≥ 78.0 %">105 %</span>81,6 %</td><td class="num ziel">≥ 78,0 %</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Ø Erlös je Monteurstunde</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,16.0 15.3,12.4 23.0,11.7 30.7,6.6 38.3,6.6 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">107 €</td><td class="num">107 €</td><td class="num">113 €</td><td class="num">114 €</td><td class="num">122 €</td><td class="num">122 €</td><td class="num jetzt">130 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Deckungsbeitrag je Monteurstunde</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.7 15.3,11.1 23.0,9.9 30.7,4.3 38.3,7.3 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">68 €</td><td class="num">68 €</td><td class="num">72 €</td><td class="num">73 €</td><td class="num">77 €</td><td class="num">75 €</td><td class="num jetzt">79 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Mitarbeitende (Köpfe)</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,16.0 15.3,16.0 23.0,16.0 30.7,16.0 38.3,16.0 46.0,16.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="16.0" r="1.9" fill="currentColor"/></svg></td><td class="num">24</td><td class="num">24</td><td class="num">24</td><td class="num">24</td><td class="num">24</td><td class="num">24</td><td class="num jetzt">24</td><td class="num ziel">–</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Vollzeitäquivalente (VZÄ)</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,16.0 15.3,16.0 23.0,16.0 30.7,16.0 38.3,16.0 46.0,16.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="16.0" r="1.9" fill="currentColor"/></svg></td><td class="num">22,5</td><td class="num">22,5</td><td class="num">22,5</td><td class="num">22,5</td><td class="num">22,5</td><td class="num">22,5</td><td class="num jetzt">22,5</td><td class="num ziel">–</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Aktive Kunden / Objekte / Mandate</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,12.5 15.3,9.0 23.0,7.2 30.7,5.5 38.3,3.8 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">41</td><td class="num">43</td><td class="num">45</td><td class="num">46</td><td class="num">47</td><td class="num">48</td><td class="num jetzt"><span class="marke gruen" title="Zielerreichung. Ziel ≥ 40">123 %</span>49</td><td class="num ziel">≥ 40</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Neukunden bzw. Neuaufträge im Monat</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,9.0 7.7,16.0 15.3,2.0 23.0,12.5 30.7,5.5 38.3,9.0 46.0,12.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="12.5" r="1.9" fill="currentColor"/></svg></td><td class="num">7</td><td class="num">5</td><td class="num">9</td><td class="num">6</td><td class="num">8</td><td class="num">7</td><td class="num jetzt"><span class="marke rot" title="Zielerreichung. Ziel ≥ 8">75 %</span>6</td><td class="num ziel">≥ 8</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Auftragsbestand / Vertragsvolumen</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.5 15.3,12.0 23.0,10.2 30.7,8.9 38.3,7.0 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">512.000 €</td><td class="num">534.800 €</td><td class="num">571.400 €</td><td class="num">598.200 €</td><td class="num">616.900 €</td><td class="num">645.230 €</td><td class="num jetzt">718.561 €</td><td class="num ziel">–</td></tr></tbody><tbody><tr class="blockkopf"><th scope="rowgroup" class="pos">Liquidität und Bilanz</th><td colspan="9"></td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Liquide Mittel (Bank + Kasse)</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,2.0 7.7,5.7 15.3,7.5 23.0,10.3 30.7,12.2 38.3,14.0 46.0,16.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="16.0" r="1.9" fill="currentColor"/></svg></td><td class="num">148.300 €</td><td class="num">141.200 €</td><td class="num">137.800 €</td><td class="num">132.400 €</td><td class="num">128.900 €</td><td class="num">125.300 €</td><td class="num jetzt"><span class="marke rot" title="Zielerreichung. Ziel ≥ 150.000 €">81 %</span>121.560 €</td><td class="num ziel">≥ 150.000 €</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Offene Forderungen</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,15.1 15.3,12.4 23.0,11.4 30.7,10.3 38.3,7.3 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">392.000 €</td><td class="num">404.500 €</td><td class="num">441.000 €</td><td class="num">455.000 €</td><td class="num">470.000 €</td><td class="num">512.000 €</td><td class="num jetzt">584.093 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Debitorenlaufzeit</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,15.2 7.7,15.2 15.3,16.0 23.0,10.0 30.7,10.2 38.3,8.6 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">44 Tage</td><td class="num">44 Tage</td><td class="num">44 Tage</td><td class="num">46 Tage</td><td class="num">46 Tage</td><td class="num">46 Tage</td><td class="num jetzt"><span class="marke rot" title="Zielerreichung. Ziel ≤ 40 Tage">83 %</span>48 Tage</td><td class="num ziel">≤ 40 Tage</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Kurzfristige Verbindlichkeiten</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.4 15.3,12.0 23.0,10.4 30.7,8.7 38.3,5.8 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num minus">−498.000 €</td><td class="num minus">−505.000 €</td><td class="num minus">−516.000 €</td><td class="num minus">−523.000 €</td><td class="num minus">−531.000 €</td><td class="num minus">−544.000 €</td><td class="num jetzt minus">−561.000 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene1"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Eigenkapital</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,14.6 15.3,11.8 23.0,9.4 30.7,7.8 38.3,3.5 46.0,2.0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="2.0" r="1.9" fill="currentColor"/></svg></td><td class="num">742.000 €</td><td class="num">748.000 €</td><td class="num">760.000 €</td><td class="num">770.000 €</td><td class="num">777.000 €</td><td class="num">795.000 €</td><td class="num jetzt">801.400 €</td><td class="num ziel">–</td></tr><tr class="zeile ebene2"><th scope="row" class="pos"><span class="klapp leer"></span><span class="titel">Eigenkapitalquote</span></th><td class="funkezelle"><svg width="46" height="18" viewBox="0 0 46 18" aria-hidden="true" class="funke"><polyline points="0.0,16.0 7.7,13.7 15.3,9.6 23.0,6.3 30.7,4.8 38.3,2.0 46.0,10.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46.0" cy="10.5" r="1.9" fill="currentColor"/></svg></td><td class="num">35,4 %</td><td class="num">35,6 %</td><td class="num">35,9 %</td><td class="num">36,2 %</td><td class="num">36,3 %</td><td class="num">36,5 %</td><td class="num jetzt"><span class="marke gruen" title="Zielerreichung. Ziel ≥ 35.0 %">102 %</span>35,8 %</td><td class="num ziel">≥ 35,0 %</td></tr></tbody></table></div>
-          </section>
-          <p class="quelle">Grundlage ist die ausgefüllte Eingabevorlage. Der vollständige
-            Bericht als Dokument liegt unter
-            <a href="portal-vorschau-bericht.html">Berichte</a>.</p>
-        </div>
-      </main></div></section><section class="bildschirm" id="bs-admin-mandanten" hidden><div class="huelle"><aside class="seitenleiste">
-      <div class="seiten-marke">Valtix<span>Mandantenportal</span></div>
-      <button type="button" class="wechsler" aria-haspopup="listbox"><span class="signet">ML</span><span class="wechsler-text"><b>Muster Lüftungstechnik GmbH</b><span>Juli 2026</span></span><span class="chevron" aria-hidden="true">⌄</span></button><div class="seiten-kennzahl"><span>Liquide Mittel</span><b>121.560 €</b></div>
-      <p class="nav-titel">Auswertung</p>
-      <nav class="seiten-nav"><a href="#" data-ziel="admin-auswertung"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v10M4 7v6M12 6v7"/></svg>Auswertung</a><a href="#" data-ziel="admin-berichte"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h8v10H4z M6 6h4M6 9h4"/></svg>Berichte</a></nav>
-      <p class="nav-titel">Verwaltung</p><nav class="seiten-nav"><a href="#" data-ziel="admin-mandanten" aria-current="page"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13v-1a3 3 0 013-3h4a3 3 0 013 3v1M8 3a2.5 2.5 0 110 5 2.5 2.5 0 010-5"/></svg>Mandanten</a><a href="#" data-ziel="admin-zugaenge"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7V5a2 2 0 114 0v2M4 7h8v6H4z"/></svg>Zugänge</a><a href="#" data-ziel="admin-protokoll"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h8v10H4z M6 6h4M6 9h3"/></svg>Protokoll</a></nav>
-      <div class="seiten-fuss">
-        <div class="person"><span class="signet klein">A</span>
-          <span><b>Administrator</b><span>admin@vorschau.valtix</span></span></div>
-        <button type="button" class="knopf stumm schmal" data-ziel="anmelden">Abmelden</button>
-      </div>
-    </aside>
-      <main class="flaeche">
-        <div class="werkzeugleiste">
-      <div class="wz-links">
-        <span class="wz-titel">Mandanten</span>
-        <span class="wz-zeitraum">Jan 2026 bis
-          Jul 2026</span>
-      </div>
-      <div class="monatsleiste" role="group" aria-label="Berichtsmonat"><button type="button" class="monat" disabled>Jan</button><button type="button" class="monat" disabled>Feb</button><button type="button" class="monat" disabled>Mär</button><button type="button" class="monat" disabled>Apr</button><button type="button" class="monat" disabled>Mai</button><button type="button" class="monat" disabled>Jun</button><button type="button" class="monat an">Jul</button></div>
-      <span class="wz-stand">Stand Juli 2026</span>
+    <button class="knopf breit" type="submit">Anmelden</button>
+  </form>
+  <p class="hinweis" style="margin-top:16px">Noch keinen Zugang? Ihren Zugang richten wir
+    im Rahmen der monatlichen Betreuung ein.
+    <a href="index.html#kontakt">Schreiben Sie uns</a>.</p>
+</div></div></section>
+<section id="bs-app" hidden>
+  <div class="kopf"><div class="kopf-innen">
+    <div class="marke">Valtix<span>Mandantenportal</span></div>
+    <div class="wechsler">
+      <button class="pfeil" id="pfeil-zurueck" type="button"
+        aria-label="Vorheriger Monat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <div class="wechsler-text"><b id="monat-name"></b><span id="monat-stand"></span></div>
+      <button class="pfeil" id="pfeil-vor" type="button"
+        aria-label="Nächster Monat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
     </div>
-        <div class="inhalt">
-          <section class="karte flach">
-            <div class="karten-kopf"><h2>Mandanten</h2></div>
-            <div class="rasterrahmen"><table class="liste"><thead><tr>
-              <th>Name</th><th class="num">Berichte</th><th>Letzter Bericht</th>
-              <th class="num">&nbsp;</th></tr></thead><tbody><tr><td>Muster Lüftungstechnik GmbH</td><td class="num">3</td><td>Juli 2026</td><td class="num"><a class="knopf stumm schmal" href="#" data-ziel="admin-auswertung">Öffnen</a></td></tr><tr><td>Beispiel Bau GmbH</td><td class="num">1</td><td>Juli 2026</td><td class="num"><a class="knopf stumm schmal" href="#" data-ziel="admin-auswertung">Öffnen</a></td></tr><tr><td>Beispiel Handel e. K.</td><td class="num">2</td><td>Juli 2026</td><td class="num"><a class="knopf stumm schmal" href="#" data-ziel="admin-auswertung">Öffnen</a></td></tr></tbody></table></div>
-          </section>
-          <section class="karte">
-            <div class="karten-kopf"><h2>Bericht einstellen</h2></div>
-            <form onsubmit="return false" class="formular">
-              <label for="m">Mandant</label>
-              <select id="m"><option>Muster Lüftungstechnik GmbH</option>
-                <option>Beispiel Bau GmbH</option>
-                <option>Beispiel Handel e. K.</option></select>
-              <label for="d">Ausgefüllte Eingabevorlage (.xlsx)</label>
-              <input id="d" type="file" accept=".xlsx" disabled>
-              <button class="knopf" type="button" disabled>Hochladen und Bericht erzeugen</button>
-              <p class="hinweis">In der Vorschau ohne Funktion. Es lässt sich nichts hochladen.</p>
-            </form>
-          </section>
-        </div>
-      </main></div></section><section class="bildschirm" id="bs-admin-zugaenge" hidden><div class="huelle"><aside class="seitenleiste">
-      <div class="seiten-marke">Valtix<span>Mandantenportal</span></div>
-      <button type="button" class="wechsler" aria-haspopup="listbox"><span class="signet">ML</span><span class="wechsler-text"><b>Muster Lüftungstechnik GmbH</b><span>Juli 2026</span></span><span class="chevron" aria-hidden="true">⌄</span></button><div class="seiten-kennzahl"><span>Liquide Mittel</span><b>121.560 €</b></div>
-      <p class="nav-titel">Auswertung</p>
-      <nav class="seiten-nav"><a href="#" data-ziel="admin-auswertung"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v10M4 7v6M12 6v7"/></svg>Auswertung</a><a href="#" data-ziel="admin-berichte"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h8v10H4z M6 6h4M6 9h4"/></svg>Berichte</a></nav>
-      <p class="nav-titel">Verwaltung</p><nav class="seiten-nav"><a href="#" data-ziel="admin-mandanten"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13v-1a3 3 0 013-3h4a3 3 0 013 3v1M8 3a2.5 2.5 0 110 5 2.5 2.5 0 010-5"/></svg>Mandanten</a><a href="#" data-ziel="admin-zugaenge" aria-current="page"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7V5a2 2 0 114 0v2M4 7h8v6H4z"/></svg>Zugänge</a><a href="#" data-ziel="admin-protokoll"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h8v10H4z M6 6h4M6 9h3"/></svg>Protokoll</a></nav>
-      <div class="seiten-fuss">
-        <div class="person"><span class="signet klein">A</span>
-          <span><b>Administrator</b><span>admin@vorschau.valtix</span></span></div>
-        <button type="button" class="knopf stumm schmal" data-ziel="anmelden">Abmelden</button>
-      </div>
-    </aside>
-      <main class="flaeche">
-        <div class="werkzeugleiste">
-      <div class="wz-links">
-        <span class="wz-titel">Zugänge</span>
-        <span class="wz-zeitraum">Jan 2026 bis
-          Jul 2026</span>
-      </div>
-      <div class="monatsleiste" role="group" aria-label="Berichtsmonat"><button type="button" class="monat" disabled>Jan</button><button type="button" class="monat" disabled>Feb</button><button type="button" class="monat" disabled>Mär</button><button type="button" class="monat" disabled>Apr</button><button type="button" class="monat" disabled>Mai</button><button type="button" class="monat" disabled>Jun</button><button type="button" class="monat an">Jul</button></div>
-      <span class="wz-stand">Stand Juli 2026</span>
+    <div class="nutzer">
+      <div class="nutzer-text"><b>Muster Lüftungstechnik GmbH</b><span>Ansprechpartner Muster</span></div>
+      <div class="signet">ML</div>
+      <button class="knopf stumm schmal" type="button" data-abmelden>Abmelden</button>
     </div>
-        <div class="inhalt">
-          <section class="karte flach">
-            <div class="karten-kopf"><h2>Zugänge</h2></div>
-            <div class="rasterrahmen"><table class="liste"><thead><tr>
-              <th>Name</th><th>E-Mail</th><th>Zugehörigkeit</th><th>Status</th>
-            </tr></thead><tbody><tr><td>Administrator</td><td>admin@vorschau.valtix</td><td>Administrator</td><td><span class="status gut">aktiv</span></td></tr><tr><td>Ansprechpartner Muster</td><td>mandant@vorschau.valtix</td><td>Muster Lüftungstechnik GmbH</td><td><span class="status gut">aktiv</span></td></tr><tr><td>Ansprechpartner Beispiel Bau</td><td>bau@vorschau.valtix</td><td>Beispiel Bau GmbH</td><td><span class="status offen">Einladung offen</span></td></tr></tbody></table></div>
-          </section>
-          <section class="karte">
-            <div class="karten-kopf"><h2>Zugang anlegen</h2></div>
-            <form onsubmit="return false" class="formular">
-              <label for="zn">Name</label><input id="zn" disabled>
-              <label for="ze">E-Mail</label><input id="ze" type="email" disabled>
-              <label for="zr">Rolle</label>
-              <select id="zr" disabled><option>Mandant</option>
-                <option>Administrator</option></select>
-              <button class="knopf" type="button" disabled>Zugang anlegen</button>
-              <p class="hinweis">Es wird kein Passwort vergeben. Die Person setzt es selbst
-                über einen einmaligen Link.</p>
-            </form>
-          </section>
-        </div>
-      </main></div></section><section class="bildschirm" id="bs-admin-protokoll" hidden><div class="huelle"><aside class="seitenleiste">
-      <div class="seiten-marke">Valtix<span>Mandantenportal</span></div>
-      <button type="button" class="wechsler" aria-haspopup="listbox"><span class="signet">ML</span><span class="wechsler-text"><b>Muster Lüftungstechnik GmbH</b><span>Juli 2026</span></span><span class="chevron" aria-hidden="true">⌄</span></button><div class="seiten-kennzahl"><span>Liquide Mittel</span><b>121.560 €</b></div>
-      <p class="nav-titel">Auswertung</p>
-      <nav class="seiten-nav"><a href="#" data-ziel="admin-auswertung"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v10M4 7v6M12 6v7"/></svg>Auswertung</a><a href="#" data-ziel="admin-berichte"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h8v10H4z M6 6h4M6 9h4"/></svg>Berichte</a></nav>
-      <p class="nav-titel">Verwaltung</p><nav class="seiten-nav"><a href="#" data-ziel="admin-mandanten"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13v-1a3 3 0 013-3h4a3 3 0 013 3v1M8 3a2.5 2.5 0 110 5 2.5 2.5 0 010-5"/></svg>Mandanten</a><a href="#" data-ziel="admin-zugaenge"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7V5a2 2 0 114 0v2M4 7h8v6H4z"/></svg>Zugänge</a><a href="#" data-ziel="admin-protokoll" aria-current="page"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h8v10H4z M6 6h4M6 9h3"/></svg>Protokoll</a></nav>
-      <div class="seiten-fuss">
-        <div class="person"><span class="signet klein">A</span>
-          <span><b>Administrator</b><span>admin@vorschau.valtix</span></span></div>
-        <button type="button" class="knopf stumm schmal" data-ziel="anmelden">Abmelden</button>
-      </div>
-    </aside>
-      <main class="flaeche">
-        <div class="werkzeugleiste">
-      <div class="wz-links">
-        <span class="wz-titel">Protokoll</span>
-        <span class="wz-zeitraum">Jan 2026 bis
-          Jul 2026</span>
-      </div>
-      <div class="monatsleiste" role="group" aria-label="Berichtsmonat"><button type="button" class="monat" disabled>Jan</button><button type="button" class="monat" disabled>Feb</button><button type="button" class="monat" disabled>Mär</button><button type="button" class="monat" disabled>Apr</button><button type="button" class="monat" disabled>Mai</button><button type="button" class="monat" disabled>Jun</button><button type="button" class="monat an">Jul</button></div>
-      <span class="wz-stand">Stand Juli 2026</span>
-    </div>
-        <div class="inhalt">
-          <section class="karte flach">
-            <div class="karten-kopf"><h2>Letzte Ereignisse</h2>
-              <p class="hinweis">Anmeldungen, Zugriffe auf Berichte und Änderungen an
-                Zugängen werden festgehalten.</p></div>
-            <div class="rasterrahmen"><table class="liste"><thead><tr>
-              <th>Zeitpunkt</th><th>Ereignis</th><th>E-Mail</th><th>Detail</th>
-            </tr></thead><tbody><tr><td>06.08.2026 09:14:02</td><td>anmeldung</td><td>mandant@vorschau.valtix</td><td></td></tr><tr><td>06.08.2026 09:14:11</td><td>bericht_geoeffnet</td><td>mandant@vorschau.valtix</td><td>Juli 2026</td></tr><tr><td>06.08.2026 08:52:40</td><td>bericht_eingestellt</td><td>admin@vorschau.valtix</td><td>Muster Lüftungstechnik GmbH</td></tr><tr><td>05.08.2026 17:30:19</td><td>zugang_angelegt</td><td>admin@vorschau.valtix</td><td>bau@vorschau.valtix</td></tr><tr><td>05.08.2026 17:29:03</td><td>anmeldung_fehlgeschlagen</td><td></td><td>unbekannte Kennung</td></tr></tbody></table></div>
-          </section>
-        </div>
-      </main></div></section>
+  </div></div>
+  <div class="reiter"><div class="reiter-innen" role="tablist"><button type="button" data-reiter="ueberblick" role="tab" aria-selected="true">Überblick</button><button type="button" data-reiter="detail" role="tab" aria-selected="false">Zahlen im Detail</button><button type="button" data-reiter="mandanten" role="tab" aria-selected="false" class="nur-admin" hidden>Mandanten</button><button type="button" data-reiter="zugaenge" role="tab" aria-selected="false" class="nur-admin" hidden>Zugänge</button><button type="button" data-reiter="protokoll" role="tab" aria-selected="false" class="nur-admin" hidden>Protokoll</button></div></div>
+  <div class="flaeche">
+    <div id="flaeche"></div>
+    <section class="karte flach verwaltung" data-reiter="mandanten" hidden><div class="karten-kopf"><h2>Mandanten</h2></div><div class="rahmen"><table><thead><tr><th>Name</th><th class="num">Berichte</th><th>Letzter Bericht</th></tr></thead><tbody><tr><td>Muster Lüftungstechnik GmbH</td><td class="num">3</td><td>Juli 2026</td></tr><tr><td>Beispiel Bau GmbH</td><td class="num">1</td><td>Juli 2026</td></tr><tr><td>Beispiel Handel e. K.</td><td class="num">2</td><td>Juli 2026</td></tr></tbody></table></div><div class="formular">
+      <div class="feld"><label for="vm">Mandant</label>
+        <select id="vm" disabled><option>Muster Lüftungstechnik GmbH</option></select></div>
+      <div class="feld"><label for="vd">Ausgefüllte Eingabevorlage (.xlsx)</label>
+        <input id="vd" type="file" accept=".xlsx" disabled></div>
+      <button class="knopf" type="button" disabled>Hochladen und Bericht erzeugen</button>
+      <p class="hinweis" style="margin-top:10px">In der Vorführung ohne Funktion.
+        Es lässt sich nichts hochladen.</p>
+    </div></section><section class="karte flach verwaltung" data-reiter="zugaenge" hidden><div class="karten-kopf"><h2>Zugänge</h2></div><div class="rahmen"><table><thead><tr><th>Name</th><th>E-Mail</th><th>Zugehörigkeit</th><th>Status</th></tr></thead><tbody><tr><td>Administrator</td><td>admin@vorschau.valtix</td><td>Administrator</td><td><span class="status gut">aktiv</span></td></tr><tr><td>Ansprechpartner Muster</td><td>mandant@vorschau.valtix</td><td>Muster Lüftungstechnik GmbH</td><td><span class="status gut">aktiv</span></td></tr><tr><td>Ansprechpartner Beispiel Bau</td><td>bau@vorschau.valtix</td><td>Beispiel Bau GmbH</td><td><span class="status offen">Einladung offen</span></td></tr></tbody></table></div></section><section class="karte flach verwaltung" data-reiter="protokoll" hidden><div class="karten-kopf"><h2>Letzte Ereignisse</h2></div><div class="rahmen"><table><thead><tr><th>Zeitpunkt</th><th>Ereignis</th><th>E-Mail</th><th>Detail</th></tr></thead><tbody><tr><td>06.08.2026 09:14:02</td><td>anmeldung</td><td>mandant@vorschau.valtix</td><td></td></tr><tr><td>06.08.2026 09:14:11</td><td>bericht_geoeffnet</td><td>mandant@vorschau.valtix</td><td>Juli 2026</td></tr><tr><td>06.08.2026 08:52:40</td><td>bericht_eingestellt</td><td>admin@vorschau.valtix</td><td>Muster Lüftungstechnik GmbH</td></tr><tr><td>05.08.2026 17:30:19</td><td>zugang_angelegt</td><td>admin@vorschau.valtix</td><td>bau@vorschau.valtix</td></tr><tr><td>05.08.2026 17:29:03</td><td>anmeldung_fehlgeschlagen</td><td></td><td>unbekannte Kennung</td></tr></tbody></table></div></section>
+  </div>
+</section>
 <div class="fuss">Valtix Financial Management · Luca Sparhuber und Sharif Ibrahim GbR,
 Leipzig · Diese Seite dient allein der Ansicht. Sie verarbeitet keine personenbezogenen
 Daten, setzt keine Cookies und sendet nichts an einen Server.</div>
+<script>window.__valtix = {"firma": "Muster Lüftungstechnik GmbH", "branche": "Lüftungs- und Klimatechnik (Beispieldaten)", "jahr": 2026, "monate": [{"lang": "Januar", "kurz": "Jan", "eingestellt": "06.02.2026"}, {"lang": "Februar", "kurz": "Feb", "eingestellt": "05.03.2026"}, {"lang": "März", "kurz": "Mär", "eingestellt": "07.04.2026"}, {"lang": "April", "kurz": "Apr", "eingestellt": "06.05.2026"}, {"lang": "Mai", "kurz": "Mai", "eingestellt": "05.06.2026"}, {"lang": "Juni", "kurz": "Jun", "eingestellt": "07.07.2026"}, {"lang": "Juli", "kurz": "Jul", "eingestellt": "06.08.2026"}], "aktiv": 6, "kommentare": ["Der Start ins Jahr endet mit einem Verlust von 4.855 €. Vor Abschreibungen und Zinsen steht ein Plus von 4.671 €, das reicht aber nicht, um beides zu decken.", "Erstmals ein positives Ergebnis, wenn auch knapp. Der Kontostand sinkt trotzdem weiter, um 7.100 € gegenüber Januar.", "Ein deutlicher Sprung auf 12.038 € Ergebnis bei gestiegener Auslastung. Der Kontostand sinkt trotzdem, weil Ihre Kunden unverändert erst nach 44 Tagen zahlen.", "Etwas schwächer als im März: der Umsatz geht leicht zurück, das Ergebnis auf 9.927 €. Ihre Kunden zahlen jetzt nach 46 statt nach 44 Tagen.", "Der Umsatz wächst, das Ergebnis nicht: die festen Kosten liegen rund 7.800 € über dem April. Wir sollten über die Personalkosten sprechen.", "Ein gutes Ergebnis von 18.519 €. Die Deckungsbeitragsquote ist erstmals unter 62 % gefallen, das liegt am höheren Materialanteil.", "Der Umsatz liegt erstmals über Ihrem Monatsziel, das Ergebnis hat sich gegenüber Juni fast verdoppelt. Zwei Dinge sollten wir besprechen: der Kontostand sinkt seit Januar, und Ihre Kunden zahlen im Schnitt nach 48 Tagen, acht Tage über Ihrem eigenen Ziel."], "kennzahlen": [{"klar": "Umsatz", "erklaerung": "Was Sie im Monat in Rechnung gestellt haben", "art": "geld", "ziel": 335000.0, "richtung": "hoeher", "reihe": [267251.0, 275718.0, 302304.0, 299566.0, 309788.0, 333812.16000000003, 365057.97]}, {"klar": "Gewinnmarge vor Steuern", "erklaerung": "Gewinn vor Steuern, gemessen am Umsatz. Fachbegriff EBT-Marge", "art": "prozent", "ziel": 8.0, "richtung": "hoeher", "reihe": [-1.8166480200261121, 0.27455588681188553, 3.9820875674817415, 3.3137906170927227, 2.2673570312600857, 5.547880580503732, 9.216566344243889]}, {"klar": "Was nach Material und Fremdleistung bleibt", "erklaerung": "Anteil an der Gesamtleistung. Fachbegriff Deckungsbeitragsquote", "art": "prozent", "ziel": 40.0, "richtung": "hoeher", "reihe": [63.1604783518116, 63.3748975402404, 63.40438763628665, 63.602675203461004, 63.06861466551319, 61.02331622670667, 61.10441713998587]}, {"klar": "Kontostand", "erklaerung": "Bank und Kasse am Monatsende", "art": "geld", "ziel": 150000.0, "richtung": "hoeher", "reihe": [148300.0, 141200.0, 137800.0, 132400.0, 128900.0, 125300.0, 121560.45]}, {"klar": "Eigenkapitalquote", "erklaerung": "Anteil des Eigenkapitals an der Bilanzsumme", "art": "prozent", "ziel": 35.0, "richtung": "hoeher", "reihe": [35.36701620591039, 35.551330798479086, 35.88290840415486, 36.15023474178404, 36.27450980392157, 36.50137741046832, 35.80875781948168]}, {"klar": "Ihre Kunden zahlen nach", "erklaerung": "Durchschnitt in Tagen. Fachbegriff Debitorenlaufzeit", "art": "tage", "ziel": 40.0, "richtung": "niedriger", "reihe": [44.00357716154477, 44.01236045524775, 43.76389329946014, 45.56591869571314, 45.51499735302852, 46.01390195012667, 47.99999983564255]}, {"klar": "Auslastung", "erklaerung": "Geleistete Stunden gemessen an Ihrer Kapazität", "art": "prozent", "ziel": 78.0, "richtung": "hoeher", "reihe": [72.59988385598142, 74.90011614401858, 77.7999419279907, 76.29994192799072, 73.50000000000001, 79.2000580720093, 81.59988385598143]}, {"klar": "Aktive Kunden", "erklaerung": "Objekte und Mandate mit Umsatz im Monat", "art": "zahl", "ziel": 40.0, "richtung": "hoeher", "reihe": [41.0, 43.0, 45.0, 46.0, 47.0, 48.0, 49.0]}, {"klar": "Neukunden", "erklaerung": "Neue Kunden oder Aufträge im Monat", "art": "zahl", "ziel": 8.0, "richtung": "hoeher", "reihe": [7.0, 5.0, 9.0, 6.0, 8.0, 7.0, 6.0]}], "detail": [{"schluessel": "umsatz", "klar": "Umsatz", "fach": "", "art": "geld", "reihe": [267251.0, 275718.0, 302304.0, 299566.0, 309788.0, 333812.16000000003, 365057.97], "minus": false, "stark": false, "kind": false, "gruppe": "", "klappbar": true, "anzahl": 2}, {"schluessel": "umsatz-6", "klar": "Erlöse Hauptleistung", "fach": "", "art": "geld", "reihe": [167031.88, 172323.75, 188940.0, 187228.75, 193617.5, 208632.6, 228196.36], "minus": false, "stark": false, "kind": true, "gruppe": "umsatz", "klappbar": false, "anzahl": 0}, {"schluessel": "umsatz-9", "klar": "Warenverkauf / weiterberechnetes Material", "fach": "", "art": "geld", "reihe": [100219.12, 103394.25, 113364.0, 112337.25, 116170.5, 125179.56, 136861.61], "minus": false, "stark": false, "kind": true, "gruppe": "umsatz", "klappbar": false, "anzahl": 0}, {"schluessel": "sonstige_ertrag", "klar": "Sonstige betriebliche Erträge", "fach": "", "art": "geld", "reihe": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2345.6], "minus": false, "stark": false, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "gesamtleistung", "klar": "Gesamtleistung", "fach": "", "art": "geld", "reihe": [267251.0, 275718.0, 302304.0, 299566.0, 309788.0, 333812.16000000003, 367403.56999999995], "minus": false, "stark": true, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "variabel", "klar": "Mengenabhängige Kosten", "fach": "variable Kosten", "art": "geld", "reihe": [98453.99, 100982.0, 110629.99999999999, 109034.01000000001, 114409.0, 130108.90999999999, 142903.76], "minus": true, "stark": false, "kind": false, "gruppe": "", "klappbar": true, "anzahl": 3}, {"schluessel": "variabel-15", "klar": "Wareneinsatz / Materialaufwand", "fach": "", "art": "geld", "reihe": [80171.09, 82229.64, 90086.01, 88786.39, 93163.25, 105947.68, 116346.42], "minus": true, "stark": false, "kind": true, "gruppe": "variabel", "klappbar": false, "anzahl": 0}, {"schluessel": "variabel-16", "klar": "Fremdleistungen / Subunternehmer", "fach": "", "art": "geld", "reihe": [11804.63, 12107.74, 13264.54, 13073.18, 13717.64, 15600.06, 17142.83], "minus": true, "stark": false, "kind": true, "gruppe": "variabel", "klappbar": false, "anzahl": 0}, {"schluessel": "variabel-21", "klar": "Sonstige variable Kosten", "fach": "", "art": "geld", "reihe": [6478.27, 6644.62, 7279.45, 7174.44, 7528.11, 8561.17, 9414.51], "minus": true, "stark": false, "kind": true, "gruppe": "variabel", "klappbar": false, "anzahl": 0}, {"schluessel": "db", "klar": "Was danach bleibt", "fach": "Deckungsbeitrag", "art": "geld", "reihe": [168797.01, 174736.0, 191674.0, 190531.99, 195379.0, 203703.25000000006, 224499.80999999994], "minus": false, "stark": true, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "db_quote", "klar": "Anteil an der Gesamtleistung", "fach": "Deckungsbeitragsquote", "art": "prozent", "reihe": [63.1604783518116, 63.3748975402404, 63.40438763628665, 63.602675203461004, 63.06861466551319, 61.02331622670667, 61.10441713998587], "minus": false, "stark": false, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "fix", "klar": "Feste Kosten", "fach": "Fixkosten", "art": "geld", "reihe": [164126.12, 164499.1, 170204.09, 171219.1, 179016.1, 175890.1, 181605.65], "minus": true, "stark": false, "kind": false, "gruppe": "", "klappbar": true, "anzahl": 7}, {"schluessel": "fix-27", "klar": "Personalaufwand (inkl. Arbeitgeberanteil)", "fach": "", "art": "geld", "reihe": [128379.44, 128671.2, 133133.65, 133927.58, 140026.39, 137581.24, 142062.35], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "fix-28", "klar": "Miete & Nebenkosten", "fach": "", "art": "geld", "reihe": [10602.55, 10626.64, 10995.18, 11060.75, 11564.44, 11362.5, 11737.4], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "fix-30", "klar": "Fahrzeuge / Fuhrpark", "fach": "", "art": "geld", "reihe": [10044.52, 10067.34, 10416.49, 10478.61, 10955.79, 10764.47, 11124.35], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "fix-32", "klar": "Versicherungen & Beiträge (inkl. Berufsgenossenschaft)", "fach": "", "art": "geld", "reihe": [4956.61, 4967.87, 5140.16, 5170.82, 5406.29, 5311.88, 5476.3], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "fix-33", "klar": "IT, Software & Kommunikation", "fach": "", "art": "geld", "reihe": [2117.23, 2122.04, 2195.63, 2208.73, 2309.31, 2268.98, 2340.75], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "fix-34", "klar": "Marketing & Vertrieb", "fach": "", "art": "geld", "reihe": [2691.67, 2697.79, 2791.35, 2807.99, 2935.86, 2884.6, 2987.6], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "fix-36", "klar": "Sonstige betriebliche Aufwendungen", "fach": "", "art": "geld", "reihe": [5334.1, 5346.22, 5531.63, 5564.62, 5818.02, 5716.43, 5876.9], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "ebitda", "klar": "Ergebnis vor Abschreibungen und Zinsen", "fach": "EBITDA", "art": "geld", "reihe": [4670.890000000014, 10236.899999999994, 21469.910000000003, 19312.889999999985, 16362.899999999994, 27813.150000000052, 42894.159999999945], "minus": false, "stark": true, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "afa", "klar": "Abschreibungen", "fach": "", "art": "geld", "reihe": [6680.9, 6680.9, 6680.9, 6680.9, 6680.9, 6680.9, 6680.9], "minus": true, "stark": false, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "ebit", "klar": "Ergebnis vor Zinsen", "fach": "EBIT", "art": "geld", "reihe": [-2010.0099999999857, 3555.9999999999945, 14789.010000000004, 12631.989999999985, 9681.999999999995, 21132.25000000005, 36213.259999999944], "minus": false, "stark": true, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "zins", "klar": "Zinsen", "fach": "", "art": "geld", "reihe": [2845.0, 2799.0, 2751.0, 2705.0, 2658.0, 2612.75, 2567.45], "minus": true, "stark": false, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "ebt", "klar": "Gewinn vor Steuern", "fach": "EBT", "art": "geld", "reihe": [-4855.009999999986, 756.9999999999945, 12038.010000000004, 9926.989999999985, 7023.9999999999945, 18519.50000000005, 33645.80999999995], "minus": false, "stark": true, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "ebt_marge", "klar": "Gewinnmarge vor Steuern", "fach": "EBT-Marge", "art": "prozent", "reihe": [-1.8166480200261121, 0.27455588681188553, 3.9820875674817415, 3.3137906170927227, 2.2673570312600857, 5.547880580503732, 9.216566344243889], "minus": false, "stark": false, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}], "umsatz": [267251.0, 275718.0, 302304.0, 299566.0, 309788.0, 333812.16000000003, 365057.97], "bericht": "portal-vorschau-bericht.html"};</script>
 <script>
-(function(){
-  var zeigen = function(id){
-    document.querySelectorAll('.bildschirm').forEach(function(s){
-      s.hidden = (s.id !== 'bs-' + id);
+(function () {
+  var D = window.__valtix;
+  var stand = { monat: D.aktiv, reiter: 'ueberblick', auf: { rot: true, gelb: true, gruen: false },
+                offen: {}, gemerkt: true, sichtbar: false };
+
+  // ---------------------------------------------------------------- Formate
+  function tausend(s) { return s.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+  function eur(w) {
+    if (w === null || w === undefined) return '–';
+    return (w < 0 ? '−' : '') + tausend(Math.abs(w).toFixed(0)) + ' €';
+  }
+  function proz(w) {
+    if (w === null || w === undefined) return '–';
+    return w.toFixed(1).replace('.', ',').replace('-', '−') + ' %';
+  }
+  function tage(w) { return w === null || w === undefined ? '–' : w.toFixed(0) + ' Tage'; }
+  function zahl(w) { return w === null || w === undefined ? '–' : w.toFixed(0); }
+  function fmt(art, w) {
+    return art === 'geld' ? eur(w) : art === 'prozent' ? proz(w)
+         : art === 'tage' ? tage(w) : zahl(w);
+  }
+  function el(tag, klasse, text) {
+    var e = document.createElement(tag);
+    if (klasse) e.className = klasse;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+
+  // -------------------------------------------------------------- Bewertung
+  function bewerten(k, i) {
+    var ist = k.reihe[i];
+    if (ist === null || ist === undefined || !k.ziel) return null;
+    // Abweichung als Anteil des Ziels, damit die Gelbschwelle in beide
+    // Richtungen bei zehn Prozent liegt.
+    var erreicht = k.richtung === 'hoeher' ? ist >= k.ziel : ist <= k.ziel;
+    var daneben = Math.abs(ist - k.ziel) / Math.abs(k.ziel);
+    return { stufe: erreicht ? 'gruen' : (daneben <= 0.1 ? 'gelb' : 'rot'), erreicht: erreicht };
+  }
+
+  // ------------------------------------------------------------------- Kopf
+  function kopf() {
+    var m = D.monate[stand.monat];
+    document.getElementById('monat-name').textContent = m.lang + ' ' + D.jahr;
+    document.getElementById('monat-stand').textContent = 'Bericht vom ' + m.eingestellt;
+    document.getElementById('pfeil-zurueck').disabled = stand.monat === 0;
+    document.getElementById('pfeil-vor').disabled = stand.monat === D.monate.length - 1;
+  }
+
+  // -------------------------------------------------------------- Überblick
+  function ueberblick() {
+    var i = stand.monat, vor = i > 0 ? i - 1 : null;
+    var wurzel = document.createDocumentFragment();
+
+    var k = el('section', 'kommentar');
+    var kt = el('div', 'kommentar-text');
+    kt.appendChild(el('div', 'kennung', 'Das sagt Ihr Berater zum ' + D.monate[i].lang));
+    kt.appendChild(el('p', null, D.kommentare[i]));
+    k.appendChild(kt);
+    var kn = el('div', 'kommentar-knoepfe');
+    var frage = el('button', 'knopf', 'Rückfrage stellen');
+    frage.type = 'button';
+    var pdf = el('a', 'knopf stumm', 'Vollständigen Bericht öffnen');
+    pdf.href = D.bericht;
+    kn.appendChild(frage); kn.appendChild(pdf);
+    k.appendChild(kn);
+    wurzel.appendChild(k);
+
+    var faecher = { rot: [], gelb: [], gruen: [] };
+    D.kennzahlen.forEach(function (kz) {
+      var b = bewerten(kz, i);
+      if (b) faecher[b.stufe].push({ kz: kz, b: b });
     });
-    window.scrollTo(0,0);
-    // Das Raster oeffnet beim Berichtsmonat, nicht beim Januar. Sonst muesste
-    // man auf schmalen Bildschirmen erst nach rechts schieben.
-    document.querySelectorAll('#bs-' + id + ' .rasterrahmen').forEach(function(r){
-      var jetzt = r.querySelector('thead th.jetzt');
-      if (!jetzt) return;
-      var ziel = jetzt.offsetLeft + jetzt.offsetWidth - r.clientWidth + 110;
-      r.scrollLeft = Math.max(0, ziel);
+
+    [['rot', 'Braucht Aufmerksamkeit', '!'],
+     ['gelb', 'Im Blick behalten', '•'],
+     ['gruen', 'Läuft nach Plan', '✓']].forEach(function (g) {
+      var liste = faecher[g[0]];
+      if (!liste.length) return;
+      var box = el('section', 'gruppe g-' + g[0]);
+      var kopfKnopf = el('button', 'gruppe-kopf');
+      kopfKnopf.type = 'button';
+      kopfKnopf.setAttribute('aria-expanded', String(stand.auf[g[0]]));
+      kopfKnopf.appendChild(el('span', 'zeichen', g[2]));
+      kopfKnopf.appendChild(el('span', 'titel', g[1]));
+      kopfKnopf.appendChild(el('span', 'anzahl',
+        liste.length === 1 ? '1 Kennzahl' : liste.length + ' Kennzahlen'));
+      kopfKnopf.appendChild(el('span', 'klapp', stand.auf[g[0]] ? 'zuklappen' : 'anzeigen'));
+      kopfKnopf.addEventListener('click', function () {
+        stand.auf[g[0]] = !stand.auf[g[0]];
+        zeichnen();
+      });
+      box.appendChild(kopfKnopf);
+
+      if (stand.auf[g[0]]) {
+        liste.forEach(function (p) {
+          var kz = p.kz, ist = kz.reihe[i];
+          var z = el('div', 'posten');
+          var nf = el('div', 'name-feld');
+          nf.appendChild(el('div', 'name', kz.klar));
+          nf.appendChild(el('div', 'erklaerung', kz.erklaerung));
+          z.appendChild(nf);
+
+          var w = el('div', 'wert');
+          w.appendChild(el('b', null, fmt(kz.art, ist)));
+          w.appendChild(el('span', null, vor === null ? 'kein Vormonat'
+            : 'Vormonat ' + fmt(kz.art, kz.reihe[vor])));
+          z.appendChild(w);
+
+          z.appendChild(el('div', 'ziel',
+            (kz.richtung === 'hoeher' ? 'Ziel ab ' : 'Ziel bis ') + fmt(kz.art, kz.ziel)));
+
+          var t = el('div', 'tat');
+          if (p.b.erreicht) {
+            t.appendChild(el('span', 'abstand a-gruen',
+              fmt(kz.art, Math.abs(ist - kz.ziel)) + ' besser'));
+          } else {
+            var nach = el('button', 'knopf stumm schmal', 'Dazu nachfragen');
+            nach.type = 'button';
+            t.appendChild(nach);
+          }
+          z.appendChild(t);
+          box.appendChild(z);
+        });
+      }
+      wurzel.appendChild(box);
     });
-    if (history.replaceState) history.replaceState(null, '', '#ansicht-' + id);
-  };
-  document.addEventListener('click', function(e){
-    var klapp = e.target.closest('.klapp[data-gruppe]');
-    if (klapp) {
-      var auf = klapp.getAttribute('aria-expanded') !== 'true';
-      klapp.setAttribute('aria-expanded', String(auf));
-      klapp.closest('table').querySelectorAll('.zu-' + klapp.dataset.gruppe)
-        .forEach(function(tr){ tr.hidden = !auf; });
+
+    // Verlauf
+    var v = el('section', 'karte');
+    var vk = el('div', 'karten-kopf');
+    vk.appendChild(el('h2', null, 'Umsatz im Jahresverlauf'));
+    vk.appendChild(el('p', 'hinweis', 'Wählen Sie einen Monat aus'));
+    v.appendChild(vk);
+    var reihe = el('div', 'saeulen');
+    var hoch = Math.max.apply(null, D.umsatz);
+    D.umsatz.forEach(function (w, idx) {
+      var s = el('button', 'saeule');
+      s.type = 'button';
+      if (idx === i) s.setAttribute('aria-current', 'true');
+      s.setAttribute('aria-label', D.monate[idx].lang + ', ' + eur(w));
+      s.appendChild(el('span', 'zahl', idx === i ? eur(w) : ''));
+      var b = el('span', 'balken');
+      b.style.height = Math.round(w / hoch * 122) + 'px';
+      s.appendChild(b);
+      s.appendChild(el('span', 'monat', D.monate[idx].kurz));
+      s.addEventListener('click', function () { stand.monat = idx; zeichnen(); });
+      reihe.appendChild(s);
+    });
+    v.appendChild(reihe);
+    wurzel.appendChild(v);
+    return wurzel;
+  }
+
+  // ------------------------------------------------------------ Zahlen im Detail
+  function detail() {
+    var i = stand.monat, vor = i > 0 ? i - 1 : null;
+    var karte = el('section', 'karte flach');
+    var kk = el('div', 'karten-kopf');
+    var kkl = el('div');
+    kkl.appendChild(el('h2', null, 'Ergebnisrechnung ' + D.monate[i].lang + ' ' + D.jahr));
+    kkl.appendChild(el('p', 'hinweis', vor === null
+      ? 'Für diesen Monat gibt es keinen Vormonat zum Vergleich.'
+      : 'Verglichen wird mit ' + D.monate[vor].lang + '. Blöcke lassen sich öffnen.'));
+    kk.appendChild(kkl);
+    karte.appendChild(kk);
+
+    var rahmen = el('div', 'rahmen');
+    var t = el('table');
+    var kopfZ = el('tr');
+    ['Position', D.monate[i].kurz + ' ' + String(D.jahr).slice(-2),
+     vor === null ? '–' : D.monate[vor].kurz + ' ' + String(D.jahr).slice(-2),
+     'Veränderung'].forEach(function (txt, sp) {
+      var th = el('th', sp ? 'num' : 'pos', txt);
+      kopfZ.appendChild(th);
+    });
+    var thead = el('thead'); thead.appendChild(kopfZ); t.appendChild(thead);
+
+    var tbody = el('tbody');
+    D.detail.forEach(function (z) {
+      if (z.kind && !stand.offen[z.gruppe]) return;
+      var tr = el('tr', (z.stark ? 'summe ' : '') + (z.kind ? 'kindzeile' : ''));
+      var th = el('th', 'pos');
+      th.scope = 'row';
+      if (z.klappbar) {
+        var b = el('button', 'oeffnen',
+          stand.offen[z.schluessel] ? 'schließen' : z.anzahl + ' Posten');
+        b.type = 'button';
+        b.setAttribute('aria-expanded', String(!!stand.offen[z.schluessel]));
+        b.addEventListener('click', function () {
+          stand.offen[z.schluessel] = !stand.offen[z.schluessel];
+          zeichnen();
+        });
+        th.appendChild(b);
+      }
+      th.appendChild(document.createTextNode(z.klar));
+      if (z.fach) th.appendChild(el('span', 'fach', z.fach));
+      tr.appendChild(th);
+
+      var vz = z.minus ? -1 : 1;
+      var td1 = el('td', 'num' + (z.minus ? ' minus' : ''),
+        fmt(z.art, z.reihe[i] === null ? null : z.reihe[i] * vz));
+      tr.appendChild(td1);
+      tr.appendChild(el('td', 'num', vor === null ? '–'
+        : fmt(z.art, z.reihe[vor] === null ? null : z.reihe[vor] * vz)));
+
+      var dtxt = '', dkl = 'num';
+      if (vor !== null && z.reihe[i] !== null && z.reihe[vor] !== null) {
+        var diff = z.reihe[i] - z.reihe[vor];
+        if (z.art === 'prozent') {
+          dtxt = (diff >= 0 ? '+' : '−')
+               + Math.abs(diff).toFixed(1).replace('.', ',') + ' %-Pkt.';
+        } else if (z.reihe[vor]) {
+          var p = diff / Math.abs(z.reihe[vor]) * 100;
+          var kern = Math.abs(p).toFixed(1).replace('.', ',') + ' %';
+          // Kostenzeilen stehen negativ in der Spalte. Ein Vorzeichen davor
+          // waere doppeldeutig, deshalb steht dort mehr oder weniger.
+          dtxt = z.minus ? kern + (diff >= 0 ? ' mehr' : ' weniger')
+                         : (diff >= 0 ? '+' : '−') + kern;
+        }
+        var gut = z.minus ? diff <= 0 : diff >= 0;
+        dkl += gut ? ' hoch' : ' runter';
+      }
+      tr.appendChild(el('td', dkl, dtxt));
+      tbody.appendChild(tr);
+    });
+    t.appendChild(tbody);
+    rahmen.appendChild(t);
+    karte.appendChild(rahmen);
+    var f = el('p', 'hinweis');
+    f.style.padding = '13px 20px';
+    f.textContent = 'Alle Beträge netto. Grundlage ist die ausgefüllte Eingabevorlage.';
+    karte.appendChild(f);
+    return karte;
+  }
+
+  // ------------------------------------------------------------------ Zeichnen
+  function zeichnen() {
+    kopf();
+    document.querySelectorAll('.reiter button').forEach(function (b) {
+      b.setAttribute('aria-selected', String(b.dataset.reiter === stand.reiter));
+    });
+    document.querySelectorAll('.verwaltung').forEach(function (v) {
+      v.hidden = v.dataset.reiter !== stand.reiter;
+    });
+    var ziel = document.getElementById('flaeche');
+    ziel.innerHTML = '';
+    if (stand.reiter === 'ueberblick') ziel.appendChild(ueberblick());
+    else if (stand.reiter === 'detail') ziel.appendChild(detail());
+  }
+
+  // ------------------------------------------------------------------ Bedienung
+  document.getElementById('pfeil-zurueck').addEventListener('click', function () {
+    if (stand.monat > 0) { stand.monat--; zeichnen(); }
+  });
+  document.getElementById('pfeil-vor').addEventListener('click', function () {
+    if (stand.monat < D.monate.length - 1) { stand.monat++; zeichnen(); }
+  });
+  document.querySelectorAll('.reiter button').forEach(function (b) {
+    b.addEventListener('click', function () { stand.reiter = b.dataset.reiter; zeichnen(); });
+  });
+
+  // Anmeldung
+  var pw = document.getElementById('pw');
+  var mail = document.getElementById('mail');
+  var fehler = document.getElementById('fehler');
+  function anmelden() {
+    if (!mail.value.trim()) { melden('Bitte tragen Sie Ihre E-Mail-Adresse ein.'); return; }
+    if (pw.value !== 'Vorschau2026') {
+      melden('Das Passwort stimmt nicht. Prüfen Sie die Groß- und Kleinschreibung.');
       return;
     }
-    var ziel = e.target.closest('[data-ziel]');
-    if (!ziel) return;
+    fehler.hidden = true;
+    oeffnen('app');
+  }
+  function melden(text) {
+    document.getElementById('fehlertext').textContent = text;
+    fehler.hidden = false;
+  }
+  document.getElementById('anmeldung').addEventListener('submit', function (e) {
     e.preventDefault();
-    zeigen(ziel.dataset.ziel);
+    anmelden();
   });
-  var f = document.getElementById('form-anmelden');
-  f.addEventListener('submit', function(e){
-    e.preventDefault();
-    var mail = document.getElementById('e').value.trim().toLowerCase();
-    var pw = document.getElementById('p').value;
-    var box = document.getElementById('fehler');
-    // Ueber die Anmeldung fuehrt nur der Mandantenzugang. Die Verwaltungsansichten
-    // liegen weiterhin in der Seite, aber nicht hinter einem Zugang, der hier
-    // oeffentlich angeboten wird.
-    if (pw === 'Vorschau2026' && mail === 'mandant@vorschau.valtix') {
-      box.hidden = true; zeigen('mandant-auswertung'); return;
+  document.getElementById('sichtbar').addEventListener('click', function () {
+    stand.sichtbar = !stand.sichtbar;
+    pw.type = stand.sichtbar ? 'text' : 'password';
+    this.textContent = stand.sichtbar ? 'Verbergen' : 'Anzeigen';
+  });
+  var merken = document.getElementById('merken');
+  merken.addEventListener('click', function () {
+    stand.gemerkt = !stand.gemerkt;
+    merken.setAttribute('aria-checked', String(stand.gemerkt));
+  });
+  document.querySelectorAll('[data-abmelden]').forEach(function (b) {
+    b.addEventListener('click', function () { oeffnen('anmelden'); });
+  });
+
+  function oeffnen(was) {
+    document.getElementById('bs-anmelden').hidden = was !== 'anmelden';
+    document.getElementById('bs-app').hidden = was === 'anmelden';
+    window.scrollTo(0, 0);
+    if (history.replaceState) {
+      history.replaceState(null, '', was === 'anmelden' ? location.pathname
+        : '#ansicht-' + stand.reiter);
     }
-    box.textContent = 'E-Mail-Adresse oder Passwort stimmen nicht. Für die '
-      + 'Vorführung gelten die oben genannten Zugangsdaten.';
-    box.hidden = false;
-  });
-  var start = location.hash.replace('#ansicht-','').replace('#','');
-  zeigen(document.getElementById('bs-' + start) ? start : 'anmelden');
+    if (was !== 'anmelden') zeichnen();
+  }
+
+  // Die Verwaltung ist nur ueber die Adresse erreichbar, nicht ueber die
+  // Anmeldung. Ihre Reiter erscheinen auch nur dann.
+  var start = location.hash.replace('#ansicht-', '');
+  if (['mandanten', 'zugaenge', 'protokoll'].indexOf(start) >= 0) {
+    stand.reiter = start;
+    document.querySelectorAll('.nur-admin').forEach(function (e) { e.hidden = false; });
+    oeffnen('app');
+  } else if (start === 'detail') {
+    stand.reiter = 'detail';
+  }
 })();
 </script>
 </body></html>

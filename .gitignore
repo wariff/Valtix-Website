@@ -8,3 +8,4 @@ __pycache__/
 portal/portal.sqlite3
 package.json
 package-lock.json
+tools/entwurf/mandantenportal-entwurf.html
