@@ -79,3 +79,14 @@ Das ist keine Programmierarbeit mehr, sondern Einrichtung und Entscheidungen.
 
 Die Datenbank enthält Zahlen fremder Unternehmen. Sie gehört **nicht ins
 Repository**; `.gitignore` schließt `*.sqlite3` aus.
+
+
+## Verhältnis zur Portalvorschau
+
+`portal-vorschau.html` im Wurzelverzeichnis zeigt einen Entwurf der Oberfläche:
+Seitenleiste, Kennzahlenkacheln, Monatsverlauf und ein aufklappbares Raster mit
+den Monaten als Spalten. Dieser Entwurf ist hier noch nicht umgesetzt, das
+laufende Portal zeigt Berichte als einfache Liste.
+
+Die Daten dafür liefert `tools/bericht/matrix.py`. Wer den Entwurf übernimmt,
+baut die Ansicht auf dieser Klasse auf und muss den Generator nicht anfassen.

@@ -87,6 +87,7 @@ der EU, Rentabilität in Social-Media-Agenturen, Benchmarking von Kennzahlen, Fr
 python3 tools/build_ratgeber.py     # Artikel, Übersicht, feed.xml
 python3 tools/build_leistungen.py   # Leistungsseiten, vollständige sitemap.xml
 python3 tools/build_portal_vorschau.py     # Attrappe portal-vorschau.html
+                                    # braucht die Beispieldatei, Pfad in VALTIX_DEMO
 python3 tools/seo_audit.py          # Titel, Description, H1, Schema, Bilder
 npm i playwright && node tools/check.mjs   # Überlauf, Konsole, tote Links
 ```
@@ -156,16 +157,31 @@ prüft 20 Größen gegen den bestehenden Word-Bericht.
 ## Portalvorschau
 
 `portal-vorschau.html` ist eine reine Attrappe zur Ansicht, erzeugt von
-`tools/build_portal_vorschau.py`. Sie holt sich das Aussehen aus dem CSS in
-`portal/app.py`, damit Vorschau und echtes Portal nicht auseinanderlaufen. Es
-gibt keinen Server dahinter, nichts wird gespeichert, alle Namen und Zahlen sind
-erfunden. `portal-vorschau-bericht.html` ist der dazugehörige Musterbericht.
+`tools/build_portal_vorschau.py`. Kein Server, keine Datenbank, keine
+Speicherung. Firma und Zahlen stammen aus der Beispieldatei.
 
-Beide Seiten stehen auf `noindex, nofollow`, sind in `robots.txt` gesperrt und
-gehören nicht in die Sitemap. Der Punkt "Mandantenlogin" in Kopf- und Fußzeile
-zeigt darauf. Sobald ein echtes Portal läuft, muss dieser Link auf die richtige
-Adresse zeigen; solange kein Portal existiert, darf die Vorschau nicht so
-aussehen, als sei sie nutzbar.
+Der Aufbau folgt dem, was Auswertungswerkzeuge wie finban vormachen:
+Seitenleiste links, Werkzeugleiste oben, darunter Kennzahlenkacheln, ein
+Verlauf über alle Monate und ein aufklappbares Raster mit den Monaten als
+Spalten. Die Farben sind die von Valtix, nicht die des Vorbilds. Grün, Gelb
+und Rot bleiben der Zielerreichung vorbehalten, Erträge stehen in Navy und
+Kosten in Gold.
+
+`tools/bericht/matrix.py` liest die Eingabevorlage als Monatsraster: jede
+Position über alle befüllten Monate, dazu die Zielwerte aus Blatt 5. Wie im
+Berichtsgenerator werden nur Eingabefelder gelesen, alle Summen hier gerechnet.
+Beschriftungen kommen aus der Datei, damit umbenannte Zeilen im Portal so
+heißen, wie der Mandant sie nennt. Prüfen mit
+`python3 tools/bericht/matrix.py <datei.xlsx>`.
+
+Wichtig zum Stand: die Vorschau zeigt den Entwurf. Das laufende Portal unter
+`portal/` hat noch die einfache Listenansicht. Wer die Vorschau als Zusage
+liest, irrt.
+
+Beide Vorschauseiten stehen auf `noindex, nofollow`, sind in `robots.txt`
+gesperrt und gehören nicht in die Sitemap. Der Punkt "Mandantenlogin" in Kopf-
+und Fußzeile zeigt darauf. Sobald ein echtes Portal läuft, muss dieser Link auf
+die richtige Adresse zeigen.
 
 ## Offene Punkte (regelmäßig prüfen)
 
