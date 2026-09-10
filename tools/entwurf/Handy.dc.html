@@ -1,0 +1,219 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;800&display=swap">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif; }
+    a { color: #7A6238; } a:hover { color: #5C4A2A; }
+    button { font-family: inherit; }
+  </style>
+</helmet>
+
+<div style="width: 390px; background: #FBF8F2; color: #232941; font-size: 15px; line-height: 1.5; padding-bottom: 28px">
+
+  <!-- Kopf -->
+  <div style="padding: 14px 16px 12px; background: #ffffff; border-bottom: 1px solid rgba(35,41,65,.11)">
+    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px">
+      <div style="font-weight: 800; letter-spacing: -0.03em; font-size: 16px">Valtix</div>
+      <div style="flex-grow: 1"></div>
+      <div style="width: 34px; height: 34px; border-radius: 10px; background: #7A6238; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700">ML</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; background: #F7F4EC; border: 1px solid rgba(35,41,65,.11); border-radius: 999px; padding: 4px">
+      <button onClick="{{ zurueck }}" aria-label="Vorheriger Monat" style="width: 44px; height: 44px; border-radius: 999px; border: 0; background: #ffffff; color: {{ pfeilZurueck }}; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(35,41,65,.14)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div style="flex-grow: 1; text-align: center">
+        <div style="font-size: 15px; font-weight: 700; letter-spacing: -0.02em">{{ monatLang }}</div>
+        <div style="font-size: 12px; color: #565D73">Muster Lüftungstechnik GmbH</div>
+      </div>
+      <button onClick="{{ vor }}" aria-label="Nächster Monat" style="width: 44px; height: 44px; border-radius: 999px; border: 0; background: #ffffff; color: {{ pfeilVor }}; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(35,41,65,.14)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 14px; padding: 16px">
+
+    <!-- Kommentar -->
+    <div style="background: #ffffff; border: 1px solid rgba(35,41,65,.11); border-left: 4px solid #7A6238; border-radius: 14px; padding: 16px 18px; box-shadow: 0 8px 24px rgba(35,41,65,.07)">
+      <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: #7A6238; font-weight: 700; margin-bottom: 7px">Das sagt Ihr Berater</div>
+      <p style="margin: 0; font-size: 15.5px; line-height: 1.5; text-wrap: pretty">{{ kommentar }}</p>
+      <button style="width: 100%; min-height: 48px; margin-top: 14px; border-radius: 999px; border: 0; background: linear-gradient(180deg,#232941,#171B2C); color: #ffffff; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 6px 16px rgba(35,41,65,.24)">Rückfrage stellen</button>
+    </div>
+
+    <!-- Statusgruppen -->
+    <sc-for list="{{ gruppen }}" as="g" hint-placeholder-count="2">
+      <div style="background: #ffffff; border: 1px solid rgba(35,41,65,.11); border-radius: 14px; box-shadow: 0 8px 24px rgba(35,41,65,.07); overflow: hidden">
+        <button onClick="{{ g.klappen }}" style="width: 100%; display: flex; align-items: center; gap: 10px; padding: 14px 16px; min-height: 52px; background: {{ g.kopfgrund }}; border: 0; border-bottom: 1px solid rgba(35,41,65,.11); cursor: pointer; text-align: left">
+          <span style="width: 22px; height: 22px; border-radius: 999px; background: {{ g.farbe }}; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0">{{ g.zeichen }}</span>
+          <span style="font-size: 15px; font-weight: 700; letter-spacing: -0.02em; color: {{ g.textfarbe }}">{{ g.titel }}</span>
+          <span style="flex-grow: 1"></span>
+          <span style="font-size: 13px; color: #565D73">{{ g.hinweis }}</span>
+        </button>
+        <sc-if value="{{ g.offen }}" hint-placeholder-val="{{ true }}">
+          <sc-for list="{{ g.posten }}" as="p" hint-placeholder-count="3">
+            <div style="padding: 14px 16px; border-bottom: 1px solid rgba(35,41,65,.08)">
+              <div style="display: flex; align-items: baseline; gap: 12px">
+                <div style="flex-grow: 1; font-size: 15px; font-weight: 600; letter-spacing: -0.01em">{{ p.klar }}</div>
+                <div style="font-size: 19px; font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; white-space: nowrap">{{ p.wert }}</div>
+              </div>
+              <div style="display: flex; align-items: baseline; gap: 12px; margin-top: 3px">
+                <div style="flex-grow: 1; font-size: 12.5px; color: #565D73">{{ p.ziel }}</div>
+                <div style="font-size: 12.5px; color: {{ p.abstandFarbe }}; font-variant-numeric: tabular-nums; white-space: nowrap">{{ p.abstand }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </sc-if>
+      </div>
+    </sc-for>
+
+    <!-- Verlauf -->
+    <div style="background: #ffffff; border: 1px solid rgba(35,41,65,.11); border-radius: 14px; padding: 16px 18px 18px; box-shadow: 0 8px 24px rgba(35,41,65,.07)">
+      <h2 style="font-size: 15px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 2px">Umsatz im Jahresverlauf</h2>
+      <p style="margin: 0 0 12px; font-size: 12.5px; color: #565D73">Tippen Sie einen Monat an</p>
+      <div style="display: flex; align-items: flex-end; gap: 7px; height: 150px">
+        <sc-for list="{{ balken }}" as="b" hint-placeholder-count="7">
+          <div onClick="{{ b.waehlen }}" style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 7px; cursor: pointer; align-self: stretch; justify-content: flex-end">
+            <div style="font-size: 11px; font-weight: 700; color: {{ b.beschriftung }}; font-variant-numeric: tabular-nums; white-space: nowrap">{{ b.text }}</div>
+            <div style="width: 100%; height: {{ b.hoehe }}; background: {{ b.farbe }}; border-radius: 5px 5px 0 0"></div>
+            <div style="font-size: 12px; color: {{ b.beschriftung }}; font-weight: {{ b.gewicht }}">{{ b.kurz }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <button style="width: 100%; min-height: 50px; border-radius: 999px; border: 1px solid rgba(35,41,65,.14); background: #ffffff; color: #232941; font-size: 15px; font-weight: 600; cursor: pointer">Alle Zahlen im Detail</button>
+    <button style="width: 100%; min-height: 50px; border-radius: 999px; border: 1px solid rgba(35,41,65,.14); background: #ffffff; color: #232941; font-size: 15px; font-weight: 600; cursor: pointer">Bericht als PDF öffnen</button>
+  </div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"$preview":{"width":390,"height":1360}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { monat: 6, auf: { rot: true, gelb: true, gruen: false } };
+  }
+  eur(w) {
+    var s = Math.abs(w).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return (w < 0 ? '−' : '') + s + ' €';
+  }
+  proz(w) { return w.toFixed(1).replace('.', ',') + ' %'; }
+
+  renderVals() {
+    var self = this;
+    var i = this.state.monat;
+    var lang = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli'];
+    var kurz = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul'];
+    var umsatz = [267251, 275718, 302304, 299566, 309788, 333812, 365058];
+    var marge = [-1.8, 0.3, 4.0, 3.3, 2.3, 5.5, 9.2];
+    var dbQuote = [63.2, 63.4, 63.4, 63.6, 63.1, 61.0, 61.1];
+    var liquide = [148300, 141200, 137800, 132400, 128900, 125300, 121560];
+    var ekQuote = [35.4, 35.6, 35.9, 36.2, 36.3, 36.5, 35.8];
+    var dso = [44, 44, 44, 46, 46, 46, 48];
+    var auslastung = [72.6, 74.9, 77.8, 76.3, 73.5, 79.2, 81.6];
+    var kunden = [41, 43, 45, 46, 47, 48, 49];
+    var neukunden = [7, 5, 9, 6, 8, 7, 6];
+
+    var kommentare = [
+      'Der Start ins Jahr endet mit einem Verlust von 4.855 €. Die Fixkosten liegen über dem Deckungsbeitrag.',
+      'Erstmals ein positives Ergebnis, wenn auch knapp. Der Kontostand sinkt trotzdem weiter.',
+      'Ein deutlicher Sprung auf 12.038 € Ergebnis bei gestiegener Auslastung.',
+      'Etwas schwächer als im März, aber weiter im Plus. Ihre Kunden zahlen zwei Tage später als zuletzt.',
+      'Der Umsatz wächst, das Ergebnis nicht: die Fixkosten sind um rund 7.800 € gestiegen.',
+      'Ein gutes Ergebnis von 18.520 €. Die Deckungsbeitragsquote ist erstmals unter 62 % gefallen.',
+      'Der Umsatz ist den sechsten Monat in Folge gestiegen und liegt erstmals über Ihrem Monatsziel. Zwei Dinge sollten wir besprechen: der Kontostand sinkt seit Januar, und Ihre Kunden zahlen acht Tage später als vereinbart.'
+    ];
+
+    var roh = [
+      { klar: 'Umsatz', reihe: umsatz, art: 'eur', ziel: 335000, richtung: 'hoch' },
+      { klar: 'Gewinn vor Steuern', reihe: marge, art: 'proz', ziel: 8, richtung: 'hoch' },
+      { klar: 'Deckungsbeitragsquote', reihe: dbQuote, art: 'proz', ziel: 40, richtung: 'hoch' },
+      { klar: 'Kontostand', reihe: liquide, art: 'eur', ziel: 150000, richtung: 'hoch' },
+      { klar: 'Eigenkapitalquote', reihe: ekQuote, art: 'proz', ziel: 35, richtung: 'hoch' },
+      { klar: 'Ihre Kunden zahlen nach', reihe: dso, art: 'tage', ziel: 40, richtung: 'runter' },
+      { klar: 'Auslastung', reihe: auslastung, art: 'proz', ziel: 78, richtung: 'hoch' },
+      { klar: 'Aktive Kunden', reihe: kunden, art: 'zahl', ziel: 40, richtung: 'hoch' },
+      { klar: 'Neukunden', reihe: neukunden, art: 'zahl', ziel: 8, richtung: 'hoch' }
+    ];
+    var fmt = function (art, w) {
+      if (art === 'eur') return self.eur(w);
+      if (art === 'proz') return self.proz(w);
+      if (art === 'tage') return w.toFixed(0) + ' Tage';
+      return w.toFixed(0);
+    };
+
+    var rot = [], gelb = [], gruen = [];
+    for (var q = 0; q < roh.length; q++) {
+      var r = roh[q];
+      var ist = r.reihe[i];
+      var erf = r.richtung === 'hoch' ? ist / r.ziel : r.ziel / ist;
+      var stufe = erf >= 1 ? 'gruen' : (erf >= 0.9 ? 'gelb' : 'rot');
+      var posten = {
+        klar: r.klar,
+        wert: fmt(r.art, ist),
+        ziel: (r.richtung === 'hoch' ? 'Ziel ab ' : 'Ziel bis ') + fmt(r.art, r.ziel),
+        abstand: r.richtung === 'hoch'
+          ? fmt(r.art, Math.abs(ist - r.ziel)) + (ist >= r.ziel ? ' darüber' : ' darunter')
+          : fmt(r.art, Math.abs(r.ziel - ist)) + (ist <= r.ziel ? ' darunter' : ' darüber'),
+        abstandFarbe: stufe === 'gruen' ? '#0A7A0A' : (stufe === 'gelb' ? '#8A6100' : '#A32C2C')
+      };
+      if (stufe === 'rot') rot.push(posten);
+      else if (stufe === 'gelb') gelb.push(posten);
+      else gruen.push(posten);
+    }
+
+    var auf = this.state.auf;
+    var mach = function (schluessel, titel, zeichen, farbe, textfarbe, kopfgrund, posten) {
+      if (!posten.length) return null;
+      return {
+        titel: titel, zeichen: zeichen, farbe: farbe, textfarbe: textfarbe,
+        kopfgrund: kopfgrund, posten: posten, offen: auf[schluessel],
+        hinweis: auf[schluessel] ? 'zuklappen' : posten.length + ' anzeigen',
+        klappen: function () { var s = {}; s[schluessel] = !auf[schluessel]; self.setState({ auf: Object.assign({}, auf, s) }); }
+      };
+    };
+    var gruppen = [
+      mach('rot', 'Braucht Aufmerksamkeit', '!', '#D03B3B', '#A32C2C', 'rgba(208,59,59,.07)', rot),
+      mach('gelb', 'Im Blick behalten', '•', '#FAB219', '#8A6100', 'rgba(250,178,25,.12)', gelb),
+      mach('gruen', 'Läuft nach Plan', '✓', '#0CA30C', '#0A7A0A', 'rgba(12,163,12,.08)', gruen)
+    ].filter(function (g) { return g; });
+
+    var hoch = Math.max.apply(null, umsatz);
+    var balken = [];
+    for (var m = 0; m < umsatz.length; m++) {
+      (function (idx) {
+        balken.push({
+          kurz: kurz[idx],
+          text: idx === i ? self.eur(umsatz[idx]) : '',
+          hoehe: Math.round(umsatz[idx] / hoch * 96) + 'px',
+          farbe: idx === i ? '#404D97' : 'rgba(64,77,151,.28)',
+          beschriftung: idx === i ? '#232941' : '#8A8FA3',
+          gewicht: idx === i ? '700' : '400',
+          waehlen: function () { self.setState({ monat: idx }); }
+        });
+      })(m);
+    }
+
+    return {
+      monatLang: lang[i] + ' 2026',
+      kommentar: kommentare[i],
+      gruppen: gruppen,
+      balken: balken,
+      zurueck: function () { if (i > 0) self.setState({ monat: i - 1 }); },
+      vor: function () { if (i < lang.length - 1) self.setState({ monat: i + 1 }); },
+      pfeilZurueck: i > 0 ? '#232941' : '#C9CBD4',
+      pfeilVor: i < lang.length - 1 ? '#232941' : '#C9CBD4'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;800&display=swap">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif; }
+    a { color: #7A6238; } a:hover { color: #5C4A2A; }
+    button { font-family: inherit; }
+    .zr:hover { background: #FCFAF5; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; min-height: 1120px; background: #FBF8F2; color: #232941; font-size: 14px; line-height: 1.55; padding-bottom: 40px">
+
+  <!-- Kopfzeile -->
+  <div style="display: flex; align-items: center; gap: 16px; padding: 14px 32px; background: #ffffff; border-bottom: 1px solid rgba(35,41,65,.11)">
+    <div style="font-weight: 800; letter-spacing: -0.03em; font-size: 17px">Valtix<span style="font-weight: 500; color: #565D73; margin-left: 8px; font-size: 14px">Mandantenportal</span></div>
+    <div style="flex-grow: 1"></div>
+    <div style="display: flex; align-items: center; gap: 10px; background: #F7F4EC; border: 1px solid rgba(35,41,65,.11); border-radius: 999px; padding: 4px">
+      <button onClick="{{ zurueck }}" aria-label="Vorheriger Monat" style="width: 44px; height: 44px; border-radius: 999px; border: 0; background: #ffffff; color: {{ pfeilZurueck }}; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(35,41,65,.14)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div style="min-width: 168px; text-align: center">
+        <div style="font-size: 15px; font-weight: 700; letter-spacing: -0.02em">{{ monatLang }}</div>
+        <div style="font-size: 12px; color: #565D73">Bericht vom {{ eingestellt }}</div>
+      </div>
+      <button onClick="{{ vor }}" aria-label="Nächster Monat" style="width: 44px; height: 44px; border-radius: 999px; border: 0; background: #ffffff; color: {{ pfeilVor }}; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(35,41,65,.14)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <div style="flex-grow: 1"></div>
+    <div style="display: flex; align-items: center; gap: 12px">
+      <div style="text-align: right">
+        <div style="font-size: 13px; font-weight: 700; line-height: 1.3">Muster Lüftungstechnik GmbH</div>
+        <div style="font-size: 12px; color: #565D73">Ansprechpartner Muster</div>
+      </div>
+      <div style="width: 36px; height: 36px; border-radius: 11px; background: #7A6238; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700">ML</div>
+    </div>
+  </div>
+
+  <!-- Reiter -->
+  <div style="display: flex; align-items: flex-end; gap: 4px; padding: 0 32px; background: #ffffff; border-bottom: 1px solid rgba(35,41,65,.11)">
+    <sc-for list="{{ reiter }}" as="r" hint-placeholder-count="2">
+      <button onClick="{{ r.waehlen }}" style="border: 0; background: none; cursor: pointer; padding: 12px 4px; margin-right: 22px; font-size: 15px; font-weight: {{ r.gewicht }}; color: {{ r.farbe }}; border-bottom: 3px solid {{ r.linie }}; min-height: 46px">{{ r.titel }}</button>
+    </sc-for>
+  </div>
+
+  <!-- ÜBERBLICK -->
+  <sc-if value="{{ istUeberblick }}" hint-placeholder-val="{{ true }}">
+  <div style="display: flex; flex-direction: column; gap: 18px; padding: 24px 32px 0">
+
+    <!-- Kommentar -->
+    <div style="display: flex; gap: 18px; background: #ffffff; border: 1px solid rgba(35,41,65,.11); border-left: 4px solid #7A6238; border-radius: 14px; padding: 22px 26px; box-shadow: 0 8px 24px rgba(35,41,65,.07)">
+      <div style="flex-grow: 1">
+        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: #7A6238; font-weight: 700; margin-bottom: 8px">Das sagt Ihr Berater zum {{ monatKurzLang }}</div>
+        <p style="font-size: 17px; line-height: 1.5; margin: 0; max-width: 780px; text-wrap: pretty">{{ kommentar }}</p>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px; align-self: center">
+        <button style="min-height: 44px; padding: 0 20px; border-radius: 999px; border: 0; background: linear-gradient(180deg,#232941,#171B2C); color: #ffffff; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; box-shadow: 0 6px 16px rgba(35,41,65,.24)">Rückfrage stellen</button>
+        <button style="min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid rgba(35,41,65,.11); background: #ffffff; color: #232941; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap">Bericht als PDF</button>
+      </div>
+    </div>
+
+    <!-- Statusgruppen -->
+    <sc-for list="{{ gruppen }}" as="g" hint-placeholder-count="2">
+      <div style="background: #ffffff; border: 1px solid rgba(35,41,65,.11); border-radius: 14px; box-shadow: 0 8px 24px rgba(35,41,65,.07); overflow: hidden">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 14px 22px; background: {{ g.kopfgrund }}; border-bottom: 1px solid rgba(35,41,65,.11)">
+          <span style="width: 22px; height: 22px; border-radius: 999px; background: {{ g.farbe }}; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">{{ g.zeichen }}</span>
+          <span style="font-size: 15px; font-weight: 700; letter-spacing: -0.02em; color: {{ g.textfarbe }}">{{ g.titel }}</span>
+          <span style="font-size: 13px; color: #565D73">{{ g.anzahlText }}</span>
+        </div>
+        <sc-for list="{{ g.posten }}" as="p" hint-placeholder-count="3">
+          <div class="zr" style="display: grid; grid-template-columns: minmax(0, 1fr) 168px 148px 168px; gap: 16px; align-items: center; padding: 15px 22px; border-bottom: 1px solid rgba(35,41,65,.08)">
+            <div>
+              <div style="font-size: 15px; font-weight: 600; letter-spacing: -0.01em">{{ p.klar }}</div>
+              <div style="font-size: 12.5px; color: #565D73; margin-top: 2px">{{ p.erklaerung }}</div>
+            </div>
+            <div style="text-align: right">
+              <div style="font-size: 19px; font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums">{{ p.wert }}</div>
+              <div style="font-size: 12px; color: #565D73; font-variant-numeric: tabular-nums">{{ p.vormonat }}</div>
+            </div>
+            <div style="text-align: right; font-size: 13px; color: #565D73; font-variant-numeric: tabular-nums">{{ p.ziel }}</div>
+            <div style="text-align: right">
+              <sc-if value="{{ p.handeln }}" hint-placeholder-val="{{ true }}">
+                <button style="min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(35,41,65,.18); background: #ffffff; color: #232941; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap">Dazu nachfragen</button>
+              </sc-if>
+              <sc-if value="{{ p.ruhig }}" hint-placeholder-val="{{ true }}">
+                <span style="font-size: 13px; color: #8A8FA3">{{ p.abstand }}</span>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+
+    <!-- Verlauf -->
+    <div style="background: #ffffff; border: 1px solid rgba(35,41,65,.11); border-radius: 14px; padding: 20px 26px 22px; box-shadow: 0 8px 24px rgba(35,41,65,.07)">
+      <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 4px">
+        <h2 style="font-size: 16px; font-weight: 700; letter-spacing: -0.02em; margin: 0">Umsatz im Jahresverlauf</h2>
+        <span style="font-size: 13px; color: #565D73">Klicken Sie auf einen Balken, um den Monat zu öffnen</span>
+      </div>
+      <div style="display: flex; align-items: flex-end; gap: 14px; height: 190px; padding-top: 18px">
+        <sc-for list="{{ balken }}" as="b" hint-placeholder-count="7">
+          <div onClick="{{ b.waehlen }}" style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; align-self: stretch; justify-content: flex-end">
+            <div style="font-size: 12.5px; font-weight: 600; color: {{ b.beschriftung }}; font-variant-numeric: tabular-nums">{{ b.text }}</div>
+            <div style="width: 100%; height: {{ b.hoehe }}; background: {{ b.farbe }}; border-radius: 6px 6px 0 0"></div>
+            <div style="font-size: 12.5px; color: {{ b.beschriftung }}; font-weight: {{ b.gewicht }}">{{ b.kurz }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ZAHLEN IM DETAIL -->
+  <sc-if value="{{ istDetail }}" hint-placeholder-val="{{ true }}">
+  <div style="display: flex; flex-direction: column; gap: 16px; padding: 24px 32px 0">
+    <div style="background: #ffffff; border: 1px solid rgba(35,41,65,.11); border-radius: 14px; box-shadow: 0 8px 24px rgba(35,41,65,.07); overflow: hidden">
+      <div style="padding: 18px 22px 14px">
+        <h2 style="font-size: 16px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 4px">Ergebnisrechnung {{ monatLang }}</h2>
+        <p style="font-size: 13px; color: #565D73; margin: 0">Verglichen wird mit {{ vormonatLang }}. Blöcke lassen sich für die einzelnen Posten öffnen.</p>
+      </div>
+      <div style="display: grid; grid-template-columns: minmax(0, 1fr) 150px 150px 130px; gap: 0; align-items: center; padding: 8px 22px; background: #F7F4EC; border-top: 1px solid rgba(35,41,65,.11); border-bottom: 1px solid rgba(35,41,65,.11); font-size: 11px; text-transform: uppercase; letter-spacing: 0.09em; color: #565D73; font-weight: 700">
+        <div>Position</div>
+        <div style="text-align: right">{{ monatKurz }}</div>
+        <div style="text-align: right">{{ vormonatKurz }}</div>
+        <div style="text-align: right">Veränderung</div>
+      </div>
+      <sc-for list="{{ zeilen }}" as="z" hint-placeholder-count="8">
+        <div class="zr" style="display: grid; grid-template-columns: minmax(0, 1fr) 150px 150px 130px; gap: 0; align-items: center; padding: {{ z.polster }} 22px; border-bottom: 1px solid rgba(35,41,65,.08); background: {{ z.grund }}">
+          <div style="display: flex; align-items: center; gap: 10px; padding-left: {{ z.einzug }}">
+            <sc-if value="{{ z.klappbar }}" hint-placeholder-val="{{ true }}">
+              <button onClick="{{ z.klappen }}" style="min-height: 30px; padding: 0 11px; border-radius: 999px; border: 1px solid rgba(35,41,65,.18); background: #ffffff; color: #565D73; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap">{{ z.klapptext }}</button>
+            </sc-if>
+            <span style="font-size: {{ z.schrift }}; font-weight: {{ z.gewicht }}; letter-spacing: -0.01em">{{ z.klar }}</span>
+            <sc-if value="{{ z.hatFach }}" hint-placeholder-val="{{ true }}">
+              <span style="font-size: 12px; color: #8A8FA3">{{ z.fach }}</span>
+            </sc-if>
+          </div>
+          <div style="text-align: right; font-variant-numeric: tabular-nums; font-weight: {{ z.gewicht }}; color: {{ z.farbe }}">{{ z.wert }}</div>
+          <div style="text-align: right; font-variant-numeric: tabular-nums; color: #565D73">{{ z.vor }}</div>
+          <div style="text-align: right; font-variant-numeric: tabular-nums; font-size: 13px; color: {{ z.deltaFarbe }}">{{ z.delta }}</div>
+        </div>
+      </sc-for>
+      <div style="padding: 14px 22px; font-size: 12.5px; color: #565D73">Alle Beträge netto. Grundlage ist die von Ihnen ausgefüllte Eingabevorlage.</div>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":1120},"dichte":{"editor":"enum","options":["luftig","kompakt"],"default":"luftig","section":"Darstellung"}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { monat: 6, reiter: 'ueberblick', offen: { variabel: false, fix: false } };
+  }
+
+  eur(w, nk) {
+    var s = Math.abs(w).toFixed(nk === undefined ? 0 : nk);
+    var t = s.split('.');
+    t[0] = t[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return (w < 0 ? '−' : '') + t.join(',') + ' €';
+  }
+  proz(w) { return w.toFixed(1).replace('.', ',') + ' %'; }
+
+  renderVals() {
+    var kompakt = this.props.dichte === 'kompakt';
+    var i = this.state.monat;
+    var lang = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli'];
+    var kurz = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul'];
+    var eingestellt = ['06.02.2026', '05.03.2026', '07.04.2026', '06.05.2026', '05.06.2026', '07.07.2026', '06.08.2026'];
+
+    var d = {
+      hauptleistung: [167031.88, 172323.75, 188940, 187228.75, 193617.5, 208632.6, 228196.36],
+      warenverkauf: [100219.12, 103394.25, 113364, 112337.25, 116170.5, 125179.56, 136861.61],
+      sonstErtrag: [0, 0, 0, 0, 0, 0, 2345.6],
+      wareneinsatz: [80171.09, 82229.64, 90086.01, 88786.39, 93163.25, 105947.68, 116346.42],
+      fremdleistung: [11804.63, 12107.74, 13264.54, 13073.18, 13717.64, 15600.06, 17142.83],
+      sonstVariabel: [6478.27, 6644.62, 7279.45, 7174.44, 7528.11, 8561.17, 9414.51],
+      personal: [128379.44, 128671.2, 133133.65, 133927.58, 140026.39, 137581.24, 142062.35],
+      miete: [10602.55, 10626.64, 10995.18, 11060.75, 11564.44, 11362.5, 11737.4],
+      fahrzeuge: [10044.52, 10067.34, 10416.49, 10478.61, 10955.79, 10764.47, 11124.35],
+      versicherung: [4956.61, 4967.87, 5140.16, 5170.82, 5406.29, 5311.88, 5476.3],
+      it: [2117.23, 2122.04, 2195.63, 2208.73, 2309.31, 2268.98, 2340.75],
+      marketing: [2691.67, 2697.79, 2791.35, 2807.99, 2935.86, 2884.6, 2987.6],
+      sonstAufwand: [5334.1, 5346.22, 5531.63, 5564.62, 5818.02, 5716.43, 5876.9],
+      afa: [6680.9, 6680.9, 6680.9, 6680.9, 6680.9, 6680.9, 6680.9],
+      zins: [2845, 2799, 2751, 2705, 2658, 2613, 2567.45],
+      liquide: [148300, 141200, 137800, 132400, 128900, 125300, 121560.45],
+      dso: [44, 44, 44, 46, 46, 46, 48],
+      ekQuote: [35.4, 35.6, 35.9, 36.2, 36.3, 36.5, 35.8],
+      auslastung: [72.6, 74.9, 77.8, 76.3, 73.5, 79.2, 81.6],
+      kunden: [41, 43, 45, 46, 47, 48, 49],
+      neukunden: [7, 5, 9, 6, 8, 7, 6]
+    };
+    var n = lang.length;
+    var umsatz = [], gesamt = [], variabel = [], db = [], dbQuote = [], fix = [], ebitda = [], ebit = [], ebt = [], marge = [];
+    for (var k = 0; k < n; k++) {
+      umsatz[k] = d.hauptleistung[k] + d.warenverkauf[k];
+      gesamt[k] = umsatz[k] + d.sonstErtrag[k];
+      variabel[k] = d.wareneinsatz[k] + d.fremdleistung[k] + d.sonstVariabel[k];
+      db[k] = gesamt[k] - variabel[k];
+      dbQuote[k] = db[k] / gesamt[k] * 100;
+      fix[k] = d.personal[k] + d.miete[k] + d.fahrzeuge[k] + d.versicherung[k] + d.it[k] + d.marketing[k] + d.sonstAufwand[k];
+      ebitda[k] = db[k] - fix[k];
+      ebit[k] = ebitda[k] - d.afa[k];
+      ebt[k] = ebit[k] - d.zins[k];
+      marge[k] = ebt[k] / umsatz[k] * 100;
+    }
+
+    var kommentare = [
+      'Der Start ins Jahr endet mit einem Verlust von 4.855 €. Die Fixkosten liegen über dem Deckungsbeitrag. Das sollten wir uns gemeinsam ansehen, bevor sich das Muster im Februar wiederholt.',
+      'Erstmals ein positives Ergebnis, wenn auch knapp. Der Umsatz zieht leicht an, die Kosten bleiben stabil. Der Kontostand sinkt trotzdem weiter.',
+      'Ein deutlicher Sprung auf 12.038 € Ergebnis bei gestiegener Auslastung. Am Kontostand ändert das noch nichts, weil Ihre Kunden weiter mit 44 Tagen zahlen.',
+      'Etwas schwächer als im März, aber weiter im Plus. Ihre Kunden zahlen jetzt im Schnitt zwei Tage später als zuletzt.',
+      'Der Umsatz wächst, das Ergebnis nicht: die Fixkosten sind gegenüber April um rund 7.800 € gestiegen. Wir sollten über die Personalkosten sprechen.',
+      'Ein gutes Ergebnis von 18.520 €. Die Deckungsbeitragsquote ist erstmals unter 62 % gefallen, das liegt am höheren Materialanteil.',
+      'Der Umsatz ist den sechsten Monat in Folge gestiegen und liegt erstmals über Ihrem Monatsziel. Zwei Dinge sollten wir besprechen: der Kontostand sinkt seit Januar, und Ihre Kunden zahlen im Schnitt acht Tage später als vereinbart.'
+    ];
+
+    var self = this;
+    var vor = i > 0 ? i - 1 : null;
+
+    // Kennzahlen mit Klarnamen, Ziel und Bewertung
+    var roh = [
+      { klar: 'Umsatz', erklaerung: 'Was Sie im Monat in Rechnung gestellt haben', reihe: umsatz, art: 'eur', ziel: 335000, richtung: 'hoch' },
+      { klar: 'Gewinn vor Steuern', erklaerung: 'Anteil am Umsatz, Fachbegriff EBT-Marge', reihe: marge, art: 'proz', ziel: 8, richtung: 'hoch' },
+      { klar: 'Was nach Material und Fremdleistung bleibt', erklaerung: 'Anteil am Umsatz, Fachbegriff Deckungsbeitragsquote', reihe: dbQuote, art: 'proz', ziel: 40, richtung: 'hoch' },
+      { klar: 'Kontostand', erklaerung: 'Bank und Kasse am Monatsende', reihe: d.liquide, art: 'eur', ziel: 150000, richtung: 'hoch' },
+      { klar: 'Eigenkapitalquote', erklaerung: 'Anteil des Eigenkapitals an der Bilanzsumme', reihe: d.ekQuote, art: 'proz', ziel: 35, richtung: 'hoch' },
+      { klar: 'Ihre Kunden zahlen nach', erklaerung: 'Durchschnitt in Tagen, Fachbegriff Debitorenlaufzeit', reihe: d.dso, art: 'tage', ziel: 40, richtung: 'runter' },
+      { klar: 'Auslastung', erklaerung: 'Geleistete Monteurstunden gemessen an Ihrer Kapazität', reihe: d.auslastung, art: 'proz', ziel: 78, richtung: 'hoch' },
+      { klar: 'Aktive Kunden', erklaerung: 'Objekte und Mandate mit Umsatz im Monat', reihe: d.kunden, art: 'zahl', ziel: 40, richtung: 'hoch' },
+      { klar: 'Neukunden', erklaerung: 'Neue Aufträge im Monat', reihe: d.neukunden, art: 'zahl', ziel: 8, richtung: 'hoch' }
+    ];
+
+    var fmt = function (art, w) {
+      if (art === 'eur') return self.eur(w);
+      if (art === 'proz') return self.proz(w);
+      if (art === 'tage') return w.toFixed(0) + ' Tage';
+      return w.toFixed(0);
+    };
+
+    var rot = [], gelb = [], gruen = [];
+    for (var q = 0; q < roh.length; q++) {
+      var r = roh[q];
+      var ist = r.reihe[i];
+      var erf = r.richtung === 'hoch' ? ist / r.ziel : r.ziel / ist;
+      var stufe = erf >= 1 ? 'gruen' : (erf >= 0.9 ? 'gelb' : 'rot');
+      var abstand = r.richtung === 'hoch'
+        ? fmt(r.art, ist - r.ziel) + ' über Ziel'
+        : fmt(r.art, r.ziel - ist) + ' unter Ziel';
+      var posten = {
+        klar: r.klar,
+        erklaerung: r.erklaerung,
+        wert: fmt(r.art, ist),
+        vormonat: vor === null ? 'kein Vormonat' : 'Vormonat ' + fmt(r.art, r.reihe[vor]),
+        ziel: (r.richtung === 'hoch' ? 'Ziel ab ' : 'Ziel bis ') + fmt(r.art, r.ziel),
+        handeln: stufe !== 'gruen',
+        ruhig: stufe === 'gruen',
+        abstand: abstand
+      };
+      if (stufe === 'rot') rot.push(posten);
+      else if (stufe === 'gelb') gelb.push(posten);
+      else gruen.push(posten);
+    }
+
+    var zaehl = function (a) { return a.length === 1 ? '1 Kennzahl' : a.length + ' Kennzahlen'; };
+    var gruppen = [];
+    if (rot.length) gruppen.push({ titel: 'Braucht Aufmerksamkeit', anzahlText: zaehl(rot), zeichen: '!', farbe: '#D03B3B', textfarbe: '#A32C2C', kopfgrund: 'rgba(208,59,59,.07)', posten: rot });
+    if (gelb.length) gruppen.push({ titel: 'Im Blick behalten', anzahlText: zaehl(gelb), zeichen: '•', farbe: '#FAB219', textfarbe: '#8A6100', kopfgrund: 'rgba(250,178,25,.12)', posten: gelb });
+    if (gruen.length) gruppen.push({ titel: 'Läuft nach Plan', anzahlText: zaehl(gruen), zeichen: '✓', farbe: '#0CA30C', textfarbe: '#0A7A0A', kopfgrund: 'rgba(12,163,12,.08)', posten: gruen });
+
+    // Balken
+    var hoch = Math.max.apply(null, umsatz);
+    var balken = [];
+    for (var m = 0; m < n; m++) {
+      (function (idx) {
+        balken.push({
+          kurz: kurz[idx],
+          text: idx === i ? self.eur(umsatz[idx]) : '',
+          hoehe: Math.round(umsatz[idx] / hoch * 132) + 'px',
+          farbe: idx === i ? '#404D97' : 'rgba(64,77,151,.28)',
+          beschriftung: idx === i ? '#232941' : '#8A8FA3',
+          gewicht: idx === i ? '700' : '400',
+          waehlen: function () { self.setState({ monat: idx }); }
+        });
+      })(m);
+    }
+
+    // Detailzeilen
+    var offen = this.state.offen;
+    var zeilen = [];
+    var polster = kompakt ? '8px' : '13px';
+    var push = function (o) {
+      zeilen.push({
+        klar: o.klar, fach: o.fach || '', hatFach: !!o.fach,
+        wert: o.art === 'proz' ? self.proz(o.reihe[i]) : self.eur(o.reihe[i] * (o.minus ? -1 : 1)),
+        vor: vor === null ? '–' : (o.art === 'proz' ? self.proz(o.reihe[vor]) : self.eur(o.reihe[vor] * (o.minus ? -1 : 1))),
+        delta: vor === null ? '' : (function () {
+          var v = o.reihe[i] - o.reihe[vor];
+          if (o.art === 'proz') return (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(1).replace('.', ',') + ' %-Pkt.';
+          var p = o.reihe[vor] ? v / Math.abs(o.reihe[vor]) * 100 : 0;
+          return (v >= 0 ? '+' : '−') + Math.abs(p).toFixed(1).replace('.', ',') + ' %';
+        })(),
+        deltaFarbe: vor === null ? '#8A8FA3' : ((o.reihe[i] - o.reihe[vor]) * (o.gutHoch === false ? -1 : 1) >= 0 ? '#0A7A0A' : '#A32C2C'),
+        farbe: o.minus ? '#7A6238' : '#232941',
+        gewicht: o.stark ? '700' : '400',
+        schrift: o.stark ? '15px' : '14px',
+        grund: o.stark ? 'rgba(35,41,65,.028)' : '#ffffff',
+        einzug: o.kind ? '30px' : '0px',
+        polster: polster,
+        klappbar: !!o.gruppe,
+        klapptext: o.gruppe ? (offen[o.gruppe] ? 'schließen' : o.oeffnenText) : '',
+        klappen: o.gruppe ? function () { var s = {}; s[o.gruppe] = !offen[o.gruppe]; self.setState({ offen: Object.assign({}, offen, s) }); } : null
+      });
+    };
+
+    push({ klar: 'Umsatz', fach: '', reihe: umsatz, stark: true });
+    push({ klar: 'Erlöse Hauptleistung', reihe: d.hauptleistung, kind: true });
+    push({ klar: 'Warenverkauf und weiterberechnetes Material', reihe: d.warenverkauf, kind: true });
+    push({ klar: 'Sonstige betriebliche Erträge', reihe: d.sonstErtrag, kind: true });
+    push({ klar: 'Gesamtleistung', reihe: gesamt, stark: true });
+    push({ klar: 'Mengenabhängige Kosten', fach: 'variable Kosten', reihe: variabel, minus: true, gutHoch: false, gruppe: 'variabel', oeffnenText: '3 Posten' });
+    if (offen.variabel) {
+      push({ klar: 'Wareneinsatz und Material', reihe: d.wareneinsatz, kind: true, minus: true, gutHoch: false });
+      push({ klar: 'Fremdleistungen und Subunternehmer', reihe: d.fremdleistung, kind: true, minus: true, gutHoch: false });
+      push({ klar: 'Sonstige mengenabhängige Kosten', reihe: d.sonstVariabel, kind: true, minus: true, gutHoch: false });
+    }
+    push({ klar: 'Was danach bleibt', fach: 'Deckungsbeitrag', reihe: db, stark: true });
+    push({ klar: 'Feste Kosten', fach: 'Fixkosten', reihe: fix, minus: true, gutHoch: false, gruppe: 'fix', oeffnenText: '7 Posten' });
+    if (offen.fix) {
+      push({ klar: 'Personal einschließlich Arbeitgeberanteil', reihe: d.personal, kind: true, minus: true, gutHoch: false });
+      push({ klar: 'Miete und Nebenkosten', reihe: d.miete, kind: true, minus: true, gutHoch: false });
+      push({ klar: 'Fahrzeuge und Fuhrpark', reihe: d.fahrzeuge, kind: true, minus: true, gutHoch: false });
+      push({ klar: 'Versicherungen und Beiträge', reihe: d.versicherung, kind: true, minus: true, gutHoch: false });
+      push({ klar: 'IT, Software und Kommunikation', reihe: d.it, kind: true, minus: true, gutHoch: false });
+      push({ klar: 'Marketing und Vertrieb', reihe: d.marketing, kind: true, minus: true, gutHoch: false });
+      push({ klar: 'Sonstige betriebliche Aufwendungen', reihe: d.sonstAufwand, kind: true, minus: true, gutHoch: false });
+    }
+    push({ klar: 'Ergebnis vor Abschreibungen und Zinsen', fach: 'EBITDA', reihe: ebitda, stark: true });
+    push({ klar: 'Abschreibungen', reihe: d.afa, kind: true, minus: true, gutHoch: false });
+    push({ klar: 'Zinsen', reihe: d.zins, kind: true, minus: true, gutHoch: false });
+    push({ klar: 'Gewinn vor Steuern', fach: 'EBT', reihe: ebt, stark: true });
+
+    var reiter = [
+      { titel: 'Überblick', schluessel: 'ueberblick' },
+      { titel: 'Zahlen im Detail', schluessel: 'detail' }
+    ].map(function (r) {
+      var an = self.state.reiter === r.schluessel;
+      return {
+        titel: r.titel,
+        gewicht: an ? '700' : '500',
+        farbe: an ? '#232941' : '#565D73',
+        linie: an ? '#232941' : 'transparent',
+        waehlen: function () { self.setState({ reiter: r.schluessel }); }
+      };
+    });
+
+    return {
+      monatLang: lang[i] + ' 2026',
+      monatKurz: kurz[i] + ' 26',
+      monatKurzLang: lang[i],
+      vormonatLang: vor === null ? 'keinem Vormonat' : lang[vor] + ' 2026',
+      vormonatKurz: vor === null ? '–' : kurz[vor] + ' 26',
+      eingestellt: eingestellt[i],
+      kommentar: kommentare[i],
+      gruppen: gruppen,
+      balken: balken,
+      zeilen: zeilen,
+      reiter: reiter,
+      istUeberblick: this.state.reiter === 'ueberblick',
+      istDetail: this.state.reiter === 'detail',
+      zurueck: function () { if (i > 0) self.setState({ monat: i - 1 }); },
+      vor: function () { if (i < n - 1) self.setState({ monat: i + 1 }); },
+      pfeilZurueck: i > 0 ? '#232941' : '#C9CBD4',
+      pfeilVor: i < n - 1 ? '#232941' : '#C9CBD4'
+    };
+  }
+}
+</script>
+</body>
+</html>

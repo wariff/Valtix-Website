@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;800&display=swap">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif; }
+    a { color: #7A6238; } a:hover { color: #5C4A2A; }
+    button, input { font-family: inherit; }
+    input:focus { outline: none; border-color: #232941; box-shadow: 0 0 0 3px rgba(35,41,65,.13); }
+  </style>
+</helmet>
+
+<div style="width: 560px; min-height: 720px; background: #FBF8F2; color: #232941; font-size: 15px; line-height: 1.5; display: flex; flex-direction: column; justify-content: center; padding: 40px 60px">
+
+  <div style="background: #ffffff; border: 1px solid rgba(35,41,65,.11); border-radius: 18px; padding: 34px 34px 30px; box-shadow: 0 8px 24px rgba(35,41,65,.07)">
+
+    <div style="font-weight: 800; letter-spacing: -0.03em; font-size: 17px; margin-bottom: 22px">Valtix<span style="font-weight: 500; color: #565D73; margin-left: 8px; font-size: 14px">Mandantenportal</span></div>
+
+    <sc-if value="{{ angemeldet }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 8px 0 6px">
+        <span style="width: 44px; height: 44px; border-radius: 999px; background: rgba(12,163,12,.1); color: #0A7A0A; display: flex; align-items: center; justify-content: center">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5.5 5.5L20 7"/></svg>
+        </span>
+        <h1 style="font-size: 23px; font-weight: 800; letter-spacing: -0.03em; margin: 0">Willkommen zurück</h1>
+        <p style="margin: 0; color: #565D73">Ihr Bericht für Juli 2026 liegt bereit.</p>
+        <button onClick="{{ zurueck }}" style="min-height: 46px; padding: 0 22px; margin-top: 6px; border-radius: 999px; border: 1px solid rgba(35,41,65,.14); background: #ffffff; color: #232941; font-size: 15px; font-weight: 600; cursor: pointer">Noch einmal von vorn</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ formular }}" hint-placeholder-val="{{ true }}">
+    <div>
+      <h1 style="font-size: 23px; font-weight: 800; letter-spacing: -0.03em; margin: 0 0 6px">Anmelden</h1>
+      <p style="margin: 0 0 22px; color: #565D73">Ihre monatliche Auswertung, jederzeit abrufbar.</p>
+
+      <sc-if value="{{ fehler }}" hint-placeholder-val="{{ false }}">
+        <div role="alert" style="display: flex; gap: 10px; align-items: flex-start; background: #FDECEC; color: #8B1F1F; border-radius: 11px; padding: 12px 14px; margin-bottom: 16px; font-size: 14px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="flex-shrink: 0; margin-top: 1px" aria-hidden="true"><path d="M12 7v6M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+          <span>{{ fehlertext }}</span>
+        </div>
+      </sc-if>
+
+      <label for="mail" style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px">E-Mail-Adresse</label>
+      <input id="mail" type="email" autocomplete="username" value="{{ mail }}" onChange="{{ mailTippen }}" style="width: 100%; min-height: 50px; font-size: 16px; color: #232941; background: #ffffff; border: 1px solid {{ mailRand }}; border-radius: 12px; padding: 10px 14px; margin-bottom: 16px">
+
+      <label for="pw" style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px">Passwort</label>
+      <div style="display: flex; gap: 8px; align-items: stretch; margin-bottom: 14px">
+        <input id="pw" type="{{ pwTyp }}" autocomplete="current-password" value="{{ pw }}" onChange="{{ pwTippen }}" style="flex-grow: 1; min-width: 0; min-height: 50px; font-size: 16px; color: #232941; background: #ffffff; border: 1px solid {{ pwRand }}; border-radius: 12px; padding: 10px 14px">
+        <button onClick="{{ sichtbarkeit }}" style="min-height: 50px; padding: 0 16px; border-radius: 12px; border: 1px solid rgba(35,41,65,.18); background: #ffffff; color: #565D73; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap">{{ sichtText }}</button>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px">
+        <button onClick="{{ merken }}" style="display: flex; align-items: center; gap: 9px; min-height: 44px; padding: 0 4px; border: 0; background: none; cursor: pointer; color: #232941; font-size: 14px">
+          <span style="width: 22px; height: 22px; border-radius: 7px; border: 1px solid {{ hakenRand }}; background: {{ hakenGrund }}; color: #ffffff; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+            <sc-if value="{{ gemerkt }}" hint-placeholder-val="{{ true }}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>
+            </sc-if>
+          </span>
+          Angemeldet bleiben
+        </button>
+        <span style="flex-grow: 1"></span>
+        <a href="#" style="font-size: 14px; text-decoration: none">Passwort vergessen?</a>
+      </div>
+
+      <button onClick="{{ anmelden }}" style="width: 100%; min-height: 52px; border-radius: 999px; border: 0; background: linear-gradient(180deg,#232941,#171B2C); color: #ffffff; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 6px 16px rgba(35,41,65,.24)">Anmelden</button>
+
+      <p style="margin: 18px 0 0; font-size: 13px; color: #565D73; line-height: 1.5">Noch keinen Zugang? Ihren Zugang richten wir im Rahmen der monatlichen Betreuung ein. <a href="#" style="text-decoration: none">Schreiben Sie uns</a>.</p>
+    </div>
+    </sc-if>
+  </div>
+
+  <p style="margin: 18px 4px 0; font-size: 12.5px; color: #8A8FA3; line-height: 1.5">Zum Ausprobieren: <span style="color: #565D73">mandant@vorschau.valtix</span> mit dem Passwort <span style="color: #565D73">Vorschau2026</span>. Die Eingabe wird nur im Browser geprüft.</p>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"$preview":{"width":560,"height":720}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      mail: 'mandant@vorschau.valtix',
+      pw: 'Vorschau2026',
+      fehler: '',
+      gemerkt: true,
+      sichtbar: false,
+      angemeldet: false
+    };
+  }
+  renderVals() {
+    var self = this;
+    var s = this.state;
+    var randMail = s.fehler && !s.mail ? '#D03B3B' : 'rgba(35,41,65,.18)';
+    var randPw = s.fehler && s.mail ? '#D03B3B' : 'rgba(35,41,65,.18)';
+    return {
+      mail: s.mail,
+      pw: s.pw,
+      fehler: !!s.fehler,
+      fehlertext: s.fehler,
+      formular: !s.angemeldet,
+      angemeldet: s.angemeldet,
+      mailRand: randMail,
+      pwRand: randPw,
+      pwTyp: s.sichtbar ? 'text' : 'password',
+      sichtText: s.sichtbar ? 'Verbergen' : 'Anzeigen',
+      gemerkt: s.gemerkt,
+      hakenRand: s.gemerkt ? '#232941' : 'rgba(35,41,65,.28)',
+      hakenGrund: s.gemerkt ? '#232941' : '#ffffff',
+      mailTippen: function (e) { self.setState({ mail: e.target.value, fehler: '' }); },
+      pwTippen: function (e) { self.setState({ pw: e.target.value, fehler: '' }); },
+      sichtbarkeit: function () { self.setState({ sichtbar: !s.sichtbar }); },
+      merken: function () { self.setState({ gemerkt: !s.gemerkt }); },
+      zurueck: function () { self.setState({ angemeldet: false, fehler: '' }); },
+      anmelden: function () {
+        if (!s.mail) { self.setState({ fehler: 'Bitte tragen Sie Ihre E-Mail-Adresse ein.' }); return; }
+        if (s.pw !== 'Vorschau2026') {
+          self.setState({ fehler: 'Das Passwort stimmt nicht. Prüfen Sie die Groß- und Kleinschreibung.' });
+          return;
+        }
+        self.setState({ angemeldet: true, fehler: '' });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
