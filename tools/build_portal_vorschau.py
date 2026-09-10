@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-"""Baut die statische Portalvorschau.
+"""Baut die Portalseite der Website.
 
-Reine Attrappe zur Ansicht: kein Server, keine Datenbank, keine Speicherung.
-Die Zahlen stammen aus der Beispieldatei, die Firma ist erfunden.
+Reine Vorfuehrung: kein Server, keine Datenbank, keine Speicherung. Firma und
+Zahlen stammen aus der Beispieldatei des Berichtsgenerators, nichts ist
+dazuerfunden.
 
-Der Aufbau folgt dem, was Auswertungswerkzeuge wie finban vormachen:
-Seitenleiste links, Werkzeugleiste oben, darunter Kennzahlen, ein Verlauf
-ueber alle Monate und ein aufklappbares Raster mit den Monaten als Spalten.
-Die Farben sind die von Valtix, nicht die des Vorbilds.
+Aufbau nach dem Entwurf: nach der Anmeldung zuerst ein Satz des Beraters,
+danach die Kennzahlen nach Status gruppiert, erst dann die Zahlen im Detail.
+Die Werte liest tools/bericht/matrix.py aus der Eingabevorlage, damit Portal
+und Bericht nicht auseinanderlaufen.
 """
-import math
+import json
 import os
-import re
 import sys
 
 _HIER = os.path.dirname(os.path.abspath(__file__))
@@ -21,481 +21,688 @@ from matrix import Matrix                                    # noqa: E402
 
 QUELLE = os.environ.get('VALTIX_DEMO', '/tmp/demo.xlsx')
 BERICHT = 'portal-vorschau-bericht.html'
-
 M = Matrix(QUELLE)
+
 KURZ = {'Januar': 'Jan', 'Februar': 'Feb', 'März': 'Mär', 'April': 'Apr',
         'Mai': 'Mai', 'Juni': 'Jun', 'Juli': 'Jul', 'August': 'Aug',
         'September': 'Sep', 'Oktober': 'Okt', 'November': 'Nov',
         'Dezember': 'Dez'}
 
+# Wann der jeweilige Bericht eingestellt wurde. Erfundene, aber plausible
+# Daten fuer die Vorfuehrung.
+EINGESTELLT = ['06.02.2026', '05.03.2026', '07.04.2026', '06.05.2026',
+               '05.06.2026', '07.07.2026', '06.08.2026']
 
-# ------------------------------------------------------------------- Formate
-def geld(w, nachkomma=0):
-    if w is None:
-        return '–'
-    s = f'{w:,.{nachkomma}f}'.replace(',', '@').replace('.', ',').replace('@', '.')
-    return s + ' €'
+# Was der Berater zum jeweiligen Monat schreibt. Jede Zahl darin stammt aus
+# der Beispieldatei; wer hier etwas aendert, prueft sie gegen die Reihen.
+KOMMENTARE = [
+    'Der Start ins Jahr endet mit einem Verlust von 4.855 €. Vor Abschreibungen '
+    'und Zinsen steht ein Plus von 4.671 €, das reicht aber nicht, um beides zu decken.',
+    'Erstmals ein positives Ergebnis, wenn auch knapp. Der Kontostand sinkt trotzdem '
+    'weiter, um 7.100 € gegenüber Januar.',
+    'Ein deutlicher Sprung auf 12.038 € Ergebnis bei gestiegener Auslastung. Der '
+    'Kontostand sinkt trotzdem, weil Ihre Kunden unverändert erst nach 44 Tagen zahlen.',
+    'Etwas schwächer als im März: der Umsatz geht leicht zurück, das Ergebnis auf '
+    '9.927 €. Ihre Kunden zahlen jetzt nach 46 statt nach 44 Tagen.',
+    'Der Umsatz wächst, das Ergebnis nicht: die festen Kosten liegen rund 7.800 € '
+    'über dem April. Wir sollten über die Personalkosten sprechen.',
+    'Ein gutes Ergebnis von 18.519 €. Die Deckungsbeitragsquote ist erstmals unter '
+    '62 % gefallen, das liegt am höheren Materialanteil.',
+    'Der Umsatz liegt erstmals über Ihrem Monatsziel, das Ergebnis hat sich gegenüber '
+    'Juni fast verdoppelt. Zwei Dinge sollten wir besprechen: der Kontostand sinkt seit '
+    'Januar, und Ihre Kunden zahlen im Schnitt nach 48 Tagen, acht Tage über Ihrem '
+    'eigenen Ziel.',
+]
 
+# Klarname und Erklaerung je Kennzahl. Der Fachbegriff steht in der Erklaerung,
+# damit ihn findet, wer ihn kennt, ohne dass er die Zeile anfuehrt.
+KENNZAHLEN = [
+    ('umsatz', 'Umsatz', 'Was Sie im Monat in Rechnung gestellt haben'),
+    ('ebt_marge', 'Gewinnmarge vor Steuern',
+     'Gewinn vor Steuern, gemessen am Umsatz. Fachbegriff EBT-Marge'),
+    ('db_quote', 'Was nach Material und Fremdleistung bleibt',
+     'Anteil an der Gesamtleistung. Fachbegriff Deckungsbeitragsquote'),
+    ('liquide', 'Kontostand', 'Bank und Kasse am Monatsende'),
+    ('ek_quote', 'Eigenkapitalquote', 'Anteil des Eigenkapitals an der Bilanzsumme'),
+    ('dso', 'Ihre Kunden zahlen nach',
+     'Durchschnitt in Tagen. Fachbegriff Debitorenlaufzeit'),
+    ('auslastung', 'Auslastung', 'Geleistete Stunden gemessen an Ihrer Kapazität'),
+    ('aktive_kunden', 'Aktive Kunden', 'Objekte und Mandate mit Umsatz im Monat'),
+    ('neukunden', 'Neukunden', 'Neue Kunden oder Aufträge im Monat'),
+]
 
-def prozent(w):
-    return '–' if w is None else f'{w:,.1f}'.replace('.', ',') + ' %'
-
-
-def zahl(w):
-    if w is None:
-        return '–'
-    nk = 0 if abs(w - round(w)) < 0.005 else 1
-    return f'{w:,.{nk}f}'.replace(',', '@').replace('.', ',').replace('@', '.')
-
-
-def tage(w):
-    return '–' if w is None else f'{w:,.0f}'.replace(',', '.') + ' Tage'
-
-
-def formatiere(art, w):
-    return {'geld': geld, 'prozent': prozent, 'zahl': zahl, 'tage': tage}[art](w)
-
-
-# ---------------------------------------------------------------- Diagramme
-def sparkline(werte, breite=46, hoehe=18):
-    """Winziger Verlauf am Zeilenanfang, wie im Vorbild."""
-    echte = [w for w in werte if w is not None]
-    if len(echte) < 2:
-        return f'<svg width="{breite}" height="{hoehe}" aria-hidden="true"></svg>'
-    tief, hoch = min(echte), max(echte)
-    spanne = (hoch - tief) or 1
-    schritt = breite / (len(werte) - 1)
-    punkte = []
-    for i, w in enumerate(werte):
-        if w is None:
-            continue
-        y = hoehe - 2 - (w - tief) / spanne * (hoehe - 4)
-        punkte.append(f'{i * schritt:.1f},{y:.1f}')
-    letzte = punkte[-1].split(',')
-    return (f'<svg width="{breite}" height="{hoehe}" viewBox="0 0 {breite} {hoehe}" '
-            f'aria-hidden="true" class="funke">'
-            f'<polyline points="{" ".join(punkte)}" fill="none" stroke="currentColor" '
-            f'stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>'
-            f'<circle cx="{letzte[0]}" cy="{letzte[1]}" r="1.9" fill="currentColor"/></svg>')
-
-
-def _runde_obergrenze(wert, stufen=4):
-    """Achsen sollen bei glatten Betraegen enden, nicht bei 411.492 Euro."""
-    grob = wert / stufen
-    zehner = 10 ** math.floor(math.log10(grob))
-    for faktor in (1, 2, 2.5, 5, 10):
-        if faktor * zehner >= grob:
-            return faktor * zehner * stufen
-    return grob * stufen
-
-
-def verlaufsbild():
-    """Saeulen je Monat fuer Gesamtleistung und Gesamtkosten, dazu die
-    liquiden Mittel als Linie. Der Berichtsmonat ist hinterlegt."""
-    gesamt = M.zeile('gesamtleistung').werte
-    kosten = [M.zeile('variabel').werte[i] + M.zeile('fix').werte[i]
-              + (M.zeile('afa').werte[i] if M.zeile('afa') else 0)
-              for i in range(len(M.monate))]
-    liq_zeile = M.zeile('liquide')
-    liquide = liq_zeile.werte if liq_zeile else []
-
-    B, H = 1000, 250
-    links, rechts, oben, unten = 74, 18, 18, 34
-    flaeche_b = B - links - rechts
-    flaeche_h = H - oben - unten
-    roh = max(gesamt + kosten + [w for w in liquide if w is not None] + [1]) * 1.08
-    hoch = _runde_obergrenze(roh)
-    spalte = flaeche_b / len(M.monate)
-    balken = min(26, spalte * 0.3)
-
-    teile = [f'<svg viewBox="0 0 {B} {H}" role="img" class="verlauf" '
-             f'aria-label="Gesamtleistung, Gesamtkosten und liquide Mittel je Monat">']
-    # Gitter
-    for k in range(5):
-        y = oben + flaeche_h - flaeche_h * k / 4
-        wert = hoch * k / 4
-        teile.append(f'<line x1="{links}" y1="{y:.1f}" x2="{B - rechts}" y2="{y:.1f}" '
-                     f'stroke="rgba(35,41,65,.09)" stroke-width="1"/>')
-        teile.append(f'<text x="{links - 10}" y="{y + 4:.1f}" text-anchor="end" '
-                     f'font-size="11" fill="#8A8FA3">{geld(wert)}</text>')
-    # Berichtsmonat hinterlegen
-    mx = links + spalte * M.aktiv
-    teile.append(f'<rect x="{mx:.1f}" y="{oben - 8}" width="{spalte:.1f}" '
-                 f'height="{flaeche_h + 8}" fill="rgba(35,41,65,.045)"/>')
-    # Saeulen
-    for i, monat in enumerate(M.monate):
-        mitte = links + spalte * (i + .5)
-        for wert, farbe, versatz in ((gesamt[i], '#404D97', -balken - 2),
-                                     (kosten[i], '#B0842A', 2)):
-            h = flaeche_h * (wert / hoch)
-            teile.append(
-                f'<rect x="{mitte + versatz:.1f}" y="{oben + flaeche_h - h:.1f}" '
-                f'width="{balken:.1f}" height="{h:.1f}" rx="3" fill="{farbe}">'
-                f'<title>{monat}: {geld(wert)}</title></rect>')
-        teile.append(f'<text x="{mitte:.1f}" y="{H - 12}" text-anchor="middle" '
-                     f'font-size="11.5" fill="#565D73">{KURZ[monat]}</text>')
-    # Liquiditaetslinie
-    if any(w is not None for w in liquide):
-        punkte = [f'{links + spalte * (i + .5):.1f},'
-                  f'{oben + flaeche_h - flaeche_h * (w / hoch):.1f}'
-                  for i, w in enumerate(liquide) if w is not None]
-        teile.append(f'<polyline points="{" ".join(punkte)}" fill="none" '
-                     f'stroke="#232941" stroke-width="1.8" stroke-dasharray="4 4" '
-                     f'stroke-linecap="round"/>')
-        x, y = punkte[-1].split(',')
-        teile.append(f'<circle cx="{x}" cy="{y}" r="4" fill="#232941" '
-                     f'stroke="#FBF8F2" stroke-width="2"/>')
-    teile.append('</svg>')
-    return ''.join(teile)
+# Klarnamen der Detailzeilen. Was hier fehlt, behaelt die Beschriftung aus der
+# Eingabevorlage, damit umbenannte Zeilen ihren Namen behalten.
+DETAIL_NAMEN = {
+    'umsatz': ('Umsatz', ''),
+    'gesamtleistung': ('Gesamtleistung', ''),
+    'variabel': ('Mengenabhängige Kosten', 'variable Kosten'),
+    'db': ('Was danach bleibt', 'Deckungsbeitrag'),
+    'db_quote': ('Anteil an der Gesamtleistung', 'Deckungsbeitragsquote'),
+    'fix': ('Feste Kosten', 'Fixkosten'),
+    'ebitda': ('Ergebnis vor Abschreibungen und Zinsen', 'EBITDA'),
+    'afa': ('Abschreibungen', ''),
+    'ebit': ('Ergebnis vor Zinsen', 'EBIT'),
+    'zins': ('Zinsen', ''),
+    'ebt': ('Gewinn vor Steuern', 'EBT'),
+    'ebt_marge': ('Gewinnmarge vor Steuern', 'EBT-Marge'),
+}
 
 
-# -------------------------------------------------------------------- Raster
-def ampelmarke(zl, i):
-    a = M.ampel(zl, i)
-    if not a:
-        return ''
-    farbe, erfuellung = a
-    ziel = ('≥ ' if zl.richtung == 'hoeher' else '≤ ') + formatiere(zl.art, zl.ziel)
-    return (f'<span class="marke {farbe}" title="Zielerreichung, Ziel {ziel}">'
-            f'{erfuellung * 100:,.0f}'.replace(',', '.') + ' %</span>')
+def daten():
+    """Alles, was die Seite zum Zeichnen braucht, als eine Struktur."""
+    monate = [{'lang': m, 'kurz': KURZ[m], 'eingestellt': EINGESTELLT[i]}
+              for i, m in enumerate(M.monate)]
 
-
-def raster():
-    kopf = ''.join(
-        f'<th class="num{" jetzt" if i == M.aktiv else ""}">{KURZ[m]} '
-        f'{str(M.jahr)[-2:]}</th>' for i, m in enumerate(M.monate))
-    bloecke = []
-    for kennung, titel, zeilen in M.bloecke:
-        koerper = []
-        for zl in zeilen:
-            klassen = ['zeile', f'ebene{zl.ebene}']
-            attribute = ''
-            if zl.gruppe:
-                klassen.append('kind')
-                klassen.append(f'zu-{zl.gruppe}')
-                attribute = ' hidden'
-            hat_kinder = any(k.gruppe == zl.schluessel for k in zeilen)
-            knopf = (f'<button type="button" class="klapp" data-gruppe="{zl.schluessel}" '
-                     f'aria-expanded="false"><span aria-hidden="true">›</span>'
-                     f'<span class="nurlesen">Positionen anzeigen</span></button>'
-                     if hat_kinder else '<span class="klapp leer"></span>')
-            zellen = []
-            for i, w in enumerate(zl.werte):
-                text = formatiere(zl.art, w)
-                if zl.vorzeichen < 0 and w:
-                    text = '−' + text
-                marke = ampelmarke(zl, i) if i == M.aktiv else ''
-                zellen.append(
-                    f'<td class="num{" jetzt" if i == M.aktiv else ""}'
-                    f'{" minus" if zl.vorzeichen < 0 else ""}">{marke}{text}</td>')
-            ziel = ('–' if zl.ziel is None else
-                    ('≥ ' if zl.richtung == 'hoeher' else '≤ ')
-                    + formatiere(zl.art, zl.ziel))
-            koerper.append(
-                f'<tr class="{" ".join(klassen)}"{attribute}>'
-                f'<th scope="row" class="pos">{knopf}<span class="titel">{zl.titel}</span></th>'
-                f'<td class="funkezelle">{sparkline(zl.werte)}</td>'
-                f'{"".join(zellen)}'
-                f'<td class="num ziel">{ziel}</td></tr>')
-        bloecke.append(
-            f'<tbody><tr class="blockkopf"><th scope="rowgroup" class="pos">{titel}</th>'
-            f'<td colspan="{len(M.monate) + 2}"></td></tr>{"".join(koerper)}</tbody>')
-    return (f'<div class="rasterrahmen"><table class="raster">'
-            f'<thead><tr><th class="pos">Position</th><th class="funkezelle">Verlauf</th>'
-            f'{kopf}<th class="num ziel">Ziel</th></tr></thead>'
-            f'{"".join(bloecke)}</table></div>')
-
-
-# ------------------------------------------------------------------ Kacheln
-def kacheln():
-    def delta(schluessel):
-        w = M.zeile(schluessel).werte
-        if M.aktiv == 0 or w[M.aktiv - 1] in (None, 0) or w[M.aktiv] is None:
-            return ''
-        v = (w[M.aktiv] - w[M.aktiv - 1]) / abs(w[M.aktiv - 1]) * 100
-        pfeil = '▲' if v >= 0 else '▼'
-        return (f'<span class="delta {"hoch" if v >= 0 else "runter"}">{pfeil} '
-                + f'{abs(v):,.1f}'.replace('.', ',') + ' % zum Vormonat</span>')
-
-    posten = [('umsatz', 'Umsatzerlöse', True), ('ebt', 'Ergebnis vor Steuern', True),
-              ('db_quote', 'Deckungsbeitragsquote', False),
-              ('liquide', 'Liquide Mittel', True), ('auslastung', 'Auslastung', False)]
-    raus = []
-    for schluessel, titel, mit_delta in posten:
+    kennzahlen = []
+    for schluessel, klar, erklaerung in KENNZAHLEN:
         zl = M.zeile(schluessel)
-        if zl is None:
+        if zl is None or zl.ziel is None:
             continue
-        wert = zl.werte[M.aktiv]
-        raus.append(
-            f'<div class="kachel"><span class="kachel-titel">{titel}</span>'
-            f'<b>{formatiere(zl.art, wert)}</b>'
-            f'{ampelmarke(zl, M.aktiv)}{delta(schluessel) if mit_delta else ""}</div>')
-    return f'<div class="kacheln">{"".join(raus)}</div>'
+        kennzahlen.append({
+            'klar': klar, 'erklaerung': erklaerung, 'art': zl.art,
+            'ziel': zl.ziel, 'richtung': zl.richtung, 'reihe': zl.werte,
+        })
+
+    detail = []
+    for kennung, _, zeilen in M.bloecke:
+        if kennung != 'ergebnis':
+            continue
+        hat_kinder = {z.gruppe for z in zeilen if z.gruppe}
+        for z in zeilen:
+            klar, fach = DETAIL_NAMEN.get(z.schluessel, (z.titel, ''))
+            kinder = [k for k in zeilen if k.gruppe == z.schluessel]
+            detail.append({
+                'schluessel': z.schluessel, 'klar': klar, 'fach': fach,
+                'art': z.art, 'reihe': z.werte, 'minus': z.vorzeichen < 0,
+                'stark': z.ebene == 0, 'kind': bool(z.gruppe),
+                'gruppe': z.gruppe or '',
+                'klappbar': z.schluessel in hat_kinder,
+                'anzahl': len(kinder),
+            })
+
+    return {
+        'firma': M.firma, 'branche': M.branche, 'jahr': M.jahr,
+        'monate': monate, 'aktiv': M.aktiv, 'kommentare': KOMMENTARE,
+        'kennzahlen': kennzahlen, 'detail': detail,
+        'umsatz': M.zeile('umsatz').werte,
+        'bericht': BERICHT,
+    }
 
 
-# ------------------------------------------------------------------- Huelle
+CSS = '''
+:root{
+  --ink:#232941; --ink-soft:#565D73; --muted:#8A8FA3;
+  --gold-deep:#7A6238; --cream:#F5EBD0; --bg:#FBF8F2; --flaeche:#F7F4EC;
+  --serie-a:#404D97; --serie-b:#B0842A;
+  --gruen:#0CA30C; --gruen-text:#0A7A0A;
+  --gelb:#FAB219; --gelb-text:#8A6100;
+  --rot:#D03B3B; --rot-text:#A32C2C;
+  --linie:rgba(35,41,65,.11); --linie-stark:rgba(35,41,65,.18);
+  --r:14px; --schatten:0 8px 24px rgba(35,41,65,.07);
+  --font:"Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);
+     font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--gold-deep)}
+button,input{font-family:inherit}
+[hidden]{display:none!important}
+h1{font-size:1.5rem;font-weight:800;letter-spacing:-.03em}
+h2{font-size:1.02rem;font-weight:700;letter-spacing:-.02em}
+
+.band{background:var(--ink);color:#fff;font-size:.84rem;padding:11px 22px}
+.band-innen{max-width:1220px;margin:0 auto;display:flex;gap:14px;
+            align-items:baseline;flex-wrap:wrap}
+.band b{font-weight:700}
+.band span{color:rgba(255,255,255,.72)}
+.band a{color:var(--cream)}
+
+/* Anmeldung */
+.tuer{padding:6vh 22px 60px}
+.tuer-karte{width:100%;max-width:430px;margin:0 auto;background:#fff;
+  border:1px solid var(--linie);border-radius:18px;padding:30px;
+  box-shadow:var(--schatten)}
+.marke{font-weight:800;letter-spacing:-.03em;font-size:1.06rem}
+.marke span{font-weight:500;color:var(--ink-soft);margin-left:8px;font-size:.9rem}
+.lead{color:var(--ink-soft);margin:6px 0 20px}
+label{display:block;font-size:.86rem;font-weight:600;margin-bottom:6px}
+input[type=email],input[type=password],input[type=text],select{width:100%;
+  min-height:50px;font-size:1rem;color:var(--ink);background:#fff;
+  border:1px solid var(--linie-stark);border-radius:12px;padding:10px 14px}
+input:focus,select:focus{outline:none;border-color:var(--ink);
+  box-shadow:0 0 0 3px rgba(35,41,65,.13)}
+input:disabled,select:disabled{background:var(--flaeche);color:var(--muted)}
+.feld{margin-bottom:16px}
+.pw-reihe{display:flex;gap:8px;align-items:stretch}
+.pw-reihe input{flex:1;min-width:0}
+.merken{display:flex;align-items:center;gap:9px;min-height:44px;padding:0 4px;
+  border:0;background:none;cursor:pointer;color:var(--ink);font-size:.9rem}
+.haken{width:22px;height:22px;border-radius:7px;border:1px solid rgba(35,41,65,.28);
+  background:#fff;display:flex;align-items:center;justify-content:center;flex:none}
+.merken[aria-checked=true] .haken{background:var(--ink);border-color:var(--ink);color:#fff}
+.merken[aria-checked=false] .haken svg{display:none}
+.zeile-merken{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.knopf{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:50px;padding:0 22px;border-radius:999px;border:0;font:inherit;
+  font-size:1rem;font-weight:600;cursor:pointer;text-decoration:none;
+  background:linear-gradient(180deg,#232941,#171B2C);color:#fff;
+  box-shadow:0 6px 16px rgba(35,41,65,.24)}
+.knopf.breit{width:100%}
+.knopf.stumm{background:#fff;color:var(--ink);border:1px solid var(--linie);
+  box-shadow:none}
+.knopf.schmal{min-height:40px;padding:0 16px;font-size:.86rem;box-shadow:none}
+.knopf:disabled{opacity:.5;box-shadow:none;cursor:not-allowed}
+.meldung{display:flex;gap:10px;align-items:flex-start;background:#FDECEC;
+  color:#8B1F1F;border-radius:11px;padding:12px 14px;margin-bottom:16px;
+  font-size:.9rem}
+.meldung svg{flex:none;margin-top:2px}
+.demo{background:var(--cream);border:1px solid rgba(122,98,56,.26);
+  border-radius:12px;padding:13px 15px;margin-bottom:16px;font-size:.88rem}
+.demo b{display:block;font-size:.68rem;text-transform:uppercase;
+  letter-spacing:.11em;color:var(--gold-deep);margin-bottom:7px}
+.demo dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;align-items:baseline}
+.demo dt{color:var(--ink-soft)}
+.demo dd{min-width:0;overflow-wrap:anywhere}
+.demo p{margin-top:8px;color:var(--ink-soft);font-size:.8rem}
+code{background:rgba(35,41,65,.08);padding:1px 5px;border-radius:5px;font-size:.86rem}
+
+/* Portalkopf */
+.kopf{background:#fff;border-bottom:1px solid var(--linie)}
+.kopf-innen{max-width:1220px;margin:0 auto;padding:12px 22px;display:flex;
+  align-items:center;gap:14px;flex-wrap:wrap}
+.wechsler{display:flex;align-items:center;gap:8px;background:var(--flaeche);
+  border:1px solid var(--linie);border-radius:999px;padding:4px;margin:0 auto}
+.pfeil{width:44px;height:44px;border-radius:999px;border:0;background:#fff;
+  color:var(--ink);cursor:pointer;display:flex;align-items:center;
+  justify-content:center;box-shadow:0 1px 3px rgba(35,41,65,.14)}
+.pfeil:disabled{color:#C9CBD4;cursor:default;box-shadow:none;background:transparent}
+.wechsler-text{min-width:150px;text-align:center}
+.wechsler-text b{display:block;font-size:.96rem;font-weight:700;letter-spacing:-.02em}
+.wechsler-text span{font-size:.76rem;color:var(--ink-soft)}
+.nutzer{display:flex;align-items:center;gap:10px}
+.nutzer-text{text-align:right}
+.nutzer-text b{display:block;font-size:.82rem;font-weight:700;line-height:1.3}
+.nutzer-text span{font-size:.76rem;color:var(--ink-soft)}
+.signet{width:36px;height:36px;border-radius:11px;background:var(--gold-deep);
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:.74rem;font-weight:700;flex:none}
+.reiter{background:#fff;border-bottom:1px solid var(--linie);overflow-x:auto}
+.reiter-innen{max-width:1220px;margin:0 auto;padding:0 22px;display:flex;gap:22px}
+.reiter button{border:0;background:none;cursor:pointer;padding:12px 2px;
+  min-height:48px;font-size:.94rem;font-weight:500;color:var(--ink-soft);
+  border-bottom:3px solid transparent;white-space:nowrap}
+.reiter button[aria-selected=true]{color:var(--ink);font-weight:700;
+  border-bottom-color:var(--ink)}
+.flaeche{max-width:1220px;margin:0 auto;padding:20px 22px 48px;
+  display:flex;flex-direction:column;gap:16px}
+
+/* Kommentar */
+.kommentar{display:flex;gap:18px;flex-wrap:wrap;background:#fff;
+  border:1px solid var(--linie);border-left:4px solid var(--gold-deep);
+  border-radius:var(--r);padding:20px 24px;box-shadow:var(--schatten)}
+.kommentar-text{flex:1;min-width:260px}
+.kommentar .kennung{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--gold-deep);font-weight:700;margin-bottom:8px}
+.kommentar p{font-size:1.06rem;line-height:1.5;max-width:74ch;text-wrap:pretty}
+.kommentar-knoepfe{display:flex;flex-direction:column;gap:8px;align-self:center}
+.kommentar-knoepfe .knopf{min-height:44px;white-space:nowrap}
+
+/* Statusgruppen */
+.gruppe{background:#fff;border:1px solid var(--linie);border-radius:var(--r);
+  box-shadow:var(--schatten);overflow:hidden}
+.gruppe-kopf{width:100%;display:flex;align-items:center;gap:10px;padding:13px 20px;
+  min-height:52px;border:0;border-bottom:1px solid var(--linie);cursor:pointer;
+  text-align:left;font-size:.95rem}
+.gruppe-kopf .zeichen{width:22px;height:22px;border-radius:999px;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:.8rem;
+  font-weight:800;flex:none}
+.gruppe-kopf .titel{font-weight:700;letter-spacing:-.02em}
+.gruppe-kopf .anzahl{color:var(--ink-soft);font-size:.84rem}
+.gruppe-kopf .klapp{margin-left:auto;color:var(--ink-soft);font-size:.84rem}
+.g-rot .gruppe-kopf{background:rgba(208,59,59,.07)}
+.g-rot .zeichen{background:var(--rot)} .g-rot .titel{color:var(--rot-text)}
+.g-gelb .gruppe-kopf{background:rgba(250,178,25,.12)}
+.g-gelb .zeichen{background:var(--gelb)} .g-gelb .titel{color:var(--gelb-text)}
+.g-gruen .gruppe-kopf{background:rgba(12,163,12,.08)}
+.g-gruen .zeichen{background:var(--gruen)} .g-gruen .titel{color:var(--gruen-text)}
+.posten{display:grid;grid-template-columns:minmax(0,1fr) 168px 150px 170px;
+  gap:16px;align-items:center;padding:14px 20px;
+  border-bottom:1px solid rgba(35,41,65,.08)}
+.posten:last-child{border-bottom:0}
+.posten .name{font-size:.98rem;font-weight:600;letter-spacing:-.01em}
+.posten .erklaerung{font-size:.82rem;color:var(--ink-soft);margin-top:2px}
+.posten .wert{text-align:right}
+.posten .wert b{display:block;font-size:1.2rem;font-weight:800;
+  letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.posten .wert span{font-size:.78rem;color:var(--ink-soft);
+  font-variant-numeric:tabular-nums}
+.posten .ziel{text-align:right;font-size:.85rem;color:var(--ink-soft);
+  font-variant-numeric:tabular-nums}
+.posten .tat{text-align:right}
+.posten .abstand{font-size:.84rem;font-variant-numeric:tabular-nums}
+.a-gruen{color:var(--gruen-text)} .a-gelb{color:var(--gelb-text)}
+.a-rot{color:var(--rot-text)}
+
+/* Karte, Verlauf */
+.karte{background:#fff;border:1px solid var(--linie);border-radius:var(--r);
+  padding:18px 22px 20px;box-shadow:var(--schatten)}
+.karte.flach{padding:18px 0 0}
+.karte.flach .karten-kopf{padding:0 20px}
+.karten-kopf{display:flex;justify-content:space-between;align-items:baseline;
+  gap:14px;flex-wrap:wrap;margin-bottom:10px}
+.hinweis{font-size:.82rem;color:var(--ink-soft)}
+.saeulen{display:flex;align-items:flex-end;gap:12px;height:190px;padding-top:18px}
+.saeule{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;
+  cursor:pointer;align-self:stretch;justify-content:flex-end;border:0;
+  background:none;padding:0;min-width:0}
+.saeule .zahl{font-size:.8rem;font-weight:600;color:var(--ink);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.saeule .balken{width:100%;background:rgba(64,77,151,.28);border-radius:6px 6px 0 0}
+.saeule .monat{font-size:.8rem;color:var(--muted)}
+.saeule[aria-current] .balken{background:var(--serie-a)}
+.saeule[aria-current] .monat{color:var(--ink);font-weight:700}
+
+/* Detailraster */
+.rahmen{overflow-x:auto;-webkit-overflow-scrolling:touch;
+  border-top:1px solid var(--linie)}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:.88rem;
+  min-width:720px}
+th,td{padding:9px 12px;text-align:left;font-weight:400;
+  border-bottom:1px solid rgba(35,41,65,.08);white-space:nowrap}
+thead th{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--ink-soft);font-weight:700;background:var(--flaeche)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.summe td,tr.summe th{font-weight:700;background:rgba(35,41,65,.028)}
+.pos{min-width:280px;white-space:normal}
+.pos .fach{font-size:.78rem;color:var(--muted);margin-left:7px}
+.kindzeile .pos{padding-left:32px;color:var(--ink-soft)}
+td.minus{color:var(--gold-deep)}
+.oeffnen{min-height:30px;padding:0 11px;border-radius:999px;
+  border:1px solid var(--linie-stark);background:#fff;color:var(--ink-soft);
+  font-size:.76rem;font-weight:600;cursor:pointer;margin-right:9px;
+  white-space:nowrap}
+.hoch{color:var(--gruen-text)} .runter{color:var(--rot-text)}
+
+/* Verwaltung */
+.status.gut{color:var(--gruen-text);font-weight:600;font-size:.86rem}
+.status.offen{color:var(--gold-deep);font-weight:600;font-size:.86rem}
+.formular{max-width:460px;padding:0 20px 20px}
+.formular .knopf{margin-top:16px}
+
+.fuss{max-width:1220px;margin:0 auto;padding:14px 22px 34px;font-size:.78rem;
+      color:var(--ink-soft)}
+
+@media(max-width:860px){
+  .kopf-innen{padding:10px 14px;gap:10px}
+  .marke{flex:1}
+  .nutzer{order:2;width:100%;gap:10px}
+  .nutzer-text{flex:1;text-align:left;min-width:0}
+  .nutzer-text b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .wechsler{order:3;width:100%;margin:0}
+  .wechsler-text{flex:1}
+  .gruppe-kopf{flex-wrap:wrap;row-gap:2px}
+  .gruppe-kopf .titel{flex:1;min-width:0}
+  .gruppe-kopf .anzahl{width:100%;padding-left:32px;order:4}
+  .reiter-innen,.flaeche{padding-left:14px;padding-right:14px}
+  .kommentar{padding:16px 18px;flex-direction:column;gap:14px}
+  .kommentar p{font-size:1rem}
+  .kommentar-knoepfe{flex-direction:row;flex-wrap:wrap;align-self:stretch}
+  .kommentar-knoepfe .knopf{flex:1}
+  .posten{grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:14px 16px}
+  .posten .name-feld{grid-column:1}
+  .posten .wert{grid-column:2;grid-row:1}
+  .posten .wert span{display:none}
+  .posten .ziel{grid-column:1;text-align:left;grid-row:2}
+  .posten .tat{grid-column:2;grid-row:2}
+  .posten .erklaerung{display:none}
+  .gruppe-kopf{padding:13px 16px}
+  .karte{padding:16px 16px 18px}
+  .karte.flach .karten-kopf{padding:0 16px}
+  .saeulen{height:150px;gap:6px}
+  .saeule .zahl{font-size:.72rem}
+}
+'''
+
+
+JS = r'''
+(function () {
+  var D = window.__valtix;
+  var stand = { monat: D.aktiv, reiter: 'ueberblick', auf: { rot: true, gelb: true, gruen: false },
+                offen: {}, gemerkt: true, sichtbar: false };
+
+  // ---------------------------------------------------------------- Formate
+  function tausend(s) { return s.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+  function eur(w) {
+    if (w === null || w === undefined) return '–';
+    return (w < 0 ? '−' : '') + tausend(Math.abs(w).toFixed(0)) + ' €';
+  }
+  function proz(w) {
+    if (w === null || w === undefined) return '–';
+    return w.toFixed(1).replace('.', ',').replace('-', '−') + ' %';
+  }
+  function tage(w) { return w === null || w === undefined ? '–' : w.toFixed(0) + ' Tage'; }
+  function zahl(w) { return w === null || w === undefined ? '–' : w.toFixed(0); }
+  function fmt(art, w) {
+    return art === 'geld' ? eur(w) : art === 'prozent' ? proz(w)
+         : art === 'tage' ? tage(w) : zahl(w);
+  }
+  function el(tag, klasse, text) {
+    var e = document.createElement(tag);
+    if (klasse) e.className = klasse;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+
+  // -------------------------------------------------------------- Bewertung
+  function bewerten(k, i) {
+    var ist = k.reihe[i];
+    if (ist === null || ist === undefined || !k.ziel) return null;
+    // Abweichung als Anteil des Ziels, damit die Gelbschwelle in beide
+    // Richtungen bei zehn Prozent liegt.
+    var erreicht = k.richtung === 'hoeher' ? ist >= k.ziel : ist <= k.ziel;
+    var daneben = Math.abs(ist - k.ziel) / Math.abs(k.ziel);
+    return { stufe: erreicht ? 'gruen' : (daneben <= 0.1 ? 'gelb' : 'rot'), erreicht: erreicht };
+  }
+
+  // ------------------------------------------------------------------- Kopf
+  function kopf() {
+    var m = D.monate[stand.monat];
+    document.getElementById('monat-name').textContent = m.lang + ' ' + D.jahr;
+    document.getElementById('monat-stand').textContent = 'Bericht vom ' + m.eingestellt;
+    document.getElementById('pfeil-zurueck').disabled = stand.monat === 0;
+    document.getElementById('pfeil-vor').disabled = stand.monat === D.monate.length - 1;
+  }
+
+  // -------------------------------------------------------------- Überblick
+  function ueberblick() {
+    var i = stand.monat, vor = i > 0 ? i - 1 : null;
+    var wurzel = document.createDocumentFragment();
+
+    var k = el('section', 'kommentar');
+    var kt = el('div', 'kommentar-text');
+    kt.appendChild(el('div', 'kennung', 'Das sagt Ihr Berater zum ' + D.monate[i].lang));
+    kt.appendChild(el('p', null, D.kommentare[i]));
+    k.appendChild(kt);
+    var kn = el('div', 'kommentar-knoepfe');
+    var frage = el('button', 'knopf', 'Rückfrage stellen');
+    frage.type = 'button';
+    var pdf = el('a', 'knopf stumm', 'Vollständigen Bericht öffnen');
+    pdf.href = D.bericht;
+    kn.appendChild(frage); kn.appendChild(pdf);
+    k.appendChild(kn);
+    wurzel.appendChild(k);
+
+    var faecher = { rot: [], gelb: [], gruen: [] };
+    D.kennzahlen.forEach(function (kz) {
+      var b = bewerten(kz, i);
+      if (b) faecher[b.stufe].push({ kz: kz, b: b });
+    });
+
+    [['rot', 'Braucht Aufmerksamkeit', '!'],
+     ['gelb', 'Im Blick behalten', '•'],
+     ['gruen', 'Läuft nach Plan', '✓']].forEach(function (g) {
+      var liste = faecher[g[0]];
+      if (!liste.length) return;
+      var box = el('section', 'gruppe g-' + g[0]);
+      var kopfKnopf = el('button', 'gruppe-kopf');
+      kopfKnopf.type = 'button';
+      kopfKnopf.setAttribute('aria-expanded', String(stand.auf[g[0]]));
+      kopfKnopf.appendChild(el('span', 'zeichen', g[2]));
+      kopfKnopf.appendChild(el('span', 'titel', g[1]));
+      kopfKnopf.appendChild(el('span', 'anzahl',
+        liste.length === 1 ? '1 Kennzahl' : liste.length + ' Kennzahlen'));
+      kopfKnopf.appendChild(el('span', 'klapp', stand.auf[g[0]] ? 'zuklappen' : 'anzeigen'));
+      kopfKnopf.addEventListener('click', function () {
+        stand.auf[g[0]] = !stand.auf[g[0]];
+        zeichnen();
+      });
+      box.appendChild(kopfKnopf);
+
+      if (stand.auf[g[0]]) {
+        liste.forEach(function (p) {
+          var kz = p.kz, ist = kz.reihe[i];
+          var z = el('div', 'posten');
+          var nf = el('div', 'name-feld');
+          nf.appendChild(el('div', 'name', kz.klar));
+          nf.appendChild(el('div', 'erklaerung', kz.erklaerung));
+          z.appendChild(nf);
+
+          var w = el('div', 'wert');
+          w.appendChild(el('b', null, fmt(kz.art, ist)));
+          w.appendChild(el('span', null, vor === null ? 'kein Vormonat'
+            : 'Vormonat ' + fmt(kz.art, kz.reihe[vor])));
+          z.appendChild(w);
+
+          z.appendChild(el('div', 'ziel',
+            (kz.richtung === 'hoeher' ? 'Ziel ab ' : 'Ziel bis ') + fmt(kz.art, kz.ziel)));
+
+          var t = el('div', 'tat');
+          if (p.b.erreicht) {
+            t.appendChild(el('span', 'abstand a-gruen',
+              fmt(kz.art, Math.abs(ist - kz.ziel)) + ' besser'));
+          } else {
+            var nach = el('button', 'knopf stumm schmal', 'Dazu nachfragen');
+            nach.type = 'button';
+            t.appendChild(nach);
+          }
+          z.appendChild(t);
+          box.appendChild(z);
+        });
+      }
+      wurzel.appendChild(box);
+    });
+
+    // Verlauf
+    var v = el('section', 'karte');
+    var vk = el('div', 'karten-kopf');
+    vk.appendChild(el('h2', null, 'Umsatz im Jahresverlauf'));
+    vk.appendChild(el('p', 'hinweis', 'Wählen Sie einen Monat aus'));
+    v.appendChild(vk);
+    var reihe = el('div', 'saeulen');
+    var hoch = Math.max.apply(null, D.umsatz);
+    D.umsatz.forEach(function (w, idx) {
+      var s = el('button', 'saeule');
+      s.type = 'button';
+      if (idx === i) s.setAttribute('aria-current', 'true');
+      s.setAttribute('aria-label', D.monate[idx].lang + ', ' + eur(w));
+      s.appendChild(el('span', 'zahl', idx === i ? eur(w) : ''));
+      var b = el('span', 'balken');
+      b.style.height = Math.round(w / hoch * 122) + 'px';
+      s.appendChild(b);
+      s.appendChild(el('span', 'monat', D.monate[idx].kurz));
+      s.addEventListener('click', function () { stand.monat = idx; zeichnen(); });
+      reihe.appendChild(s);
+    });
+    v.appendChild(reihe);
+    wurzel.appendChild(v);
+    return wurzel;
+  }
+
+  // ------------------------------------------------------------ Zahlen im Detail
+  function detail() {
+    var i = stand.monat, vor = i > 0 ? i - 1 : null;
+    var karte = el('section', 'karte flach');
+    var kk = el('div', 'karten-kopf');
+    var kkl = el('div');
+    kkl.appendChild(el('h2', null, 'Ergebnisrechnung ' + D.monate[i].lang + ' ' + D.jahr));
+    kkl.appendChild(el('p', 'hinweis', vor === null
+      ? 'Für diesen Monat gibt es keinen Vormonat zum Vergleich.'
+      : 'Verglichen wird mit ' + D.monate[vor].lang + '. Blöcke lassen sich öffnen.'));
+    kk.appendChild(kkl);
+    karte.appendChild(kk);
+
+    var rahmen = el('div', 'rahmen');
+    var t = el('table');
+    var kopfZ = el('tr');
+    ['Position', D.monate[i].kurz + ' ' + String(D.jahr).slice(-2),
+     vor === null ? '–' : D.monate[vor].kurz + ' ' + String(D.jahr).slice(-2),
+     'Veränderung'].forEach(function (txt, sp) {
+      var th = el('th', sp ? 'num' : 'pos', txt);
+      kopfZ.appendChild(th);
+    });
+    var thead = el('thead'); thead.appendChild(kopfZ); t.appendChild(thead);
+
+    var tbody = el('tbody');
+    D.detail.forEach(function (z) {
+      if (z.kind && !stand.offen[z.gruppe]) return;
+      var tr = el('tr', (z.stark ? 'summe ' : '') + (z.kind ? 'kindzeile' : ''));
+      var th = el('th', 'pos');
+      th.scope = 'row';
+      if (z.klappbar) {
+        var b = el('button', 'oeffnen',
+          stand.offen[z.schluessel] ? 'schließen' : z.anzahl + ' Posten');
+        b.type = 'button';
+        b.setAttribute('aria-expanded', String(!!stand.offen[z.schluessel]));
+        b.addEventListener('click', function () {
+          stand.offen[z.schluessel] = !stand.offen[z.schluessel];
+          zeichnen();
+        });
+        th.appendChild(b);
+      }
+      th.appendChild(document.createTextNode(z.klar));
+      if (z.fach) th.appendChild(el('span', 'fach', z.fach));
+      tr.appendChild(th);
+
+      var vz = z.minus ? -1 : 1;
+      var td1 = el('td', 'num' + (z.minus ? ' minus' : ''),
+        fmt(z.art, z.reihe[i] === null ? null : z.reihe[i] * vz));
+      tr.appendChild(td1);
+      tr.appendChild(el('td', 'num', vor === null ? '–'
+        : fmt(z.art, z.reihe[vor] === null ? null : z.reihe[vor] * vz)));
+
+      var dtxt = '', dkl = 'num';
+      if (vor !== null && z.reihe[i] !== null && z.reihe[vor] !== null) {
+        var diff = z.reihe[i] - z.reihe[vor];
+        if (z.art === 'prozent') {
+          dtxt = (diff >= 0 ? '+' : '−')
+               + Math.abs(diff).toFixed(1).replace('.', ',') + ' %-Pkt.';
+        } else if (z.reihe[vor]) {
+          var p = diff / Math.abs(z.reihe[vor]) * 100;
+          var kern = Math.abs(p).toFixed(1).replace('.', ',') + ' %';
+          // Kostenzeilen stehen negativ in der Spalte. Ein Vorzeichen davor
+          // waere doppeldeutig, deshalb steht dort mehr oder weniger.
+          dtxt = z.minus ? kern + (diff >= 0 ? ' mehr' : ' weniger')
+                         : (diff >= 0 ? '+' : '−') + kern;
+        }
+        var gut = z.minus ? diff <= 0 : diff >= 0;
+        dkl += gut ? ' hoch' : ' runter';
+      }
+      tr.appendChild(el('td', dkl, dtxt));
+      tbody.appendChild(tr);
+    });
+    t.appendChild(tbody);
+    rahmen.appendChild(t);
+    karte.appendChild(rahmen);
+    var f = el('p', 'hinweis');
+    f.style.padding = '13px 20px';
+    f.textContent = 'Alle Beträge netto. Grundlage ist die ausgefüllte Eingabevorlage.';
+    karte.appendChild(f);
+    return karte;
+  }
+
+  // ------------------------------------------------------------------ Zeichnen
+  function zeichnen() {
+    kopf();
+    document.querySelectorAll('.reiter button').forEach(function (b) {
+      b.setAttribute('aria-selected', String(b.dataset.reiter === stand.reiter));
+    });
+    document.querySelectorAll('.verwaltung').forEach(function (v) {
+      v.hidden = v.dataset.reiter !== stand.reiter;
+    });
+    var ziel = document.getElementById('flaeche');
+    ziel.innerHTML = '';
+    if (stand.reiter === 'ueberblick') ziel.appendChild(ueberblick());
+    else if (stand.reiter === 'detail') ziel.appendChild(detail());
+  }
+
+  // ------------------------------------------------------------------ Bedienung
+  document.getElementById('pfeil-zurueck').addEventListener('click', function () {
+    if (stand.monat > 0) { stand.monat--; zeichnen(); }
+  });
+  document.getElementById('pfeil-vor').addEventListener('click', function () {
+    if (stand.monat < D.monate.length - 1) { stand.monat++; zeichnen(); }
+  });
+  document.querySelectorAll('.reiter button').forEach(function (b) {
+    b.addEventListener('click', function () { stand.reiter = b.dataset.reiter; zeichnen(); });
+  });
+
+  // Anmeldung
+  var pw = document.getElementById('pw');
+  var mail = document.getElementById('mail');
+  var fehler = document.getElementById('fehler');
+  function anmelden() {
+    if (!mail.value.trim()) { melden('Bitte tragen Sie Ihre E-Mail-Adresse ein.'); return; }
+    if (pw.value !== 'Vorschau2026') {
+      melden('Das Passwort stimmt nicht. Prüfen Sie die Groß- und Kleinschreibung.');
+      return;
+    }
+    fehler.hidden = true;
+    oeffnen('app');
+  }
+  function melden(text) {
+    document.getElementById('fehlertext').textContent = text;
+    fehler.hidden = false;
+  }
+  document.getElementById('anmeldung').addEventListener('submit', function (e) {
+    e.preventDefault();
+    anmelden();
+  });
+  document.getElementById('sichtbar').addEventListener('click', function () {
+    stand.sichtbar = !stand.sichtbar;
+    pw.type = stand.sichtbar ? 'text' : 'password';
+    this.textContent = stand.sichtbar ? 'Verbergen' : 'Anzeigen';
+  });
+  var merken = document.getElementById('merken');
+  merken.addEventListener('click', function () {
+    stand.gemerkt = !stand.gemerkt;
+    merken.setAttribute('aria-checked', String(stand.gemerkt));
+  });
+  document.querySelectorAll('[data-abmelden]').forEach(function (b) {
+    b.addEventListener('click', function () { oeffnen('anmelden'); });
+  });
+
+  function oeffnen(was) {
+    document.getElementById('bs-anmelden').hidden = was !== 'anmelden';
+    document.getElementById('bs-app').hidden = was === 'anmelden';
+    window.scrollTo(0, 0);
+    if (history.replaceState) {
+      history.replaceState(null, '', was === 'anmelden' ? location.pathname
+        : '#ansicht-' + stand.reiter);
+    }
+    if (was !== 'anmelden') zeichnen();
+  }
+
+  // Die Verwaltung ist nur ueber die Adresse erreichbar, nicht ueber die
+  // Anmeldung. Ihre Reiter erscheinen auch nur dann.
+  var start = location.hash.replace('#ansicht-', '');
+  if (['mandanten', 'zugaenge', 'protokoll'].indexOf(start) >= 0) {
+    stand.reiter = start;
+    document.querySelectorAll('.nur-admin').forEach(function (e) { e.hidden = false; });
+    oeffnen('app');
+  } else if (start === 'detail') {
+    stand.reiter = 'detail';
+  }
+})();
+'''
+
+
 def initialen(name):
-    teile = [t for t in re.split(r'\s+', name) if t]
+    teile = [t for t in name.split() if t]
     return (teile[0][0] + (teile[1][0] if len(teile) > 1 else '')).upper()
 
 
-NAV_MANDANT = [('auswertung', 'Auswertung', 'M8 3v10M4 7v6M12 6v7'),
-               ('berichte', 'Berichte', 'M4 3h8v10H4z M6 6h4M6 9h4')]
-NAV_ADMIN = [('mandanten', 'Mandanten', 'M3 13v-1a3 3 0 013-3h4a3 3 0 013 3v1M8 3a2.5 2.5 0 110 5 2.5 2.5 0 010-5'),
-             ('zugaenge', 'Zugänge', 'M6 7V5a2 2 0 114 0v2M4 7h8v6H4z'),
-             ('protokoll', 'Protokoll', 'M4 3h8v10H4z M6 6h4M6 9h3')]
-
-
-def icon(pfad):
-    return (f'<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" '
-            f'stroke="currentColor" stroke-width="1.5" stroke-linecap="round" '
-            f'stroke-linejoin="round"><path d="{pfad}"/></svg>')
-
-
-def seitenleiste(rolle, aktiv):
-    liq = M.zeile('liquide')
-    wechsler = (
-        f'<button type="button" class="wechsler" aria-haspopup="listbox">'
-        f'<span class="signet">{initialen(M.firma)}</span>'
-        f'<span class="wechsler-text"><b>{M.firma}</b>'
-        f'<span>{M.berichtsmonat} {M.jahr}</span></span>'
-        f'<span class="chevron" aria-hidden="true">⌄</span></button>')
-    kennzahl = (f'<div class="seiten-kennzahl"><span>Liquide Mittel</span>'
-                f'<b>{geld(liq.werte[M.aktiv])}</b></div>') if liq else ''
-
-    punkte = []
-    for kennung, titel, pfad in NAV_MANDANT:
-        an = ' aria-current="page"' if kennung == aktiv else ''
-        punkte.append(f'<a href="#" data-ziel="{rolle}-{kennung}"{an}>{icon(pfad)}{titel}</a>')
-    admin = ''
-    if rolle == 'admin':
-        eintraege = []
-        for kennung, titel, pfad in NAV_ADMIN:
-            an = ' aria-current="page"' if kennung == aktiv else ''
-            eintraege.append(
-                f'<a href="#" data-ziel="admin-{kennung}"{an}>{icon(pfad)}{titel}</a>')
-        admin = (f'<p class="nav-titel">Verwaltung</p><nav class="seiten-nav">'
-                 f'{"".join(eintraege)}</nav>')
-
-    person = ('Administrator', 'admin@vorschau.valtix') if rolle == 'admin' \
-        else ('Ansprechpartner Muster', 'mandant@vorschau.valtix')
-    return f'''<aside class="seitenleiste">
-      <div class="seiten-marke">Valtix<span>Mandantenportal</span></div>
-      {wechsler}{kennzahl}
-      <p class="nav-titel">Auswertung</p>
-      <nav class="seiten-nav">{"".join(punkte)}</nav>
-      {admin}
-      <div class="seiten-fuss">
-        <div class="person"><span class="signet klein">{initialen(person[0])}</span>
-          <span><b>{person[0]}</b><span>{person[1]}</span></span></div>
-        <button type="button" class="knopf stumm schmal" data-ziel="anmelden">Abmelden</button>
-      </div>
-    </aside>'''
-
-
-def werkzeugleiste(untertitel):
-    monate = ''.join(
-        f'<button type="button" class="monat{" an" if i == M.aktiv else ""}"'
-        f'{"" if i == M.aktiv else " disabled"}>{KURZ[m]}</button>'
-        for i, m in enumerate(M.monate))
-    return f'''<div class="werkzeugleiste">
-      <div class="wz-links">
-        <span class="wz-titel">{untertitel}</span>
-        <span class="wz-zeitraum">{KURZ[M.monate[0]]} {M.jahr} bis
-          {KURZ[M.monate[-1]]} {M.jahr}</span>
-      </div>
-      <div class="monatsleiste" role="group" aria-label="Berichtsmonat">{monate}</div>
-      <span class="wz-stand">Stand {M.berichtsmonat} {M.jahr}</span>
-    </div>'''
-
-
-def auswertung(rolle):
-    return f'''{seitenleiste(rolle, 'auswertung')}
-      <main class="flaeche">
-        {werkzeugleiste('Auswertung')}
-        <div class="inhalt">
-          {kacheln()}
-          <section class="karte">
-            <div class="karten-kopf">
-              <h2>Gesamtleistung, Kosten und Liquidität</h2>
-              <div class="legende">
-                <span><i style="background:#404D97"></i>Gesamtleistung</span>
-                <span><i style="background:#B0842A"></i>Gesamtkosten</span>
-                <span><i class="strich"></i>Liquide Mittel</span>
-              </div>
-            </div>
-            <div class="bildrahmen">{verlaufsbild()}</div>
-            <p class="hinweis">Auf schmalen Bildschirmen lässt sich das Diagramm
-              seitlich schieben.</p>
-          </section>
-          <section class="karte flach">
-            <div class="karten-kopf">
-              <h2>Alle Positionen je Monat</h2>
-              <p class="hinweis">Zeilen mit Pfeil lassen sich aufklappen. Die Prozentmarke
-                im Berichtsmonat zeigt die Zielerreichung.</p>
-            </div>
-            {raster()}
-          </section>
-          <p class="quelle">Grundlage ist die ausgefüllte Eingabevorlage. Der vollständige
-            Bericht als Dokument liegt unter
-            <a href="{BERICHT}">Berichte</a>.</p>
-        </div>
-      </main>'''
-
-
-def berichte(rolle):
-    zeilen = ''.join(
-        f'<tr><td>{z}</td><td>{d}</td><td class="num">'
-        f'<a class="knopf stumm schmal" href="{BERICHT}">Ansehen</a></td></tr>'
-        for z, d in [('Juli 2026', '06.08.2026'), ('Juni 2026', '07.07.2026'),
-                     ('Mai 2026', '05.06.2026')])
-    return f'''{seitenleiste(rolle, 'berichte')}
-      <main class="flaeche">
-        {werkzeugleiste('Berichte')}
-        <div class="inhalt">
-          <section class="karte flach">
-            <div class="karten-kopf"><h2>Monatsberichte</h2>
-              <p class="hinweis">Jeder Bericht bleibt in der Fassung erhalten, in der
-                er eingestellt wurde.</p></div>
-            <div class="rasterrahmen"><table class="liste"><thead><tr>
-              <th>Zeitraum</th><th>Eingestellt</th><th class="num">&nbsp;</th>
-            </tr></thead><tbody>{zeilen}</tbody></table></div>
-          </section>
-        </div>
-      </main>'''
-
-
-def admin_mandanten():
-    zeilen = ''.join(
-        f'<tr><td>{n}</td><td class="num">{b}</td><td>{s}</td>'
-        f'<td class="num"><a class="knopf stumm schmal" href="#" '
-        f'data-ziel="admin-auswertung">Öffnen</a></td></tr>'
-        for n, b, s in [('Muster Lüftungstechnik GmbH', 3, 'Juli 2026'),
-                        ('Beispiel Bau GmbH', 1, 'Juli 2026'),
-                        ('Beispiel Handel e. K.', 2, 'Juli 2026')])
-    return f'''{seitenleiste('admin', 'mandanten')}
-      <main class="flaeche">
-        {werkzeugleiste('Mandanten')}
-        <div class="inhalt">
-          <section class="karte flach">
-            <div class="karten-kopf"><h2>Mandanten</h2></div>
-            <div class="rasterrahmen"><table class="liste"><thead><tr>
-              <th>Name</th><th class="num">Berichte</th><th>Letzter Bericht</th>
-              <th class="num">&nbsp;</th></tr></thead><tbody>{zeilen}</tbody></table></div>
-          </section>
-          <section class="karte">
-            <div class="karten-kopf"><h2>Bericht einstellen</h2></div>
-            <form onsubmit="return false" class="formular">
-              <label for="m">Mandant</label>
-              <select id="m"><option>Muster Lüftungstechnik GmbH</option>
-                <option>Beispiel Bau GmbH</option>
-                <option>Beispiel Handel e. K.</option></select>
-              <label for="d">Ausgefüllte Eingabevorlage (.xlsx)</label>
-              <input id="d" type="file" accept=".xlsx" disabled>
-              <button class="knopf" type="button" disabled>Hochladen und Bericht erzeugen</button>
-              <p class="hinweis">In der Vorschau ohne Funktion. Es lässt sich nichts hochladen.</p>
-            </form>
-          </section>
-        </div>
-      </main>'''
-
-
-def admin_zugaenge():
-    zeilen = ''.join(
-        f'<tr><td>{a}</td><td>{b}</td><td>{c}</td><td><span class="status {k}">{d}</span></td></tr>'
-        for a, b, c, d, k in [
-            ('Administrator', 'admin@vorschau.valtix', 'Administrator', 'aktiv', 'gut'),
-            ('Ansprechpartner Muster', 'mandant@vorschau.valtix',
-             'Muster Lüftungstechnik GmbH', 'aktiv', 'gut'),
-            ('Ansprechpartner Beispiel Bau', 'bau@vorschau.valtix',
-             'Beispiel Bau GmbH', 'Einladung offen', 'offen')])
-    return f'''{seitenleiste('admin', 'zugaenge')}
-      <main class="flaeche">
-        {werkzeugleiste('Zugänge')}
-        <div class="inhalt">
-          <section class="karte flach">
-            <div class="karten-kopf"><h2>Zugänge</h2></div>
-            <div class="rasterrahmen"><table class="liste"><thead><tr>
-              <th>Name</th><th>E-Mail</th><th>Zugehörigkeit</th><th>Status</th>
-            </tr></thead><tbody>{zeilen}</tbody></table></div>
-          </section>
-          <section class="karte">
-            <div class="karten-kopf"><h2>Zugang anlegen</h2></div>
-            <form onsubmit="return false" class="formular">
-              <label for="zn">Name</label><input id="zn" disabled>
-              <label for="ze">E-Mail</label><input id="ze" type="email" disabled>
-              <label for="zr">Rolle</label>
-              <select id="zr" disabled><option>Mandant</option>
-                <option>Administrator</option></select>
-              <button class="knopf" type="button" disabled>Zugang anlegen</button>
-              <p class="hinweis">Es wird kein Passwort vergeben. Die Person setzt es selbst
-                über einen einmaligen Link.</p>
-            </form>
-          </section>
-        </div>
-      </main>'''
-
-
-def admin_protokoll():
-    zeilen = ''.join(f'<tr><td>{a}</td><td>{b}</td><td>{c}</td><td>{d}</td></tr>'
-                     for a, b, c, d in [
-        ('06.08.2026 09:14:02', 'anmeldung', 'mandant@vorschau.valtix', ''),
-        ('06.08.2026 09:14:11', 'bericht_geoeffnet', 'mandant@vorschau.valtix', 'Juli 2026'),
-        ('06.08.2026 08:52:40', 'bericht_eingestellt', 'admin@vorschau.valtix',
-         'Muster Lüftungstechnik GmbH'),
-        ('05.08.2026 17:30:19', 'zugang_angelegt', 'admin@vorschau.valtix',
-         'bau@vorschau.valtix'),
-        ('05.08.2026 17:29:03', 'anmeldung_fehlgeschlagen', '', 'unbekannte Kennung')])
-    return f'''{seitenleiste('admin', 'protokoll')}
-      <main class="flaeche">
-        {werkzeugleiste('Protokoll')}
-        <div class="inhalt">
-          <section class="karte flach">
-            <div class="karten-kopf"><h2>Letzte Ereignisse</h2>
-              <p class="hinweis">Anmeldungen, Zugriffe auf Berichte und Änderungen an
-                Zugängen werden festgehalten.</p></div>
-            <div class="rasterrahmen"><table class="liste"><thead><tr>
-              <th>Zeitpunkt</th><th>Ereignis</th><th>E-Mail</th><th>Detail</th>
-            </tr></thead><tbody>{zeilen}</tbody></table></div>
-          </section>
-        </div>
-      </main>'''
-
-
-ANMELDEN = '''<div class="tuer">
-  <div class="tuer-karte">
-    <div class="seiten-marke gross">Valtix<span>Mandantenportal</span></div>
-    <h1>Anmelden</h1>
-    <p class="lead">Zugang erhalten Mandanten im Rahmen der monatlichen Betreuung.</p>
-    <div class="zugang"><b>Demonstrationszugang</b>
-      <dl>
-        <dt>E-Mail</dt><dd><code>mandant@vorschau.valtix</code></dd>
-        <dt>Passwort</dt><dd><code>Vorschau2026</code></dd>
-      </dl>
-      <p>Damit lässt sich die Ansicht eines Mandanten ansehen. Geprüft wird nur im
-        Browser. Es gibt keine Datenbank hinter dieser Seite und keinen Server,
-        der etwas entgegennimmt.</p>
-    </div>
-    <div class="meldung fehler" id="fehler" hidden></div>
-    <form id="form-anmelden" novalidate class="formular">
-      <label for="e">E-Mail-Adresse</label>
-      <input id="e" type="email" autocomplete="off" value="mandant@vorschau.valtix">
-      <label for="p">Passwort</label>
-      <input id="p" type="password" autocomplete="off" value="Vorschau2026">
-      <button class="knopf" type="submit">Anmelden</button>
-    </form>
-  </div>
-</div>'''
-
-BILDSCHIRME = [
-    ('anmelden', 'Anmeldung', ANMELDEN, False),
-    ('mandant-auswertung', 'Mandantenansicht', auswertung('mandant'), True),
-    ('mandant-berichte', 'Berichte', berichte('mandant'), True),
-    ('admin-auswertung', 'Adminansicht', auswertung('admin'), True),
-    ('admin-mandanten', 'Mandanten', admin_mandanten(), True),
-    ('admin-zugaenge', 'Zugänge', admin_zugaenge(), True),
-    ('admin-protokoll', 'Protokoll', admin_protokoll(), True),
-]
+PFEIL_LINKS = ('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" '
+               'stroke="currentColor" stroke-width="2.2" stroke-linecap="round" '
+               'stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>')
+PFEIL_RECHTS = PFEIL_LINKS.replace('M15 5l-7 7 7 7', 'M9 5l7 7-7 7')
+HAKEN = ('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" '
+         'stroke="currentColor" stroke-width="3" stroke-linecap="round" '
+         'stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>')
+WARNUNG = ('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" '
+           'stroke="currentColor" stroke-width="2.2" stroke-linecap="round" '
+           'aria-hidden="true"><path d="M12 7v6M12 17h.01"/>'
+           '<circle cx="12" cy="12" r="9"/></svg>')
 
 BAND = '''<div class="band"><div class="band-innen">
   <b>Demonstration</b>
@@ -504,279 +711,143 @@ BAND = '''<div class="band"><div class="band-innen">
   <a href="index.html">Zurück zur Website</a>
 </div></div>'''
 
-CSS = '''
-:root{
-  --ink:#232941; --ink-soft:#565D73; --muted:#8A8FA3;
-  --gold-deep:#7A6238; --cream:#F5EBD0; --bg:#FBF8F2; --flaeche:#F7F4EC;
-  --serie-a:#404D97; --serie-b:#B0842A;
-  --gruen:#0CA30C; --gelb:#FAB219; --rot:#D03B3B;
-  --linie:rgba(35,41,65,.11); --linie-stark:rgba(35,41,65,.18);
-  --r:14px; --schatten:0 8px 24px rgba(35,41,65,.07);
-  --font:"Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font);background:var(--bg);color:var(--ink);
-     font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
-a{color:var(--gold-deep)}
-h1{font-size:1.55rem;font-weight:800;letter-spacing:-.03em;margin-bottom:4px}
-h2{font-size:1.02rem;font-weight:700;letter-spacing:-.02em}
-.nurlesen{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);
-          white-space:nowrap}
+ANMELDEN = f'''<section id="bs-anmelden"><div class="tuer"><div class="tuer-karte">
+  <div class="marke">Valtix<span>Mandantenportal</span></div>
+  <h1 style="margin-top:18px">Anmelden</h1>
+  <p class="lead">Ihre monatliche Auswertung, jederzeit abrufbar.</p>
 
-/* Vorschauleisten, im echten Portal nicht vorhanden */
-.band{background:var(--ink);color:#fff;font-size:.84rem;padding:11px 22px}
-.band-innen{max-width:1420px;margin:0 auto;display:flex;gap:14px;
-            align-items:baseline;flex-wrap:wrap}
-.band b{font-weight:700}
-.band span{color:rgba(255,255,255,.72)}
-.band a{color:var(--cream)}
+  <div class="demo"><b>Demonstrationszugang</b>
+    <dl>
+      <dt>E-Mail</dt><dd><code>mandant@vorschau.valtix</code></dd>
+      <dt>Passwort</dt><dd><code>Vorschau2026</code></dd>
+    </dl>
+    <p>Damit lässt sich die Ansicht eines Mandanten ansehen. Geprüft wird nur im
+      Browser. Es gibt keine Datenbank hinter dieser Seite und keinen Server,
+      der etwas entgegennimmt.</p>
+  </div>
 
-/* Grundgeruest */
-.bildschirm[hidden]{display:none}
-.huelle{display:flex;min-height:calc(100vh - 52px);max-width:1460px;margin:0 auto;
-        background:var(--bg)}
+  <div class="meldung" id="fehler" role="alert" hidden>{WARNUNG}<span id="fehlertext"></span></div>
 
-/* Seitenleiste */
-.seitenleiste{width:236px;flex:0 0 236px;border-right:1px solid var(--linie);
-  background:#fff;padding:18px 14px 16px;display:flex;flex-direction:column;gap:4px}
-.seiten-marke{font-weight:800;letter-spacing:-.03em;font-size:1.02rem;padding:0 8px 14px}
-.seiten-marke span{font-weight:500;color:var(--ink-soft);margin-left:7px;font-size:.86rem}
-.wechsler{display:flex;align-items:center;gap:9px;width:100%;text-align:left;
-  background:var(--flaeche);border:1px solid var(--linie);border-radius:12px;
-  padding:9px 10px;font:inherit;cursor:pointer;color:inherit}
-.signet{flex:0 0 30px;height:30px;border-radius:9px;background:var(--ink);color:#fff;
-  display:grid;place-items:center;font-size:.74rem;font-weight:700;letter-spacing:.02em}
-.signet.klein{flex-basis:26px;height:26px;font-size:.68rem;background:var(--gold-deep)}
-.wechsler-text{min-width:0;flex:1}
-.wechsler-text b{display:block;font-size:.82rem;font-weight:700;line-height:1.25;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.wechsler-text span{font-size:.74rem;color:var(--ink-soft)}
-.chevron{color:var(--muted);font-size:.9rem}
-.seiten-kennzahl{margin:10px 0 4px;padding:10px 12px;border-radius:12px;
-  background:var(--cream);border:1px solid rgba(122,98,56,.24)}
-.seiten-kennzahl span{display:block;font-size:.7rem;text-transform:uppercase;
-  letter-spacing:.09em;color:var(--gold-deep);font-weight:700}
-.seiten-kennzahl b{font-size:1.06rem;font-weight:800;letter-spacing:-.03em}
-.nav-titel{font-size:.66rem;text-transform:uppercase;letter-spacing:.12em;
-  color:var(--muted);font-weight:700;padding:14px 8px 6px}
-.seiten-nav{display:flex;flex-direction:column;gap:1px}
-.seiten-nav a{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:10px;
-  text-decoration:none;color:var(--ink-soft);font-size:.88rem}
-.seiten-nav a svg{width:16px;height:16px;flex:0 0 16px;color:var(--muted)}
-.seiten-nav a:hover{background:var(--flaeche);color:var(--ink)}
-.seiten-nav a[aria-current]{background:var(--ink);color:#fff;font-weight:600}
-.seiten-nav a[aria-current] svg{color:var(--cream)}
-.seiten-fuss{margin-top:auto;padding-top:14px;border-top:1px solid var(--linie);
-  display:flex;flex-direction:column;gap:9px}
-.person{display:flex;align-items:center;gap:9px;min-width:0}
-.person b{display:block;font-size:.79rem;font-weight:700;line-height:1.3}
-.person span span{font-size:.72rem;color:var(--ink-soft);word-break:break-all}
+  <form id="anmeldung" novalidate>
+    <div class="feld">
+      <label for="mail">E-Mail-Adresse</label>
+      <input id="mail" type="email" autocomplete="username" value="mandant@vorschau.valtix">
+    </div>
+    <div class="feld">
+      <label for="pw">Passwort</label>
+      <div class="pw-reihe">
+        <input id="pw" type="password" autocomplete="current-password" value="Vorschau2026">
+        <button class="knopf stumm" id="sichtbar" type="button">Anzeigen</button>
+      </div>
+    </div>
+    <div class="zeile-merken">
+      <button class="merken" id="merken" type="button" role="checkbox" aria-checked="true">
+        <span class="haken">{HAKEN}</span>Angemeldet bleiben</button>
+      <span style="flex-grow:1"></span>
+      <a href="#" style="font-size:.88rem;text-decoration:none">Passwort vergessen?</a>
+    </div>
+    <button class="knopf breit" type="submit">Anmelden</button>
+  </form>
+  <p class="hinweis" style="margin-top:16px">Noch keinen Zugang? Ihren Zugang richten wir
+    im Rahmen der monatlichen Betreuung ein.
+    <a href="index.html#kontakt">Schreiben Sie uns</a>.</p>
+</div></div></section>'''
 
-/* Arbeitsflaeche */
-.flaeche{flex:1;min-width:0;display:flex;flex-direction:column}
-.werkzeugleiste{display:flex;align-items:center;gap:14px;flex-wrap:wrap;
-  padding:12px 22px;border-bottom:1px solid var(--linie);background:rgba(255,255,255,.6)}
-.wz-links{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-.wz-titel{font-weight:700;letter-spacing:-.02em}
-.wz-zeitraum{font-size:.8rem;color:var(--ink-soft)}
-.monatsleiste{display:flex;gap:2px;margin-left:auto;background:var(--flaeche);
-  border:1px solid var(--linie);border-radius:999px;padding:3px}
-.monat{font:inherit;font-size:.78rem;padding:4px 11px;border-radius:999px;border:0;
-  background:none;color:var(--muted);cursor:default}
-.monat.an{background:#fff;color:var(--ink);font-weight:700;
-  box-shadow:0 1px 3px rgba(35,41,65,.16)}
-.wz-stand{font-size:.76rem;color:var(--ink-soft);white-space:nowrap}
-.inhalt{padding:20px 22px 44px;display:flex;flex-direction:column;gap:16px}
 
-/* Kacheln */
-.kacheln{display:grid;grid-template-columns:repeat(5,1fr);gap:11px}
-@media(max-width:1180px){.kacheln{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:720px){.kacheln{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:420px){.kacheln{grid-template-columns:1fr}}
-.kachel{background:#fff;border:1px solid var(--linie);border-radius:var(--r);
-  padding:13px 15px;box-shadow:var(--schatten)}
-.kachel-titel{display:block;font-size:.74rem;color:var(--ink-soft);margin-bottom:3px}
-.kachel b{display:block;font-size:1.24rem;font-weight:800;letter-spacing:-.035em;
-  line-height:1.18}
-.kachel .marke{margin:6px 6px 0 0}
-.delta{display:inline-block;font-size:.74rem;font-weight:600;margin-top:5px}
-.hoch{color:var(--gruen)} .runter{color:var(--rot)}
+def verwaltung():
+    """Ansichten der Verwaltung. Nicht ueber die Anmeldung erreichbar, nur
+    ueber die Adresse, weil die Seite oeffentlich steht."""
+    mandanten = ''.join(
+        f'<tr><td>{n}</td><td class="num">{b}</td><td>{s}</td></tr>'
+        for n, b, s in [('Muster Lüftungstechnik GmbH', 3, 'Juli 2026'),
+                        ('Beispiel Bau GmbH', 1, 'Juli 2026'),
+                        ('Beispiel Handel e. K.', 2, 'Juli 2026')])
+    zugaenge = ''.join(
+        f'<tr><td>{a}</td><td>{b}</td><td>{c}</td>'
+        f'<td><span class="status {k}">{d}</span></td></tr>'
+        for a, b, c, d, k in [
+            ('Administrator', 'admin@vorschau.valtix', 'Administrator', 'aktiv', 'gut'),
+            ('Ansprechpartner Muster', 'mandant@vorschau.valtix',
+             'Muster Lüftungstechnik GmbH', 'aktiv', 'gut'),
+            ('Ansprechpartner Beispiel Bau', 'bau@vorschau.valtix',
+             'Beispiel Bau GmbH', 'Einladung offen', 'offen')])
+    protokoll = ''.join(
+        f'<tr><td>{a}</td><td>{b}</td><td>{c}</td><td>{d}</td></tr>' for a, b, c, d in [
+            ('06.08.2026 09:14:02', 'anmeldung', 'mandant@vorschau.valtix', ''),
+            ('06.08.2026 09:14:11', 'bericht_geoeffnet', 'mandant@vorschau.valtix',
+             'Juli 2026'),
+            ('06.08.2026 08:52:40', 'bericht_eingestellt', 'admin@vorschau.valtix',
+             'Muster Lüftungstechnik GmbH'),
+            ('05.08.2026 17:30:19', 'zugang_angelegt', 'admin@vorschau.valtix',
+             'bau@vorschau.valtix'),
+            ('05.08.2026 17:29:03', 'anmeldung_fehlgeschlagen', '', 'unbekannte Kennung')])
 
-/* Karten */
-.karte{background:#fff;border:1px solid var(--linie);border-radius:var(--r);
-  padding:16px 18px;box-shadow:var(--schatten)}
-.karte.flach{padding:16px 0 0}
-.karte.flach .karten-kopf,.karte.flach .formular{padding:0 18px}
-.karten-kopf{display:flex;justify-content:space-between;align-items:baseline;
-  gap:14px;flex-wrap:wrap;margin-bottom:10px}
-.hinweis{font-size:.78rem;color:var(--ink-soft)}
-.quelle{font-size:.78rem;color:var(--ink-soft)}
-.legende{display:flex;gap:14px;flex-wrap:wrap;font-size:.78rem;color:var(--ink-soft)}
-.legende i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
-.legende i.strich{width:16px;height:0;border-top:2px dashed var(--ink);border-radius:0;
-  transform:translateY(-3px)}
-.bildrahmen{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.verlauf{display:block;width:100%;height:auto;min-width:660px}
+    def block(kennung, titel, kopf, zeilen, zusatz=''):
+        spalten = ''.join('<th class="num">' + h + '</th>' if n
+                          else '<th>' + h + '</th>' for h, n in kopf)
+        return (f'<section class="karte flach verwaltung" data-reiter="{kennung}" hidden>'
+                f'<div class="karten-kopf"><h2>{titel}</h2></div>'
+                f'<div class="rahmen"><table><thead><tr>{spalten}</tr></thead>'
+                f'<tbody>{zeilen}</tbody></table></div>{zusatz}</section>')
 
-/* Raster */
-.rasterrahmen{overflow-x:auto;-webkit-overflow-scrolling:touch;border-top:1px solid var(--linie)}
-table{border-collapse:separate;border-spacing:0;width:100%;font-size:.83rem}
-.raster{min-width:940px}
-.liste{min-width:520px}
-th,td{padding:7px 8px;text-align:left;border-bottom:1px solid var(--linie);
-  white-space:nowrap;font-weight:400}
-thead th{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;
-  color:var(--ink-soft);font-weight:700;background:var(--flaeche);
-  position:sticky;top:0;z-index:3}
-td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
-.pos{position:sticky;left:0;background:#fff;z-index:2;
-  min-width:240px;max-width:284px;border-right:1px solid var(--linie)}
-/* Lange Positionsbezeichnungen duerfen umbrechen, sonst schiebt eine einzige
-   Zeile den Berichtsmonat aus dem Bild. */
-.pos .titel{white-space:normal;display:inline-block;vertical-align:top;
-  max-width:230px}
-thead .pos{background:var(--flaeche);z-index:4}
-.blockkopf th{font-size:.68rem;text-transform:uppercase;letter-spacing:.11em;
-  color:var(--gold-deep);font-weight:700;background:var(--flaeche);padding-top:11px;
-  padding-bottom:5px}
-.blockkopf td{background:var(--flaeche)}
-.zeile:hover td,.zeile:hover .pos{background:#FCFAF5}
-.ebene0 .pos .titel,.ebene0 td{font-weight:700}
-.ebene0 td{background:rgba(35,41,65,.028)}
-.ebene0 .pos{background:rgba(252,250,245,1)}
-.ebene2 .titel{color:var(--ink-soft);padding-left:16px}
-.klapp{border:0;background:none;font:inherit;color:var(--muted);cursor:pointer;
-  padding:0 6px 0 0;line-height:1}
-.klapp span[aria-hidden]{display:inline-block;transition:transform .12s ease}
-.klapp[aria-expanded=true] span[aria-hidden]{transform:rotate(90deg)}
-.klapp.leer{display:inline-block;width:13px}
-.funkezelle{width:54px;color:var(--muted);padding-right:0}
-.funke{display:block}
-td.minus{color:var(--gold-deep)}
-td.jetzt,th.jetzt{background:rgba(35,41,65,.05)}
-.ebene0 td.jetzt{background:rgba(35,41,65,.075)}
-thead th.jetzt{color:var(--ink);border-bottom:2px solid var(--ink)}
-td.ziel{color:var(--ink-soft)}
-.marke{display:inline-block;font-size:.68rem;font-weight:700;padding:1px 6px;
-  border-radius:999px;margin-right:7px;vertical-align:1px}
-.marke.gruen{background:rgba(12,163,12,.12);color:#0A7A0A}
-.marke.gelb{background:rgba(250,178,25,.18);color:#8A6100}
-.marke.rot{background:rgba(208,59,59,.12);color:#A32C2C}
-.status{font-size:.74rem;font-weight:600}
-.status.gut{color:#0A7A0A} .status.offen{color:var(--gold-deep)}
+    hochladen = '''<div class="formular">
+      <div class="feld"><label for="vm">Mandant</label>
+        <select id="vm" disabled><option>Muster Lüftungstechnik GmbH</option></select></div>
+      <div class="feld"><label for="vd">Ausgefüllte Eingabevorlage (.xlsx)</label>
+        <input id="vd" type="file" accept=".xlsx" disabled></div>
+      <button class="knopf" type="button" disabled>Hochladen und Bericht erzeugen</button>
+      <p class="hinweis" style="margin-top:10px">In der Vorführung ohne Funktion.
+        Es lässt sich nichts hochladen.</p>
+    </div>'''
 
-/* Formulare und Knoepfe */
-.formular{max-width:460px}
-label{display:block;font-size:.8rem;font-weight:600;margin:12px 0 4px}
-input,select{width:100%;font:inherit;font-size:.92rem;color:var(--ink);background:#fff;
-  border:1px solid var(--linie-stark);border-radius:10px;padding:9px 12px;min-height:42px}
-input:focus,select:focus{outline:none;border-color:var(--ink);
-  box-shadow:0 0 0 3px rgba(35,41,65,.13)}
-input:disabled,select:disabled{background:var(--flaeche);color:var(--muted)}
-.knopf{display:inline-flex;align-items:center;justify-content:center;min-height:42px;
-  padding:0 20px;border-radius:999px;border:0;font:inherit;font-weight:600;cursor:pointer;
-  background:linear-gradient(180deg,#232941,#171B2C);color:#fff;text-decoration:none;
-  box-shadow:0 6px 16px rgba(35,41,65,.24);margin-top:16px}
-.knopf:disabled{opacity:.5;box-shadow:none;cursor:not-allowed}
-.knopf.stumm{background:#fff;color:var(--ink);border:1px solid var(--linie);
-  box-shadow:none}
-.knopf.schmal{min-height:32px;padding:0 13px;font-size:.8rem;margin:0}
-.meldung{padding:10px 14px;border-radius:10px;font-size:.86rem;margin-bottom:12px}
-.fehler{background:#FDECEC;color:#8B1F1F}
+    return (block('mandanten', 'Mandanten',
+                  [('Name', 0), ('Berichte', 1), ('Letzter Bericht', 0)],
+                  mandanten, hochladen)
+            + block('zugaenge', 'Zugänge',
+                    [('Name', 0), ('E-Mail', 0), ('Zugehörigkeit', 0), ('Status', 0)],
+                    zugaenge)
+            + block('protokoll', 'Letzte Ereignisse',
+                    [('Zeitpunkt', 0), ('Ereignis', 0), ('E-Mail', 0), ('Detail', 0)],
+                    protokoll))
 
-/* Anmeldung */
-.tuer{padding:6vh 22px 60px;min-height:60vh}
-.tuer-karte{width:100%;max-width:430px;margin:0 auto;background:#fff;border:1px solid var(--linie);
-  border-radius:var(--r);padding:26px;box-shadow:var(--schatten)}
-.tuer-karte .seiten-marke{padding:0 0 16px}
-.lead{color:var(--ink-soft);margin-bottom:16px}
-.zugang{background:var(--cream);border:1px solid rgba(122,98,56,.26);border-radius:11px;
-  padding:13px 15px;margin-bottom:14px;font-size:.85rem}
-.zugang b{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.11em;
-  color:var(--gold-deep);margin-bottom:7px}
-.zugang dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;align-items:baseline}
-.zugang dt{color:var(--ink-soft)}
-.zugang dd{min-width:0;overflow-wrap:anywhere}
-.zugang p{margin-top:8px;color:var(--ink-soft);font-size:.79rem}
-code{background:rgba(35,41,65,.08);padding:1px 5px;border-radius:5px;font-size:.83rem}
-.fuss{max-width:1420px;margin:0 auto;padding:14px 22px 34px;font-size:.76rem;
-      color:var(--ink-soft)}
 
-@media(max-width:900px){
-  .huelle{flex-direction:column}
-  .seitenleiste{width:auto;flex:none;border-right:0;border-bottom:1px solid var(--linie);
-    padding:14px}
-  .seiten-nav{flex-direction:row;flex-wrap:wrap}
-  .seiten-fuss{flex-direction:row;align-items:center;justify-content:space-between}
-  .werkzeugleiste{padding:11px 14px}
-  .monatsleiste{margin-left:0;overflow-x:auto}
-  .inhalt{padding:14px 14px 36px}
-  .karte.flach .karten-kopf,.karte.flach .formular{padding:0 14px}
-  .pos{min-width:200px}
-  .tuer{padding:4vh 14px 44px}
-  .tuer-karte{padding:20px}
-}
-'''
+def bauen():
+    d = daten()
+    reiter = [('ueberblick', 'Überblick', False), ('detail', 'Zahlen im Detail', False),
+              ('mandanten', 'Mandanten', True), ('zugaenge', 'Zugänge', True),
+              ('protokoll', 'Protokoll', True)]
+    def knopf(k, t, admin):
+        gewaehlt = 'true' if k == 'ueberblick' else 'false'
+        zusatz = ' class="nur-admin" hidden' if admin else ''
+        return (f'<button type="button" data-reiter="{k}" role="tab" '
+                f'aria-selected="{gewaehlt}"{zusatz}>{t}</button>')
 
-JS = '''
-(function(){
-  var zeigen = function(id){
-    document.querySelectorAll('.bildschirm').forEach(function(s){
-      s.hidden = (s.id !== 'bs-' + id);
-    });
-    window.scrollTo(0,0);
-    // Das Raster oeffnet beim Berichtsmonat, nicht beim Januar. Sonst muesste
-    // man auf schmalen Bildschirmen erst nach rechts schieben.
-    document.querySelectorAll('#bs-' + id + ' .rasterrahmen').forEach(function(r){
-      var jetzt = r.querySelector('thead th.jetzt');
-      if (!jetzt) return;
-      var ziel = jetzt.offsetLeft + jetzt.offsetWidth - r.clientWidth + 110;
-      r.scrollLeft = Math.max(0, ziel);
-    });
-    if (history.replaceState) history.replaceState(null, '', '#ansicht-' + id);
-  };
-  document.addEventListener('click', function(e){
-    var klapp = e.target.closest('.klapp[data-gruppe]');
-    if (klapp) {
-      var auf = klapp.getAttribute('aria-expanded') !== 'true';
-      klapp.setAttribute('aria-expanded', String(auf));
-      klapp.closest('table').querySelectorAll('.zu-' + klapp.dataset.gruppe)
-        .forEach(function(tr){ tr.hidden = !auf; });
-      return;
-    }
-    var ziel = e.target.closest('[data-ziel]');
-    if (!ziel) return;
-    e.preventDefault();
-    zeigen(ziel.dataset.ziel);
-  });
-  var f = document.getElementById('form-anmelden');
-  f.addEventListener('submit', function(e){
-    e.preventDefault();
-    var mail = document.getElementById('e').value.trim().toLowerCase();
-    var pw = document.getElementById('p').value;
-    var box = document.getElementById('fehler');
-    // Ueber die Anmeldung fuehrt nur der Mandantenzugang. Die Verwaltungsansichten
-    // liegen weiterhin in der Seite, aber nicht hinter einem Zugang, der hier
-    // oeffentlich angeboten wird.
-    if (pw === 'Vorschau2026' && mail === 'mandant@vorschau.valtix') {
-      box.hidden = true; zeigen('mandant-auswertung'); return;
-    }
-    box.textContent = 'E-Mail-Adresse oder Passwort stimmen nicht. Für die '
-      + 'Vorführung gelten die oben genannten Zugangsdaten.';
-    box.hidden = false;
-  });
-  var start = location.hash.replace('#ansicht-','').replace('#','');
-  zeigen(document.getElementById('bs-' + start) ? start : 'anmelden');
-})();
-'''
+    knoepfe = ''.join(knopf(*r) for r in reiter)
 
-abschnitte = ''.join(
-    f'<section class="bildschirm" id="bs-{kennung}" hidden>'
-    + (f'<div class="huelle">{inhalt}</div>' if huelle else inhalt)
-    + '</section>'
-    for kennung, _, inhalt, huelle in BILDSCHIRME)
+    app = f'''<section id="bs-app" hidden>
+  <div class="kopf"><div class="kopf-innen">
+    <div class="marke">Valtix<span>Mandantenportal</span></div>
+    <div class="wechsler">
+      <button class="pfeil" id="pfeil-zurueck" type="button"
+        aria-label="Vorheriger Monat">{PFEIL_LINKS}</button>
+      <div class="wechsler-text"><b id="monat-name"></b><span id="monat-stand"></span></div>
+      <button class="pfeil" id="pfeil-vor" type="button"
+        aria-label="Nächster Monat">{PFEIL_RECHTS}</button>
+    </div>
+    <div class="nutzer">
+      <div class="nutzer-text"><b>{d["firma"]}</b><span>Ansprechpartner Muster</span></div>
+      <div class="signet">{initialen(d["firma"])}</div>
+      <button class="knopf stumm schmal" type="button" data-abmelden>Abmelden</button>
+    </div>
+  </div></div>
+  <div class="reiter"><div class="reiter-innen" role="tablist">{knoepfe}</div></div>
+  <div class="flaeche">
+    <div id="flaeche"></div>
+    {verwaltung()}
+  </div>
+</section>'''
 
-html = f'''<!DOCTYPE html>
+    html = f'''<!DOCTYPE html>
 <html lang="de"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
@@ -784,15 +855,22 @@ html = f'''<!DOCTYPE html>
 <link rel="icon" href="favicon.ico" sizes="any">
 <style>{CSS}</style></head><body>
 {BAND}
-{abschnitte}
+{ANMELDEN}
+{app}
 <div class="fuss">Valtix Financial Management · Luca Sparhuber und Sharif Ibrahim GbR,
 Leipzig · Diese Seite dient allein der Ansicht. Sie verarbeitet keine personenbezogenen
 Daten, setzt keine Cookies und sendet nichts an einen Server.</div>
+<script>window.__valtix = {json.dumps(d, ensure_ascii=False)};</script>
 <script>{JS}</script>
 </body></html>'''
 
-ziel = os.path.join(ROOT, 'portal-vorschau.html')
-open(ziel, 'w').write(html)
-print('geschrieben:', ziel, len(html), 'Zeichen,', len(M.monate), 'Monate')
-if M.ohne_zuordnung:
-    print('Zielzeilen ohne passende Kennzahl:', M.ohne_zuordnung)
+    ziel = os.path.join(ROOT, 'portal-vorschau.html')
+    open(ziel, 'w', encoding='utf-8').write(html)
+    return ziel, len(html), len(d['monate'])
+
+
+if __name__ == '__main__':
+    ziel, groesse, monate = bauen()
+    print('geschrieben:', ziel, groesse, 'Zeichen,', monate, 'Monate')
+    if M.ohne_zuordnung:
+        print('Zielzeilen ohne passende Kennzahl:', M.ohne_zuordnung)

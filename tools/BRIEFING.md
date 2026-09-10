@@ -160,12 +160,18 @@ prüft 20 Größen gegen den bestehenden Word-Bericht.
 `tools/build_portal_vorschau.py`. Kein Server, keine Datenbank, keine
 Speicherung. Firma und Zahlen stammen aus der Beispieldatei.
 
-Der Aufbau folgt dem, was Auswertungswerkzeuge wie finban vormachen:
-Seitenleiste links, Werkzeugleiste oben, darunter Kennzahlenkacheln, ein
-Verlauf über alle Monate und ein aufklappbares Raster mit den Monaten als
-Spalten. Die Farben sind die von Valtix, nicht die des Vorbilds. Grün, Gelb
-und Rot bleiben der Zielerreichung vorbehalten, Erträge stehen in Navy und
-Kosten in Gold.
+Der Aufbau: nach der Anmeldung zuerst ein Satz des Beraters zum Monat, danach
+die Kennzahlen nach Status gruppiert (was Aufmerksamkeit braucht steht oben und
+ist offen, was läuft ist zugeklappt), darunter der Umsatzverlauf. Die Zahlen im
+Detail liegen auf einem zweiten Reiter und vergleichen Monat und Vormonat statt
+alle Monate auf einmal. Klarnamen führen, der Fachbegriff steht klein daneben.
+Grün, Gelb und Rot bleiben der Zielerreichung vorbehalten, Kosten stehen in
+Gold. Die Bewertung ist grün ab Ziel erreicht, gelb bis zehn Prozent daneben,
+sonst rot, und zwar in beide Richtungen gleich.
+
+Der Entwurf dazu liegt als Design-Leinwand in `tools/entwurf/`
+(`Main.dc.html`, `Handy.dc.html`, `Anmeldung.dc.html`, `canvas.json`). Wer die
+Oberfläche ändert, ändert am besten beides.
 
 `tools/bericht/matrix.py` liest die Eingabevorlage als Monatsraster: jede
 Position über alle befüllten Monate, dazu die Zielwerte aus Blatt 5. Wie im
