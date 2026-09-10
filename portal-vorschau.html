@@ -131,6 +131,13 @@ code{background:rgba(35,41,65,.07);padding:2px 6px;border-radius:6px;font-size:.
 
 /* Kopf des Portals */
 .kopf{position:sticky;top:14px;z-index:60;margin-top:14px}
+.kopf::before{content:"";position:absolute;left:50%;transform:translateX(-50%);
+  width:100vw;top:-16px;bottom:-12px;pointer-events:none;opacity:0;
+  background:rgba(251,248,242,.86);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(35,41,65,.08);
+  transition:opacity .25s ease}
+.kopf.gescrollt::before{opacity:1}
 .kopf-innen{border-radius:var(--r-pill);padding:9px 10px 9px 22px;display:flex;
   align-items:center;gap:14px;flex-wrap:wrap}
 .wechsler{display:flex;align-items:center;gap:6px;margin:0 auto;
@@ -343,6 +350,74 @@ td.minus{color:var(--gold-deep)}
   .posten-liste{padding:0 8px 8px}
   .saeulen{height:140px;gap:5px}
 }
+/* ---- Abstaende im Inhalt. Ohne die stossen die Bloecke aneinander ---- */
+#flaeche{display:flex;flex-direction:column;gap:18px}
+
+/* Der klebende Kopf muss decken, sonst scheint der Inhalt darunter durch
+   und das liest sich wie uebereinanderliegende Kaesten. */
+.kopf-innen{background:rgba(255,255,255,.9);
+  transition:box-shadow .25s ease,background .25s ease}
+.kopf.gescrollt .kopf-innen{background:rgba(255,255,255,.96);
+  box-shadow:0 14px 34px rgba(35,41,65,.16), inset 0 1px 0 rgba(255,255,255,.95)}
+.reiter-innen{background:rgba(255,255,255,.78)}
+
+/* ---- Reaktion auf den Zeiger ---- */
+.gruppe,.karte,.tabellenkarte{transition:box-shadow .3s ease,transform .3s ease}
+.gruppe:hover,.karte:hover,.tabellenkarte:hover{
+  box-shadow:0 26px 60px rgba(35,41,65,.16), inset 0 1px 0 rgba(255,255,255,.9)}
+.posten{transition:background .2s ease,box-shadow .2s ease,transform .2s ease}
+.posten:hover{background:rgba(255,255,255,.9);transform:translateX(3px);
+  box-shadow:0 8px 22px rgba(35,41,65,.10), inset 0 1px 0 rgba(255,255,255,.95)}
+.posten:hover .name{color:var(--navy)}
+.oeffnen{transition:background .18s ease,color .18s ease,box-shadow .18s ease}
+.oeffnen:hover{background:#fff;box-shadow:0 4px 10px rgba(35,41,65,.14)}
+.saeule .balken{transition:background .2s ease,transform .2s ease,box-shadow .2s ease}
+.saeule:hover .balken{transform:scaleY(1.04);transform-origin:bottom}
+.saeule .zahl{transition:opacity .2s ease}
+
+/* Merkfaehnchen an Saeulen und Kuchenstuecken */
+.faehnchen{position:absolute;z-index:20;pointer-events:none;opacity:0;
+  transform:translate(-50%,-118%);transition:opacity .16s ease;
+  background:linear-gradient(180deg,#2B3251,var(--navy-deep));color:#fff;
+  border-radius:12px;padding:8px 12px;font-size:.8rem;line-height:1.35;
+  white-space:nowrap;box-shadow:0 12px 30px rgba(23,27,44,.34)}
+.faehnchen b{display:block;font-size:.92rem;font-weight:700;
+  font-variant-numeric:tabular-nums}
+.faehnchen.an{opacity:1}
+
+/* ---- Kuchendiagramm ---- */
+.kuchen-karte{position:relative}
+.kuchen-bild{position:relative;display:flex;justify-content:center;margin:6px 0 4px}
+.kuchen{width:100%;max-width:262px;height:auto;overflow:visible}
+.kuchen circle{transition:stroke-width .2s ease,opacity .2s ease;cursor:pointer}
+.kuchen.hat-auswahl circle{opacity:.42}
+.kuchen circle.aktiv{opacity:1}
+.kuchen-mitte{position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;pointer-events:none;
+  padding:0 34px}
+.kuchen-mitte .was{font-size:.74rem;color:var(--ink-soft);line-height:1.25}
+.kuchen-mitte .wieviel{font-size:1.24rem;font-weight:800;letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums;margin-top:2px}
+.kuchen-mitte .anteil{font-size:.76rem;color:var(--ink-soft);
+  font-variant-numeric:tabular-nums}
+.kuchen-legende{display:flex;flex-direction:column;gap:2px;margin-top:12px;
+  max-width:520px;margin-inline:auto;width:100%}
+.legende-zeile{display:grid;grid-template-columns:12px minmax(0,1fr) auto;
+  gap:10px;align-items:baseline;padding:7px 10px;border-radius:10px;
+  font-size:.86rem;cursor:default;transition:background .18s ease}
+.legende-zeile:hover{background:rgba(255,255,255,.75)}
+.legende-zeile .punkt{width:12px;height:12px;border-radius:4px;
+  transform:translateY(2px)}
+.legende-zeile .was{min-width:0}
+.legende-zeile .zahl{text-align:right;font-variant-numeric:tabular-nums;
+  font-weight:600;white-space:nowrap}
+.legende-zeile .anteil{color:var(--ink-soft);font-variant-numeric:tabular-nums;
+  margin-left:8px;font-weight:400}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important}
+  .kachel:hover,.posten:hover,.knopf:hover{transform:none}
+}
+
 </style></head><body>
 <div class="aurora" aria-hidden="true"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
 <div class="band"><div class="bahn">
@@ -427,7 +502,7 @@ td.minus{color:var(--gold-deep)}
 <div class="fuss bahn">Valtix Financial Management · Luca Sparhuber und Sharif Ibrahim GbR,
 Leipzig · Diese Seite dient allein der Ansicht. Sie verarbeitet keine personenbezogenen
 Daten, setzt keine Cookies und sendet nichts an einen Server.</div>
-<script>window.__valtix = {"firma": "Muster Lüftungstechnik GmbH", "branche": "Lüftungs- und Klimatechnik (Beispieldaten)", "jahr": 2026, "monate": [{"lang": "Januar", "kurz": "Jan", "eingestellt": "06.02.2026"}, {"lang": "Februar", "kurz": "Feb", "eingestellt": "05.03.2026"}, {"lang": "März", "kurz": "Mär", "eingestellt": "07.04.2026"}, {"lang": "April", "kurz": "Apr", "eingestellt": "06.05.2026"}, {"lang": "Mai", "kurz": "Mai", "eingestellt": "05.06.2026"}, {"lang": "Juni", "kurz": "Jun", "eingestellt": "07.07.2026"}, {"lang": "Juli", "kurz": "Jul", "eingestellt": "06.08.2026"}], "aktiv": 6, "kommentare": ["Der Start ins Jahr endet mit einem Verlust von 4.855 €. Vor Abschreibungen und Zinsen steht ein Plus von 4.671 €, das reicht aber nicht, um beides zu decken.", "Erstmals ein positives Ergebnis, wenn auch knapp. Der Kontostand sinkt trotzdem weiter, um 7.100 € gegenüber Januar.", "Ein deutlicher Sprung auf 12.038 € Ergebnis bei gestiegener Auslastung. Der Kontostand sinkt trotzdem, weil Ihre Kunden unverändert erst nach 44 Tagen zahlen.", "Etwas schwächer als im März: der Umsatz geht leicht zurück, das Ergebnis auf 9.927 €. Ihre Kunden zahlen jetzt nach 46 statt nach 44 Tagen.", "Der Umsatz wächst, das Ergebnis nicht: die festen Kosten liegen rund 7.800 € über dem April. Wir sollten über die Personalkosten sprechen.", "Ein gutes Ergebnis von 18.519 €. Die Deckungsbeitragsquote ist erstmals unter 62 % gefallen, das liegt am höheren Materialanteil.", "Der Umsatz liegt erstmals über Ihrem Monatsziel, das Ergebnis hat sich gegenüber Juni fast verdoppelt. Zwei Dinge sollten wir besprechen: der Kontostand sinkt seit Januar, und Ihre Kunden zahlen im Schnitt nach 48 Tagen, acht Tage über Ihrem eigenen Ziel."], "kennzahlen": [{"klar": "Umsatz", "erklaerung": "Was Sie im Monat in Rechnung gestellt haben", "art": "geld", "ziel": 335000.0, "richtung": "hoeher", "reihe": [267251.0, 275718.0, 302304.0, 299566.0, 309788.0, 333812.16000000003, 365057.97]}, {"klar": "Gewinnmarge vor Steuern", "erklaerung": "Gewinn vor Steuern, gemessen am Umsatz. Fachbegriff EBT-Marge", "art": "prozent", "ziel": 8.0, "richtung": "hoeher", "reihe": [-1.8166480200261121, 0.27455588681188553, 3.9820875674817415, 3.3137906170927227, 2.2673570312600857, 5.547880580503732, 9.216566344243889]}, {"klar": "Was nach Material und Fremdleistung bleibt", "erklaerung": "Anteil an der Gesamtleistung. Fachbegriff Deckungsbeitragsquote", "art": "prozent", "ziel": 40.0, "richtung": "hoeher", "reihe": [63.1604783518116, 63.3748975402404, 63.40438763628665, 63.602675203461004, 63.06861466551319, 61.02331622670667, 61.10441713998587]}, {"klar": "Kontostand", "erklaerung": "Bank und Kasse am Monatsende", "art": "geld", "ziel": 150000.0, "richtung": "hoeher", "reihe": [148300.0, 141200.0, 137800.0, 132400.0, 128900.0, 125300.0, 121560.45]}, {"klar": "Eigenkapitalquote", "erklaerung": "Anteil des Eigenkapitals an der Bilanzsumme", "art": "prozent", "ziel": 35.0, "richtung": "hoeher", "reihe": [35.36701620591039, 35.551330798479086, 35.88290840415486, 36.15023474178404, 36.27450980392157, 36.50137741046832, 35.80875781948168]}, {"klar": "Ihre Kunden zahlen nach", "erklaerung": "Durchschnitt in Tagen. Fachbegriff Debitorenlaufzeit", "art": "tage", "ziel": 40.0, "richtung": "niedriger", "reihe": [44.00357716154477, 44.01236045524775, 43.76389329946014, 45.56591869571314, 45.51499735302852, 46.01390195012667, 47.99999983564255]}, {"klar": "Auslastung", "erklaerung": "Geleistete Stunden gemessen an Ihrer Kapazität", "art": "prozent", "ziel": 78.0, "richtung": "hoeher", "reihe": [72.59988385598142, 74.90011614401858, 77.7999419279907, 76.29994192799072, 73.50000000000001, 79.2000580720093, 81.59988385598143]}, {"klar": "Aktive Kunden", "erklaerung": "Objekte und Mandate mit Umsatz im Monat", "art": "zahl", "ziel": 40.0, "richtung": "hoeher", "reihe": [41.0, 43.0, 45.0, 46.0, 47.0, 48.0, 49.0]}, {"klar": "Neukunden", "erklaerung": "Neue Kunden oder Aufträge im Monat", "art": "zahl", "ziel": 8.0, "richtung": "hoeher", "reihe": [7.0, 5.0, 9.0, 6.0, 8.0, 7.0, 6.0]}], "detail": [{"schluessel": "umsatz", "klar": "Umsatz", "fach": "", "art": "geld", "reihe": [267251.0, 275718.0, 302304.0, 299566.0, 309788.0, 333812.16000000003, 365057.97], "minus": false, "stark": false, "kind": false, "gruppe": "", "klappbar": true, "anzahl": 2}, {"schluessel": "umsatz-6", "klar": "Erlöse Hauptleistung", "fach": "", "art": "geld", "reihe": [167031.88, 172323.75, 188940.0, 187228.75, 193617.5, 208632.6, 228196.36], "minus": false, "stark": false, "kind": true, "gruppe": "umsatz", "klappbar": false, "anzahl": 0}, {"schluessel": "umsatz-9", "klar": "Warenverkauf / weiterberechnetes Material", "fach": "", "art": "geld", "reihe": [100219.12, 103394.25, 113364.0, 112337.25, 116170.5, 125179.56, 136861.61], "minus": false, "stark": false, "kind": true, "gruppe": "umsatz", "klappbar": false, "anzahl": 0}, {"schluessel": "sonstige_ertrag", "klar": "Sonstige betriebliche Erträge", "fach": "", "art": "geld", "reihe": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2345.6], "minus": false, "stark": false, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "gesamtleistung", "klar": "Gesamtleistung", "fach": "", "art": "geld", "reihe": [267251.0, 275718.0, 302304.0, 299566.0, 309788.0, 333812.16000000003, 367403.56999999995], "minus": false, "stark": true, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "variabel", "klar": "Mengenabhängige Kosten", "fach": "variable Kosten", "art": "geld", "reihe": [98453.99, 100982.0, 110629.99999999999, 109034.01000000001, 114409.0, 130108.90999999999, 142903.76], "minus": true, "stark": false, "kind": false, "gruppe": "", "klappbar": true, "anzahl": 3}, {"schluessel": "variabel-15", "klar": "Wareneinsatz / Materialaufwand", "fach": "", "art": "geld", "reihe": [80171.09, 82229.64, 90086.01, 88786.39, 93163.25, 105947.68, 116346.42], "minus": true, "stark": false, "kind": true, "gruppe": "variabel", "klappbar": false, "anzahl": 0}, {"schluessel": "variabel-16", "klar": "Fremdleistungen / Subunternehmer", "fach": "", "art": "geld", "reihe": [11804.63, 12107.74, 13264.54, 13073.18, 13717.64, 15600.06, 17142.83], "minus": true, "stark": false, "kind": true, "gruppe": "variabel", "klappbar": false, "anzahl": 0}, {"schluessel": "variabel-21", "klar": "Sonstige variable Kosten", "fach": "", "art": "geld", "reihe": [6478.27, 6644.62, 7279.45, 7174.44, 7528.11, 8561.17, 9414.51], "minus": true, "stark": false, "kind": true, "gruppe": "variabel", "klappbar": false, "anzahl": 0}, {"schluessel": "db", "klar": "Was danach bleibt", "fach": "Deckungsbeitrag", "art": "geld", "reihe": [168797.01, 174736.0, 191674.0, 190531.99, 195379.0, 203703.25000000006, 224499.80999999994], "minus": false, "stark": true, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "db_quote", "klar": "Anteil an der Gesamtleistung", "fach": "Deckungsbeitragsquote", "art": "prozent", "reihe": [63.1604783518116, 63.3748975402404, 63.40438763628665, 63.602675203461004, 63.06861466551319, 61.02331622670667, 61.10441713998587], "minus": false, "stark": false, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "fix", "klar": "Feste Kosten", "fach": "Fixkosten", "art": "geld", "reihe": [164126.12, 164499.1, 170204.09, 171219.1, 179016.1, 175890.1, 181605.65], "minus": true, "stark": false, "kind": false, "gruppe": "", "klappbar": true, "anzahl": 7}, {"schluessel": "fix-27", "klar": "Personalaufwand (inkl. Arbeitgeberanteil)", "fach": "", "art": "geld", "reihe": [128379.44, 128671.2, 133133.65, 133927.58, 140026.39, 137581.24, 142062.35], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "fix-28", "klar": "Miete & Nebenkosten", "fach": "", "art": "geld", "reihe": [10602.55, 10626.64, 10995.18, 11060.75, 11564.44, 11362.5, 11737.4], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "fix-30", "klar": "Fahrzeuge / Fuhrpark", "fach": "", "art": "geld", "reihe": [10044.52, 10067.34, 10416.49, 10478.61, 10955.79, 10764.47, 11124.35], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "fix-32", "klar": "Versicherungen & Beiträge (inkl. Berufsgenossenschaft)", "fach": "", "art": "geld", "reihe": [4956.61, 4967.87, 5140.16, 5170.82, 5406.29, 5311.88, 5476.3], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "fix-33", "klar": "IT, Software & Kommunikation", "fach": "", "art": "geld", "reihe": [2117.23, 2122.04, 2195.63, 2208.73, 2309.31, 2268.98, 2340.75], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "fix-34", "klar": "Marketing & Vertrieb", "fach": "", "art": "geld", "reihe": [2691.67, 2697.79, 2791.35, 2807.99, 2935.86, 2884.6, 2987.6], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "fix-36", "klar": "Sonstige betriebliche Aufwendungen", "fach": "", "art": "geld", "reihe": [5334.1, 5346.22, 5531.63, 5564.62, 5818.02, 5716.43, 5876.9], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "ebitda", "klar": "Ergebnis vor Abschreibungen und Zinsen", "fach": "EBITDA", "art": "geld", "reihe": [4670.890000000014, 10236.899999999994, 21469.910000000003, 19312.889999999985, 16362.899999999994, 27813.150000000052, 42894.159999999945], "minus": false, "stark": true, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "afa", "klar": "Abschreibungen", "fach": "", "art": "geld", "reihe": [6680.9, 6680.9, 6680.9, 6680.9, 6680.9, 6680.9, 6680.9], "minus": true, "stark": false, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "ebit", "klar": "Ergebnis vor Zinsen", "fach": "EBIT", "art": "geld", "reihe": [-2010.0099999999857, 3555.9999999999945, 14789.010000000004, 12631.989999999985, 9681.999999999995, 21132.25000000005, 36213.259999999944], "minus": false, "stark": true, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "zins", "klar": "Zinsen", "fach": "", "art": "geld", "reihe": [2845.0, 2799.0, 2751.0, 2705.0, 2658.0, 2612.75, 2567.45], "minus": true, "stark": false, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "ebt", "klar": "Gewinn vor Steuern", "fach": "EBT", "art": "geld", "reihe": [-4855.009999999986, 756.9999999999945, 12038.010000000004, 9926.989999999985, 7023.9999999999945, 18519.50000000005, 33645.80999999995], "minus": false, "stark": true, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "ebt_marge", "klar": "Gewinnmarge vor Steuern", "fach": "EBT-Marge", "art": "prozent", "reihe": [-1.8166480200261121, 0.27455588681188553, 3.9820875674817415, 3.3137906170927227, 2.2673570312600857, 5.547880580503732, 9.216566344243889], "minus": false, "stark": false, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}], "umsatz": [267251.0, 275718.0, 302304.0, 299566.0, 309788.0, 333812.16000000003, 365057.97], "bericht": "portal-vorschau-bericht.html", "kopfzahlen": [{"klar": "Umsatz", "art": "geld", "reihe": [267251.0, 275718.0, 302304.0, 299566.0, 309788.0, 333812.16000000003, 365057.97]}, {"klar": "Gewinn vor Steuern", "art": "geld", "reihe": [-4855.009999999986, 756.9999999999945, 12038.010000000004, 9926.989999999985, 7023.9999999999945, 18519.50000000005, 33645.80999999995]}, {"klar": "Kontostand", "art": "geld", "reihe": [148300.0, 141200.0, 137800.0, 132400.0, 128900.0, 125300.0, 121560.45]}]};</script>
+<script>window.__valtix = {"kosten": [{"klar": "Wareneinsatz / Materialaufwand", "reihe": [80171.09, 82229.64, 90086.01, 88786.39, 93163.25, 105947.68, 116346.42]}, {"klar": "Fremdleistungen / Subunternehmer", "reihe": [11804.63, 12107.74, 13264.54, 13073.18, 13717.64, 15600.06, 17142.83]}, {"klar": "Sonstige variable Kosten", "reihe": [6478.27, 6644.62, 7279.45, 7174.44, 7528.11, 8561.17, 9414.51]}, {"klar": "Personalaufwand", "reihe": [128379.44, 128671.2, 133133.65, 133927.58, 140026.39, 137581.24, 142062.35]}, {"klar": "Miete & Nebenkosten", "reihe": [10602.55, 10626.64, 10995.18, 11060.75, 11564.44, 11362.5, 11737.4]}, {"klar": "Fahrzeuge / Fuhrpark", "reihe": [10044.52, 10067.34, 10416.49, 10478.61, 10955.79, 10764.47, 11124.35]}, {"klar": "Versicherungen & Beiträge", "reihe": [4956.61, 4967.87, 5140.16, 5170.82, 5406.29, 5311.88, 5476.3]}, {"klar": "IT, Software & Kommunikation", "reihe": [2117.23, 2122.04, 2195.63, 2208.73, 2309.31, 2268.98, 2340.75]}, {"klar": "Marketing & Vertrieb", "reihe": [2691.67, 2697.79, 2791.35, 2807.99, 2935.86, 2884.6, 2987.6]}, {"klar": "Sonstige betriebliche Aufwendungen", "reihe": [5334.1, 5346.22, 5531.63, 5564.62, 5818.02, 5716.43, 5876.9]}, {"klar": "Abschreibungen (AfA)", "reihe": [6680.9, 6680.9, 6680.9, 6680.9, 6680.9, 6680.9, 6680.9]}], "kostenbloecke": [{"klar": "Mengenabhängige Kosten", "reihe": [98453.99, 100982.0, 110629.99999999999, 109034.01000000001, 114409.0, 130108.90999999999, 142903.76]}, {"klar": "Feste Kosten", "reihe": [164126.12, 164499.1, 170204.09, 171219.1, 179016.1, 175890.1, 181605.65]}, {"klar": "Abschreibungen", "reihe": [6680.9, 6680.9, 6680.9, 6680.9, 6680.9, 6680.9, 6680.9]}], "firma": "Muster Lüftungstechnik GmbH", "branche": "Lüftungs- und Klimatechnik (Beispieldaten)", "jahr": 2026, "monate": [{"lang": "Januar", "kurz": "Jan", "eingestellt": "06.02.2026"}, {"lang": "Februar", "kurz": "Feb", "eingestellt": "05.03.2026"}, {"lang": "März", "kurz": "Mär", "eingestellt": "07.04.2026"}, {"lang": "April", "kurz": "Apr", "eingestellt": "06.05.2026"}, {"lang": "Mai", "kurz": "Mai", "eingestellt": "05.06.2026"}, {"lang": "Juni", "kurz": "Jun", "eingestellt": "07.07.2026"}, {"lang": "Juli", "kurz": "Jul", "eingestellt": "06.08.2026"}], "aktiv": 6, "kommentare": ["Der Start ins Jahr endet mit einem Verlust von 4.855 €. Vor Abschreibungen und Zinsen steht ein Plus von 4.671 €, das reicht aber nicht, um beides zu decken.", "Erstmals ein positives Ergebnis, wenn auch knapp. Der Kontostand sinkt trotzdem weiter, um 7.100 € gegenüber Januar.", "Ein deutlicher Sprung auf 12.038 € Ergebnis bei gestiegener Auslastung. Der Kontostand sinkt trotzdem, weil Ihre Kunden unverändert erst nach 44 Tagen zahlen.", "Etwas schwächer als im März: der Umsatz geht leicht zurück, das Ergebnis auf 9.927 €. Ihre Kunden zahlen jetzt nach 46 statt nach 44 Tagen.", "Der Umsatz wächst, das Ergebnis nicht: die festen Kosten liegen rund 7.800 € über dem April. Wir sollten über die Personalkosten sprechen.", "Ein gutes Ergebnis von 18.519 €. Die Deckungsbeitragsquote ist erstmals unter 62 % gefallen, das liegt am höheren Materialanteil.", "Der Umsatz liegt erstmals über Ihrem Monatsziel, das Ergebnis hat sich gegenüber Juni fast verdoppelt. Zwei Dinge sollten wir besprechen: der Kontostand sinkt seit Januar, und Ihre Kunden zahlen im Schnitt nach 48 Tagen, acht Tage über Ihrem eigenen Ziel."], "kennzahlen": [{"klar": "Umsatz", "erklaerung": "Was Sie im Monat in Rechnung gestellt haben", "art": "geld", "ziel": 335000.0, "richtung": "hoeher", "reihe": [267251.0, 275718.0, 302304.0, 299566.0, 309788.0, 333812.16000000003, 365057.97]}, {"klar": "Gewinnmarge vor Steuern", "erklaerung": "Gewinn vor Steuern, gemessen am Umsatz. Fachbegriff EBT-Marge", "art": "prozent", "ziel": 8.0, "richtung": "hoeher", "reihe": [-1.8166480200261121, 0.27455588681188553, 3.9820875674817415, 3.3137906170927227, 2.2673570312600857, 5.547880580503732, 9.216566344243889]}, {"klar": "Was nach Material und Fremdleistung bleibt", "erklaerung": "Anteil an der Gesamtleistung. Fachbegriff Deckungsbeitragsquote", "art": "prozent", "ziel": 40.0, "richtung": "hoeher", "reihe": [63.1604783518116, 63.3748975402404, 63.40438763628665, 63.602675203461004, 63.06861466551319, 61.02331622670667, 61.10441713998587]}, {"klar": "Kontostand", "erklaerung": "Bank und Kasse am Monatsende", "art": "geld", "ziel": 150000.0, "richtung": "hoeher", "reihe": [148300.0, 141200.0, 137800.0, 132400.0, 128900.0, 125300.0, 121560.45]}, {"klar": "Eigenkapitalquote", "erklaerung": "Anteil des Eigenkapitals an der Bilanzsumme", "art": "prozent", "ziel": 35.0, "richtung": "hoeher", "reihe": [35.36701620591039, 35.551330798479086, 35.88290840415486, 36.15023474178404, 36.27450980392157, 36.50137741046832, 35.80875781948168]}, {"klar": "Ihre Kunden zahlen nach", "erklaerung": "Durchschnitt in Tagen. Fachbegriff Debitorenlaufzeit", "art": "tage", "ziel": 40.0, "richtung": "niedriger", "reihe": [44.00357716154477, 44.01236045524775, 43.76389329946014, 45.56591869571314, 45.51499735302852, 46.01390195012667, 47.99999983564255]}, {"klar": "Auslastung", "erklaerung": "Geleistete Stunden gemessen an Ihrer Kapazität", "art": "prozent", "ziel": 78.0, "richtung": "hoeher", "reihe": [72.59988385598142, 74.90011614401858, 77.7999419279907, 76.29994192799072, 73.50000000000001, 79.2000580720093, 81.59988385598143]}, {"klar": "Aktive Kunden", "erklaerung": "Objekte und Mandate mit Umsatz im Monat", "art": "zahl", "ziel": 40.0, "richtung": "hoeher", "reihe": [41.0, 43.0, 45.0, 46.0, 47.0, 48.0, 49.0]}, {"klar": "Neukunden", "erklaerung": "Neue Kunden oder Aufträge im Monat", "art": "zahl", "ziel": 8.0, "richtung": "hoeher", "reihe": [7.0, 5.0, 9.0, 6.0, 8.0, 7.0, 6.0]}], "detail": [{"schluessel": "umsatz", "klar": "Umsatz", "fach": "", "art": "geld", "reihe": [267251.0, 275718.0, 302304.0, 299566.0, 309788.0, 333812.16000000003, 365057.97], "minus": false, "stark": false, "kind": false, "gruppe": "", "klappbar": true, "anzahl": 2}, {"schluessel": "umsatz-6", "klar": "Erlöse Hauptleistung", "fach": "", "art": "geld", "reihe": [167031.88, 172323.75, 188940.0, 187228.75, 193617.5, 208632.6, 228196.36], "minus": false, "stark": false, "kind": true, "gruppe": "umsatz", "klappbar": false, "anzahl": 0}, {"schluessel": "umsatz-9", "klar": "Warenverkauf / weiterberechnetes Material", "fach": "", "art": "geld", "reihe": [100219.12, 103394.25, 113364.0, 112337.25, 116170.5, 125179.56, 136861.61], "minus": false, "stark": false, "kind": true, "gruppe": "umsatz", "klappbar": false, "anzahl": 0}, {"schluessel": "sonstige_ertrag", "klar": "Sonstige betriebliche Erträge", "fach": "", "art": "geld", "reihe": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2345.6], "minus": false, "stark": false, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "gesamtleistung", "klar": "Gesamtleistung", "fach": "", "art": "geld", "reihe": [267251.0, 275718.0, 302304.0, 299566.0, 309788.0, 333812.16000000003, 367403.56999999995], "minus": false, "stark": true, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "variabel", "klar": "Mengenabhängige Kosten", "fach": "variable Kosten", "art": "geld", "reihe": [98453.99, 100982.0, 110629.99999999999, 109034.01000000001, 114409.0, 130108.90999999999, 142903.76], "minus": true, "stark": false, "kind": false, "gruppe": "", "klappbar": true, "anzahl": 3}, {"schluessel": "variabel-15", "klar": "Wareneinsatz / Materialaufwand", "fach": "", "art": "geld", "reihe": [80171.09, 82229.64, 90086.01, 88786.39, 93163.25, 105947.68, 116346.42], "minus": true, "stark": false, "kind": true, "gruppe": "variabel", "klappbar": false, "anzahl": 0}, {"schluessel": "variabel-16", "klar": "Fremdleistungen / Subunternehmer", "fach": "", "art": "geld", "reihe": [11804.63, 12107.74, 13264.54, 13073.18, 13717.64, 15600.06, 17142.83], "minus": true, "stark": false, "kind": true, "gruppe": "variabel", "klappbar": false, "anzahl": 0}, {"schluessel": "variabel-21", "klar": "Sonstige variable Kosten", "fach": "", "art": "geld", "reihe": [6478.27, 6644.62, 7279.45, 7174.44, 7528.11, 8561.17, 9414.51], "minus": true, "stark": false, "kind": true, "gruppe": "variabel", "klappbar": false, "anzahl": 0}, {"schluessel": "db", "klar": "Was danach bleibt", "fach": "Deckungsbeitrag", "art": "geld", "reihe": [168797.01, 174736.0, 191674.0, 190531.99, 195379.0, 203703.25000000006, 224499.80999999994], "minus": false, "stark": true, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "db_quote", "klar": "Anteil an der Gesamtleistung", "fach": "Deckungsbeitragsquote", "art": "prozent", "reihe": [63.1604783518116, 63.3748975402404, 63.40438763628665, 63.602675203461004, 63.06861466551319, 61.02331622670667, 61.10441713998587], "minus": false, "stark": false, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "fix", "klar": "Feste Kosten", "fach": "Fixkosten", "art": "geld", "reihe": [164126.12, 164499.1, 170204.09, 171219.1, 179016.1, 175890.1, 181605.65], "minus": true, "stark": false, "kind": false, "gruppe": "", "klappbar": true, "anzahl": 7}, {"schluessel": "fix-27", "klar": "Personalaufwand (inkl. Arbeitgeberanteil)", "fach": "", "art": "geld", "reihe": [128379.44, 128671.2, 133133.65, 133927.58, 140026.39, 137581.24, 142062.35], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "fix-28", "klar": "Miete & Nebenkosten", "fach": "", "art": "geld", "reihe": [10602.55, 10626.64, 10995.18, 11060.75, 11564.44, 11362.5, 11737.4], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "fix-30", "klar": "Fahrzeuge / Fuhrpark", "fach": "", "art": "geld", "reihe": [10044.52, 10067.34, 10416.49, 10478.61, 10955.79, 10764.47, 11124.35], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "fix-32", "klar": "Versicherungen & Beiträge (inkl. Berufsgenossenschaft)", "fach": "", "art": "geld", "reihe": [4956.61, 4967.87, 5140.16, 5170.82, 5406.29, 5311.88, 5476.3], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "fix-33", "klar": "IT, Software & Kommunikation", "fach": "", "art": "geld", "reihe": [2117.23, 2122.04, 2195.63, 2208.73, 2309.31, 2268.98, 2340.75], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "fix-34", "klar": "Marketing & Vertrieb", "fach": "", "art": "geld", "reihe": [2691.67, 2697.79, 2791.35, 2807.99, 2935.86, 2884.6, 2987.6], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "fix-36", "klar": "Sonstige betriebliche Aufwendungen", "fach": "", "art": "geld", "reihe": [5334.1, 5346.22, 5531.63, 5564.62, 5818.02, 5716.43, 5876.9], "minus": true, "stark": false, "kind": true, "gruppe": "fix", "klappbar": false, "anzahl": 0}, {"schluessel": "ebitda", "klar": "Ergebnis vor Abschreibungen und Zinsen", "fach": "EBITDA", "art": "geld", "reihe": [4670.890000000014, 10236.899999999994, 21469.910000000003, 19312.889999999985, 16362.899999999994, 27813.150000000052, 42894.159999999945], "minus": false, "stark": true, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "afa", "klar": "Abschreibungen", "fach": "", "art": "geld", "reihe": [6680.9, 6680.9, 6680.9, 6680.9, 6680.9, 6680.9, 6680.9], "minus": true, "stark": false, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "ebit", "klar": "Ergebnis vor Zinsen", "fach": "EBIT", "art": "geld", "reihe": [-2010.0099999999857, 3555.9999999999945, 14789.010000000004, 12631.989999999985, 9681.999999999995, 21132.25000000005, 36213.259999999944], "minus": false, "stark": true, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "zins", "klar": "Zinsen", "fach": "", "art": "geld", "reihe": [2845.0, 2799.0, 2751.0, 2705.0, 2658.0, 2612.75, 2567.45], "minus": true, "stark": false, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "ebt", "klar": "Gewinn vor Steuern", "fach": "EBT", "art": "geld", "reihe": [-4855.009999999986, 756.9999999999945, 12038.010000000004, 9926.989999999985, 7023.9999999999945, 18519.50000000005, 33645.80999999995], "minus": false, "stark": true, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}, {"schluessel": "ebt_marge", "klar": "Gewinnmarge vor Steuern", "fach": "EBT-Marge", "art": "prozent", "reihe": [-1.8166480200261121, 0.27455588681188553, 3.9820875674817415, 3.3137906170927227, 2.2673570312600857, 5.547880580503732, 9.216566344243889], "minus": false, "stark": false, "kind": false, "gruppe": "", "klappbar": false, "anzahl": 0}], "umsatz": [267251.0, 275718.0, 302304.0, 299566.0, 309788.0, 333812.16000000003, 365057.97], "bericht": "portal-vorschau-bericht.html", "kopfzahlen": [{"klar": "Umsatz", "art": "geld", "reihe": [267251.0, 275718.0, 302304.0, 299566.0, 309788.0, 333812.16000000003, 365057.97]}, {"klar": "Gewinn vor Steuern", "art": "geld", "reihe": [-4855.009999999986, 756.9999999999945, 12038.010000000004, 9926.989999999985, 7023.9999999999945, 18519.50000000005, 33645.80999999995]}, {"klar": "Kontostand", "art": "geld", "reihe": [148300.0, 141200.0, 137800.0, 132400.0, 128900.0, 125300.0, 121560.45]}]};</script>
 <script>
 (function () {
   var D = window.__valtix;
@@ -570,6 +645,142 @@ Daten, setzt keine Cookies und sendet nichts an einen Server.</div>
     return box;
   }
 
+  // Farben der Kuchenstuecke. Geprueft mit dem Validator der Diagrammregeln
+  // auf Helligkeit, Buntheit, Farbsehschwaeche und Kontrast. Gruen, Gelb und
+  // Rot fehlen bewusst, die gehoeren auf dieser Seite der Ampel.
+  var KUCHEN = ['#404D97', '#B0842A', '#1E93B0'];
+  var UEBRIGE = '#9AA0B0';
+
+  function faehnchen() {
+    var f = document.getElementById('faehnchen');
+    if (!f) {
+      f = el('div', 'faehnchen');
+      f.id = 'faehnchen';
+      document.body.appendChild(f);
+    }
+    return f;
+  }
+  function zeigeFaehnchen(el_, titel, wert) {
+    var f = faehnchen();
+    f.innerHTML = '';
+    f.appendChild(document.createTextNode(titel));
+    f.appendChild(el('b', null, wert));
+    var r = el_.getBoundingClientRect();
+    f.style.left = (r.left + r.width / 2 + window.scrollX) + 'px';
+    f.style.top = (r.top + window.scrollY) + 'px';
+    f.classList.add('an');
+  }
+  function versteckeFaehnchen() {
+    var f = document.getElementById('faehnchen');
+    if (f) f.classList.remove('an');
+  }
+
+  // Aufwendungen als Ring. Hoechstens sechs Stuecke, der Rest wird gebuendelt,
+  // weil mehr Stuecke im Ring nicht mehr unterscheidbar sind.
+  function kuchen(titel, hinweis, posten, i, hoechstens) {
+    var werte = posten.map(function (k) {
+      return { klar: k.klar, wert: k.reihe[i] || 0 };
+    }).filter(function (k) { return k.wert > 0; })
+      .sort(function (a, b) { return b.wert - a.wert; });
+    if (!werte.length) return null;
+
+    var stuecke = werte;
+    if (hoechstens && werte.length > hoechstens) {
+      var rest = werte.slice(hoechstens - 1)
+        .reduce(function (s, k) { return s + k.wert; }, 0);
+      stuecke = werte.slice(0, hoechstens - 1)
+        .concat([{ klar: 'Übrige Positionen', wert: rest, uebrig: true }]);
+    }
+    var summe = stuecke.reduce(function (s, k) { return s + k.wert; }, 0);
+
+    var karte = el('section', 'karte glass kuchen-karte');
+    karte.appendChild(el('h2', null, titel));
+    karte.appendChild(el('p', 'hinweis', hinweis));
+
+    var bild = el('div', 'kuchen-bild');
+    var NS = 'http://www.w3.org/2000/svg';
+    var s = document.createElementNS(NS, 'svg');
+    s.setAttribute('viewBox', '0 0 200 200');
+    s.setAttribute('class', 'kuchen');
+    s.setAttribute('role', 'img');
+    s.setAttribute('aria-label', titel + ', ' + stuecke.length + ' Positionen');
+    var r = 74, dicke = 30, U = 2 * Math.PI * r, luecke = 3, versatz = 0;
+    var kreise = [];
+    stuecke.forEach(function (k, idx) {
+      var anteil = k.wert / summe;
+      var laenge = Math.max(anteil * U - luecke, 1);
+      var c = document.createElementNS(NS, 'circle');
+      c.setAttribute('cx', '100'); c.setAttribute('cy', '100');
+      c.setAttribute('r', String(r));
+      c.setAttribute('fill', 'none');
+      c.setAttribute('stroke', k.uebrig ? UEBRIGE : KUCHEN[idx % KUCHEN.length]);
+      c.setAttribute('stroke-width', String(dicke));
+      c.setAttribute('stroke-dasharray', laenge.toFixed(2) + ' ' + (U - laenge).toFixed(2));
+      c.setAttribute('stroke-dashoffset', (-versatz).toFixed(2));
+      c.setAttribute('transform', 'rotate(-90 100 100)');
+      var t = document.createElementNS(NS, 'title');
+      t.textContent = k.klar + ': ' + eur(k.wert)
+        + ' (' + (anteil * 100).toFixed(1).replace('.', ',') + ' %)';
+      c.appendChild(t);
+      k.farbe = c.getAttribute('stroke');
+      k.anteil = anteil;
+      kreise.push(c);
+      s.appendChild(c);
+      versatz += anteil * U;
+    });
+    bild.appendChild(s);
+
+    var mitte = el('div', 'kuchen-mitte');
+    var mWas = el('div', 'was', 'Aufwendungen gesamt');
+    var mWieviel = el('div', 'wieviel', eur(summe));
+    var mAnteil = el('div', 'anteil', '');
+    mitte.appendChild(mWas); mitte.appendChild(mWieviel); mitte.appendChild(mAnteil);
+    bild.appendChild(mitte);
+    karte.appendChild(bild);
+
+    function heben(idx) {
+      s.classList.add('hat-auswahl');
+      kreise.forEach(function (c, n) {
+        c.classList.toggle('aktiv', n === idx);
+        c.setAttribute('stroke-width', String(n === idx ? dicke + 8 : dicke));
+      });
+      mWas.textContent = stuecke[idx].klar;
+      mWieviel.textContent = eur(stuecke[idx].wert);
+      mAnteil.textContent = (stuecke[idx].anteil * 100).toFixed(1).replace('.', ',')
+        + ' % der Kosten';
+    }
+    function loesen() {
+      s.classList.remove('hat-auswahl');
+      kreise.forEach(function (c) {
+        c.classList.remove('aktiv');
+        c.setAttribute('stroke-width', String(dicke));
+      });
+      mWas.textContent = 'Aufwendungen gesamt';
+      mWieviel.textContent = eur(summe);
+      mAnteil.textContent = '';
+    }
+
+    var legende = el('div', 'kuchen-legende');
+    stuecke.forEach(function (k, idx) {
+      kreise[idx].addEventListener('mouseenter', function () { heben(idx); });
+      kreise[idx].addEventListener('mouseleave', loesen);
+      var z = el('div', 'legende-zeile');
+      var punkt = el('span', 'punkt');
+      punkt.style.background = k.farbe;
+      z.appendChild(punkt);
+      z.appendChild(el('span', 'was', k.klar));
+      var zahl = el('span', 'zahl', eur(k.wert));
+      zahl.appendChild(el('span', 'anteil',
+        (k.anteil * 100).toFixed(1).replace('.', ',') + ' %'));
+      z.appendChild(zahl);
+      z.addEventListener('mouseenter', function () { heben(idx); });
+      z.addEventListener('mouseleave', loesen);
+      legende.appendChild(z);
+    });
+    karte.appendChild(legende);
+    return karte;
+  }
+
   function verlauf(i) {
     var v = el('section', 'karte glass');
     v.appendChild(el('h2', null, 'Umsatz im Jahresverlauf'));
@@ -587,6 +798,10 @@ Daten, setzt keine Cookies und sendet nichts an einen Server.</div>
       s.appendChild(b);
       s.appendChild(el('span', 'monat', D.monate[idx].kurz));
       s.addEventListener('click', function () { stand.monat = idx; zeichnen(); });
+      s.addEventListener('mouseenter', function () {
+        zeigeFaehnchen(s, D.monate[idx].lang, eur(w));
+      });
+      s.addEventListener('mouseleave', versteckeFaehnchen);
       reihe.appendChild(s);
     });
     v.appendChild(reihe);
@@ -652,6 +867,11 @@ Daten, setzt keine Cookies und sendet nichts an einen Server.</div>
     });
     spalten.appendChild(links);
 
+    var ring = kuchen('Woher die Kosten kommen',
+      'Die größten Posten im ' + D.monate[i].lang + '. Fahren Sie über ein Stück.',
+      D.kosten, i, 4);
+    if (ring) links.appendChild(ring);
+
     var rechts = el('div', 'saeule-rechts');
     rechts.appendChild(verlauf(i));
     rechts.appendChild(berichtkarte(i, vor));
@@ -662,6 +882,14 @@ Daten, setzt keine Cookies und sendet nichts an einen Server.</div>
 
   function detail() {
     var i = stand.monat, vor = i > 0 ? i - 1 : null;
+    var raus = document.createDocumentFragment();
+    var bloecke = kuchen('Kosten nach Art',
+      'Mengenabhängig heißt: steigt mit jeder zusätzlichen Einheit.',
+      D.kostenbloecke, i, 0);
+    if (bloecke) {
+      bloecke.classList.add('kuchen-breit');
+      raus.appendChild(bloecke);
+    }
     var karte = el('section', 'tabellenkarte glass');
     var kk = el('div', 'tabellenkopf');
     kk.appendChild(el('h2', null, 'Ergebnisrechnung ' + D.monate[i].lang + ' ' + D.jahr));
@@ -733,7 +961,8 @@ Daten, setzt keine Cookies und sendet nichts an einen Server.</div>
     karte.appendChild(rahmen);
     karte.appendChild(el('p', 'tabellenfuss',
       'Alle Beträge netto. Grundlage ist die ausgefüllte Eingabevorlage.'));
-    return karte;
+    raus.appendChild(karte);
+    return raus;
   }
 
   function zeichnen() {
@@ -801,6 +1030,11 @@ Daten, setzt keine Cookies und sendet nichts an einen Server.</div>
     }
     if (was !== 'anmelden') zeichnen();
   }
+
+  var kopfEl = document.querySelector('.kopf');
+  window.addEventListener('scroll', function () {
+    if (kopfEl) kopfEl.classList.toggle('gescrollt', window.scrollY > 8);
+  }, { passive: true });
 
   // Die Verwaltung ist nur ueber die Adresse erreichbar, nicht ueber die
   // Anmeldung. Ihre Reiter erscheinen auch nur dann.

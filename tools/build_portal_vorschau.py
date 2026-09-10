@@ -121,7 +121,28 @@ def daten():
                 'anzahl': len(kinder),
             })
 
+    # Einzelne Aufwandspositionen fuer das Kuchendiagramm, dazu die drei
+    # Bloecke mengenabhaengig, fest und Abschreibungen.
+    kosten, bloecke = [], []
+    for kennung, _, zeilen in M.bloecke:
+        if kennung != 'ergebnis':
+            continue
+        for z in zeilen:
+            if z.gruppe in ('variabel', 'fix'):
+                kosten.append({'klar': z.titel.replace(' (inkl. Arbeitgeberanteil)', '')
+                                             .replace(' (inkl. Berufsgenossenschaft)', ''),
+                               'reihe': z.werte})
+            elif z.schluessel == 'afa':
+                kosten.append({'klar': z.titel, 'reihe': z.werte})
+        for schluessel, titel in [('variabel', 'Mengenabhängige Kosten'),
+                                  ('fix', 'Feste Kosten'),
+                                  ('afa', 'Abschreibungen')]:
+            zl = M.zeile(schluessel)
+            if zl:
+                bloecke.append({'klar': titel, 'reihe': zl.werte})
+
     return {
+        'kosten': kosten, 'kostenbloecke': bloecke,
         'firma': M.firma, 'branche': M.branche, 'jahr': M.jahr,
         'monate': monate, 'aktiv': M.aktiv, 'kommentare': KOMMENTARE,
         'kennzahlen': kennzahlen, 'detail': detail,
@@ -275,6 +296,13 @@ code{background:rgba(35,41,65,.07);padding:2px 6px;border-radius:6px;font-size:.
 
 /* Kopf des Portals */
 .kopf{position:sticky;top:14px;z-index:60;margin-top:14px}
+.kopf::before{content:"";position:absolute;left:50%;transform:translateX(-50%);
+  width:100vw;top:-16px;bottom:-12px;pointer-events:none;opacity:0;
+  background:rgba(251,248,242,.86);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(35,41,65,.08);
+  transition:opacity .25s ease}
+.kopf.gescrollt::before{opacity:1}
 .kopf-innen{border-radius:var(--r-pill);padding:9px 10px 9px 22px;display:flex;
   align-items:center;gap:14px;flex-wrap:wrap}
 .wechsler{display:flex;align-items:center;gap:6px;margin:0 auto;
@@ -487,6 +515,74 @@ td.minus{color:var(--gold-deep)}
   .posten-liste{padding:0 8px 8px}
   .saeulen{height:140px;gap:5px}
 }
+/* ---- Abstaende im Inhalt. Ohne die stossen die Bloecke aneinander ---- */
+#flaeche{display:flex;flex-direction:column;gap:18px}
+
+/* Der klebende Kopf muss decken, sonst scheint der Inhalt darunter durch
+   und das liest sich wie uebereinanderliegende Kaesten. */
+.kopf-innen{background:rgba(255,255,255,.9);
+  transition:box-shadow .25s ease,background .25s ease}
+.kopf.gescrollt .kopf-innen{background:rgba(255,255,255,.96);
+  box-shadow:0 14px 34px rgba(35,41,65,.16), inset 0 1px 0 rgba(255,255,255,.95)}
+.reiter-innen{background:rgba(255,255,255,.78)}
+
+/* ---- Reaktion auf den Zeiger ---- */
+.gruppe,.karte,.tabellenkarte{transition:box-shadow .3s ease,transform .3s ease}
+.gruppe:hover,.karte:hover,.tabellenkarte:hover{
+  box-shadow:0 26px 60px rgba(35,41,65,.16), inset 0 1px 0 rgba(255,255,255,.9)}
+.posten{transition:background .2s ease,box-shadow .2s ease,transform .2s ease}
+.posten:hover{background:rgba(255,255,255,.9);transform:translateX(3px);
+  box-shadow:0 8px 22px rgba(35,41,65,.10), inset 0 1px 0 rgba(255,255,255,.95)}
+.posten:hover .name{color:var(--navy)}
+.oeffnen{transition:background .18s ease,color .18s ease,box-shadow .18s ease}
+.oeffnen:hover{background:#fff;box-shadow:0 4px 10px rgba(35,41,65,.14)}
+.saeule .balken{transition:background .2s ease,transform .2s ease,box-shadow .2s ease}
+.saeule:hover .balken{transform:scaleY(1.04);transform-origin:bottom}
+.saeule .zahl{transition:opacity .2s ease}
+
+/* Merkfaehnchen an Saeulen und Kuchenstuecken */
+.faehnchen{position:absolute;z-index:20;pointer-events:none;opacity:0;
+  transform:translate(-50%,-118%);transition:opacity .16s ease;
+  background:linear-gradient(180deg,#2B3251,var(--navy-deep));color:#fff;
+  border-radius:12px;padding:8px 12px;font-size:.8rem;line-height:1.35;
+  white-space:nowrap;box-shadow:0 12px 30px rgba(23,27,44,.34)}
+.faehnchen b{display:block;font-size:.92rem;font-weight:700;
+  font-variant-numeric:tabular-nums}
+.faehnchen.an{opacity:1}
+
+/* ---- Kuchendiagramm ---- */
+.kuchen-karte{position:relative}
+.kuchen-bild{position:relative;display:flex;justify-content:center;margin:6px 0 4px}
+.kuchen{width:100%;max-width:262px;height:auto;overflow:visible}
+.kuchen circle{transition:stroke-width .2s ease,opacity .2s ease;cursor:pointer}
+.kuchen.hat-auswahl circle{opacity:.42}
+.kuchen circle.aktiv{opacity:1}
+.kuchen-mitte{position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;pointer-events:none;
+  padding:0 34px}
+.kuchen-mitte .was{font-size:.74rem;color:var(--ink-soft);line-height:1.25}
+.kuchen-mitte .wieviel{font-size:1.24rem;font-weight:800;letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums;margin-top:2px}
+.kuchen-mitte .anteil{font-size:.76rem;color:var(--ink-soft);
+  font-variant-numeric:tabular-nums}
+.kuchen-legende{display:flex;flex-direction:column;gap:2px;margin-top:12px;
+  max-width:520px;margin-inline:auto;width:100%}
+.legende-zeile{display:grid;grid-template-columns:12px minmax(0,1fr) auto;
+  gap:10px;align-items:baseline;padding:7px 10px;border-radius:10px;
+  font-size:.86rem;cursor:default;transition:background .18s ease}
+.legende-zeile:hover{background:rgba(255,255,255,.75)}
+.legende-zeile .punkt{width:12px;height:12px;border-radius:4px;
+  transform:translateY(2px)}
+.legende-zeile .was{min-width:0}
+.legende-zeile .zahl{text-align:right;font-variant-numeric:tabular-nums;
+  font-weight:600;white-space:nowrap}
+.legende-zeile .anteil{color:var(--ink-soft);font-variant-numeric:tabular-nums;
+  margin-left:8px;font-weight:400}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important}
+  .kachel:hover,.posten:hover,.knopf:hover{transform:none}
+}
+
 '''
 
 JS = r'''
@@ -631,6 +727,142 @@ JS = r'''
     return box;
   }
 
+  // Farben der Kuchenstuecke. Geprueft mit dem Validator der Diagrammregeln
+  // auf Helligkeit, Buntheit, Farbsehschwaeche und Kontrast. Gruen, Gelb und
+  // Rot fehlen bewusst, die gehoeren auf dieser Seite der Ampel.
+  var KUCHEN = ['#404D97', '#B0842A', '#1E93B0'];
+  var UEBRIGE = '#9AA0B0';
+
+  function faehnchen() {
+    var f = document.getElementById('faehnchen');
+    if (!f) {
+      f = el('div', 'faehnchen');
+      f.id = 'faehnchen';
+      document.body.appendChild(f);
+    }
+    return f;
+  }
+  function zeigeFaehnchen(el_, titel, wert) {
+    var f = faehnchen();
+    f.innerHTML = '';
+    f.appendChild(document.createTextNode(titel));
+    f.appendChild(el('b', null, wert));
+    var r = el_.getBoundingClientRect();
+    f.style.left = (r.left + r.width / 2 + window.scrollX) + 'px';
+    f.style.top = (r.top + window.scrollY) + 'px';
+    f.classList.add('an');
+  }
+  function versteckeFaehnchen() {
+    var f = document.getElementById('faehnchen');
+    if (f) f.classList.remove('an');
+  }
+
+  // Aufwendungen als Ring. Hoechstens sechs Stuecke, der Rest wird gebuendelt,
+  // weil mehr Stuecke im Ring nicht mehr unterscheidbar sind.
+  function kuchen(titel, hinweis, posten, i, hoechstens) {
+    var werte = posten.map(function (k) {
+      return { klar: k.klar, wert: k.reihe[i] || 0 };
+    }).filter(function (k) { return k.wert > 0; })
+      .sort(function (a, b) { return b.wert - a.wert; });
+    if (!werte.length) return null;
+
+    var stuecke = werte;
+    if (hoechstens && werte.length > hoechstens) {
+      var rest = werte.slice(hoechstens - 1)
+        .reduce(function (s, k) { return s + k.wert; }, 0);
+      stuecke = werte.slice(0, hoechstens - 1)
+        .concat([{ klar: 'Übrige Positionen', wert: rest, uebrig: true }]);
+    }
+    var summe = stuecke.reduce(function (s, k) { return s + k.wert; }, 0);
+
+    var karte = el('section', 'karte glass kuchen-karte');
+    karte.appendChild(el('h2', null, titel));
+    karte.appendChild(el('p', 'hinweis', hinweis));
+
+    var bild = el('div', 'kuchen-bild');
+    var NS = 'http://www.w3.org/2000/svg';
+    var s = document.createElementNS(NS, 'svg');
+    s.setAttribute('viewBox', '0 0 200 200');
+    s.setAttribute('class', 'kuchen');
+    s.setAttribute('role', 'img');
+    s.setAttribute('aria-label', titel + ', ' + stuecke.length + ' Positionen');
+    var r = 74, dicke = 30, U = 2 * Math.PI * r, luecke = 3, versatz = 0;
+    var kreise = [];
+    stuecke.forEach(function (k, idx) {
+      var anteil = k.wert / summe;
+      var laenge = Math.max(anteil * U - luecke, 1);
+      var c = document.createElementNS(NS, 'circle');
+      c.setAttribute('cx', '100'); c.setAttribute('cy', '100');
+      c.setAttribute('r', String(r));
+      c.setAttribute('fill', 'none');
+      c.setAttribute('stroke', k.uebrig ? UEBRIGE : KUCHEN[idx % KUCHEN.length]);
+      c.setAttribute('stroke-width', String(dicke));
+      c.setAttribute('stroke-dasharray', laenge.toFixed(2) + ' ' + (U - laenge).toFixed(2));
+      c.setAttribute('stroke-dashoffset', (-versatz).toFixed(2));
+      c.setAttribute('transform', 'rotate(-90 100 100)');
+      var t = document.createElementNS(NS, 'title');
+      t.textContent = k.klar + ': ' + eur(k.wert)
+        + ' (' + (anteil * 100).toFixed(1).replace('.', ',') + ' %)';
+      c.appendChild(t);
+      k.farbe = c.getAttribute('stroke');
+      k.anteil = anteil;
+      kreise.push(c);
+      s.appendChild(c);
+      versatz += anteil * U;
+    });
+    bild.appendChild(s);
+
+    var mitte = el('div', 'kuchen-mitte');
+    var mWas = el('div', 'was', 'Aufwendungen gesamt');
+    var mWieviel = el('div', 'wieviel', eur(summe));
+    var mAnteil = el('div', 'anteil', '');
+    mitte.appendChild(mWas); mitte.appendChild(mWieviel); mitte.appendChild(mAnteil);
+    bild.appendChild(mitte);
+    karte.appendChild(bild);
+
+    function heben(idx) {
+      s.classList.add('hat-auswahl');
+      kreise.forEach(function (c, n) {
+        c.classList.toggle('aktiv', n === idx);
+        c.setAttribute('stroke-width', String(n === idx ? dicke + 8 : dicke));
+      });
+      mWas.textContent = stuecke[idx].klar;
+      mWieviel.textContent = eur(stuecke[idx].wert);
+      mAnteil.textContent = (stuecke[idx].anteil * 100).toFixed(1).replace('.', ',')
+        + ' % der Kosten';
+    }
+    function loesen() {
+      s.classList.remove('hat-auswahl');
+      kreise.forEach(function (c) {
+        c.classList.remove('aktiv');
+        c.setAttribute('stroke-width', String(dicke));
+      });
+      mWas.textContent = 'Aufwendungen gesamt';
+      mWieviel.textContent = eur(summe);
+      mAnteil.textContent = '';
+    }
+
+    var legende = el('div', 'kuchen-legende');
+    stuecke.forEach(function (k, idx) {
+      kreise[idx].addEventListener('mouseenter', function () { heben(idx); });
+      kreise[idx].addEventListener('mouseleave', loesen);
+      var z = el('div', 'legende-zeile');
+      var punkt = el('span', 'punkt');
+      punkt.style.background = k.farbe;
+      z.appendChild(punkt);
+      z.appendChild(el('span', 'was', k.klar));
+      var zahl = el('span', 'zahl', eur(k.wert));
+      zahl.appendChild(el('span', 'anteil',
+        (k.anteil * 100).toFixed(1).replace('.', ',') + ' %'));
+      z.appendChild(zahl);
+      z.addEventListener('mouseenter', function () { heben(idx); });
+      z.addEventListener('mouseleave', loesen);
+      legende.appendChild(z);
+    });
+    karte.appendChild(legende);
+    return karte;
+  }
+
   function verlauf(i) {
     var v = el('section', 'karte glass');
     v.appendChild(el('h2', null, 'Umsatz im Jahresverlauf'));
@@ -648,6 +880,10 @@ JS = r'''
       s.appendChild(b);
       s.appendChild(el('span', 'monat', D.monate[idx].kurz));
       s.addEventListener('click', function () { stand.monat = idx; zeichnen(); });
+      s.addEventListener('mouseenter', function () {
+        zeigeFaehnchen(s, D.monate[idx].lang, eur(w));
+      });
+      s.addEventListener('mouseleave', versteckeFaehnchen);
       reihe.appendChild(s);
     });
     v.appendChild(reihe);
@@ -713,6 +949,11 @@ JS = r'''
     });
     spalten.appendChild(links);
 
+    var ring = kuchen('Woher die Kosten kommen',
+      'Die größten Posten im ' + D.monate[i].lang + '. Fahren Sie über ein Stück.',
+      D.kosten, i, 4);
+    if (ring) links.appendChild(ring);
+
     var rechts = el('div', 'saeule-rechts');
     rechts.appendChild(verlauf(i));
     rechts.appendChild(berichtkarte(i, vor));
@@ -723,6 +964,14 @@ JS = r'''
 
   function detail() {
     var i = stand.monat, vor = i > 0 ? i - 1 : null;
+    var raus = document.createDocumentFragment();
+    var bloecke = kuchen('Kosten nach Art',
+      'Mengenabhängig heißt: steigt mit jeder zusätzlichen Einheit.',
+      D.kostenbloecke, i, 0);
+    if (bloecke) {
+      bloecke.classList.add('kuchen-breit');
+      raus.appendChild(bloecke);
+    }
     var karte = el('section', 'tabellenkarte glass');
     var kk = el('div', 'tabellenkopf');
     kk.appendChild(el('h2', null, 'Ergebnisrechnung ' + D.monate[i].lang + ' ' + D.jahr));
@@ -794,7 +1043,8 @@ JS = r'''
     karte.appendChild(rahmen);
     karte.appendChild(el('p', 'tabellenfuss',
       'Alle Beträge netto. Grundlage ist die ausgefüllte Eingabevorlage.'));
-    return karte;
+    raus.appendChild(karte);
+    return raus;
   }
 
   function zeichnen() {
@@ -862,6 +1112,11 @@ JS = r'''
     }
     if (was !== 'anmelden') zeichnen();
   }
+
+  var kopfEl = document.querySelector('.kopf');
+  window.addEventListener('scroll', function () {
+    if (kopfEl) kopfEl.classList.toggle('gescrollt', window.scrollY > 8);
+  }, { passive: true });
 
   // Die Verwaltung ist nur ueber die Adresse erreichbar, nicht ueber die
   // Anmeldung. Ihre Reiter erscheinen auch nur dann.
