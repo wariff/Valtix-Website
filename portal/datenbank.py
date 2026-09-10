@@ -50,6 +50,69 @@ CREATE TABLE IF NOT EXISTS protokoll (
   detail      TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_bericht_mandant ON bericht(mandant_id);
+
+-- ---------------------------------------------------------------- M1
+-- Eine Periode ist ein Mandant und ein Monat. Rueckwirkende Monate sind
+-- ausdruecklich erlaubt, deshalb kein Zwang zur Reihenfolge.
+CREATE TABLE IF NOT EXISTS periode (
+  id             INTEGER PRIMARY KEY,
+  mandant_id     INTEGER NOT NULL REFERENCES mandant(id),
+  jahr_monat     TEXT NOT NULL,                 -- YYYY-MM
+  status         TEXT NOT NULL DEFAULT 'offen'
+                 CHECK (status IN ('offen','hochgeladen','eingereicht',
+                                   'in_pruefung','freigegeben','bericht_gestellt')),
+  eingereicht_am TEXT,
+  notiz          TEXT,
+  angelegt_am    TEXT NOT NULL,
+  UNIQUE (mandant_id, jahr_monat)
+);
+-- Die Checkliste ist je Mandant einstellbar. Ein Eintrag ohne mandant_id ist
+-- die Vorlage, die fuer neue Mandanten kopiert wird.
+CREATE TABLE IF NOT EXISTS checkliste_slot (
+  id          INTEGER PRIMARY KEY,
+  mandant_id  INTEGER REFERENCES mandant(id),
+  schluessel  TEXT NOT NULL,
+  bezeichnung TEXT NOT NULL,
+  pflicht     INTEGER NOT NULL DEFAULT 1,
+  reihenfolge INTEGER NOT NULL DEFAULT 0,
+  UNIQUE (mandant_id, schluessel)
+);
+CREATE TABLE IF NOT EXISTS dokument (
+  id                  INTEGER PRIMARY KEY,
+  periode_id          INTEGER NOT NULL REFERENCES periode(id),
+  slot_schluessel     TEXT,
+  dateiname           TEXT NOT NULL,
+  mime                TEXT NOT NULL,
+  groesse             INTEGER NOT NULL,
+  hash                TEXT NOT NULL,
+  version             INTEGER NOT NULL DEFAULT 1,
+  ersetzt_id          INTEGER REFERENCES dokument(id),
+  speicher_schluessel TEXT NOT NULL,
+  hochgeladen_von     INTEGER REFERENCES benutzer(id),
+  hochgeladen_am      TEXT NOT NULL,
+  aktiv               INTEGER NOT NULL DEFAULT 1
+);
+-- Ein Slot, den der Mandant begruendet auf "entfaellt" setzt.
+CREATE TABLE IF NOT EXISTS slot_entfaellt (
+  id              INTEGER PRIMARY KEY,
+  periode_id      INTEGER NOT NULL REFERENCES periode(id),
+  slot_schluessel TEXT NOT NULL,
+  grund           TEXT NOT NULL,
+  gesetzt_von     INTEGER REFERENCES benutzer(id),
+  gesetzt_am      TEXT NOT NULL,
+  UNIQUE (periode_id, slot_schluessel)
+);
+CREATE TABLE IF NOT EXISTS meldung (
+  id          INTEGER PRIMARY KEY,
+  benutzer_id INTEGER REFERENCES benutzer(id),
+  rolle       TEXT,                              -- an alle dieser Rolle
+  text        TEXT NOT NULL,
+  ziel        TEXT,
+  erstellt_am TEXT NOT NULL,
+  gelesen_am  TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_periode_mandant ON periode(mandant_id, jahr_monat);
+CREATE INDEX IF NOT EXISTS idx_dokument_periode ON dokument(periode_id, aktiv);
 '''
 
 
@@ -64,9 +127,28 @@ def verbinden():
     return con
 
 
+SPALTEN_NACHTRAG = [
+    ('protokoll', 'vorher', 'TEXT'),
+    ('protokoll', 'nachher', 'TEXT'),
+    # Ein Nachtrag oeffnet das Hochladen wieder, ohne dass die Periode ihren
+    # Status verliert. Sonst waere nicht mehr zu sehen, dass schon eingereicht war.
+    ('periode', 'nachtrag_offen', 'INTEGER NOT NULL DEFAULT 0'),
+]
+
+
+def _spalten_nachziehen(con):
+    """Fehlende Spalten ergaenzen, damit eine bestehende Datei weiterlaeuft."""
+    for tabelle, spalte, art in SPALTEN_NACHTRAG:
+        vorhanden = [r[1] for r in con.execute(f'PRAGMA table_info({tabelle})')]
+        if spalte not in vorhanden:
+            con.execute(f'ALTER TABLE {tabelle} ADD COLUMN {spalte} {art}')
+
+
 def anlegen():
     with verbinden() as con:
         con.executescript(SCHEMA)
+        _spalten_nachziehen(con)
+        _standardcheckliste(con)
 
 
 # ---------- Benutzer ----------
@@ -170,10 +252,39 @@ def bericht(bid):
     return dict(r) if r else None
 
 
-def protokollieren(ereignis, benutzer_id=None, email=None, detail=None):
+# Standardliste nach F4 der Spezifikation. Sie liegt ohne mandant_id in der
+# Tabelle und wird beim Anlegen eines Mandanten kopiert, damit sie danach je
+# Mandant angepasst werden kann.
+STANDARD_SLOTS = [
+    ('bwa', 'BWA', 1),
+    ('susa', 'Summen- und Saldenliste', 1),
+    ('opos_debitoren', 'OPOS Debitoren', 1),
+    ('opos_kreditoren', 'OPOS Kreditoren', 1),
+    ('kontensalden', 'Kontensaldenliste oder Kontoauszüge', 1),
+    ('bestandsliste', 'Bestandsliste', 0),
+    ('lohnjournal', 'Lohnjournal', 0),
+    ('investitionsliste', 'Investitionsliste', 0),
+]
+
+
+def _standardcheckliste(con):
+    vorhanden = con.execute(
+        'SELECT COUNT(*) FROM checkliste_slot WHERE mandant_id IS NULL').fetchone()[0]
+    if vorhanden:
+        return
+    for i, (schluessel, bezeichnung, pflicht) in enumerate(STANDARD_SLOTS):
+        con.execute('INSERT INTO checkliste_slot '
+                    '(mandant_id, schluessel, bezeichnung, pflicht, reihenfolge) '
+                    'VALUES (NULL,?,?,?,?)', (schluessel, bezeichnung, pflicht, i))
+
+
+def protokollieren(ereignis, benutzer_id=None, email=None, detail=None,
+                   vorher=None, nachher=None):
     with verbinden() as con:
-        con.execute('INSERT INTO protokoll (zeitpunkt,benutzer_id,email,ereignis,detail) '
-                    'VALUES (?,?,?,?,?)', (jetzt(), benutzer_id, email, ereignis, detail))
+        con.execute('INSERT INTO protokoll '
+                    '(zeitpunkt,benutzer_id,email,ereignis,detail,vorher,nachher) '
+                    'VALUES (?,?,?,?,?,?,?)',
+                    (jetzt(), benutzer_id, email, ereignis, detail, vorher, nachher))
 
 
 def protokoll(grenze=60):

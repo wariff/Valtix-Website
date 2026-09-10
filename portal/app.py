@@ -19,6 +19,9 @@ HIER = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HIER)
 sys.path.insert(0, os.path.join(os.path.dirname(HIER), 'tools', 'bericht'))
 import datenbank as db                                   # noqa: E402
+import perioden as pd                                    # noqa: E402
+import speicher as sp                                    # noqa: E402
+import benachrichtigung as bn                            # noqa: E402
 
 GEHEIM = os.environ.get('VALTIX_SECRET')
 if not GEHEIM:
@@ -125,8 +128,11 @@ def seite(titel, inhalt, nutzer=None, breit=True):
     if nutzer:
         links = ['<a href="/">Übersicht</a>']
         if nutzer['rolle'] == 'admin':
+            links.append('<a href="/uebersicht">Monatsübersicht</a>')
             links.append('<a href="/verwaltung">Verwaltung</a>')
             links.append('<a href="/protokoll">Protokoll</a>')
+        else:
+            links.append('<a href="/unterlagen">Unterlagen</a>')
         nav = ('<nav>' + ''.join(links) +
                f'<form method="post" action="/abmelden" style="display:inline">'
                f'<button type="submit">Abmelden</button></form></nav>')
@@ -268,7 +274,7 @@ def start(request: Request, meldung: str = ''):
         f'<td class="num"><a class="knopf schmal stumm" href="/bericht/{b["id"]}">Ansehen</a></td></tr>'
         for b in db.berichte(n['mandant_id'])) or \
         '<tr><td colspan="3">Ihr erster Bericht erscheint hier, sobald er vorliegt.</td></tr>'
-    return seite('Ihre Berichte', f'''{hinweis}
+    return seite('Ihre Berichte', f'''{hinweis}{statusblock(n)}
       <h1>Ihre Berichte</h1>
       <p class="lead">Angemeldet als {escape(n["name"])}.</p>
       <div class="rahmen"><table><thead><tr><th>Zeitraum</th><th>Eingestellt</th>
@@ -428,3 +434,422 @@ def protokoll(request: Request):
       Änderungen an Zugängen werden festgehalten.</p>
       <div class="rahmen"><table><thead><tr><th>Zeitpunkt</th><th>Ereignis</th>
       <th>E-Mail</th><th>Detail</th></tr></thead><tbody>{zeilen}</tbody></table></div>''', n)
+
+
+# ======================================================================
+# M1: Perioden, Unterlagen, Einreichen
+# ======================================================================
+from datetime import date                                  # noqa: E402
+
+AMPEL_TEXT = {'vollstaendig': ('Vollständig', '#0CA30C'),
+              'unvollstaendig': ('Unvollständig', '#FAB219'),
+              'fehlt': ('Fehlt', '#D03B3B')}
+
+
+def aktueller_monat():
+    """Der Monat, für den Unterlagen erwartet werden: der Vormonat."""
+    h = date.today()
+    jahr, monat = (h.year, h.month - 1) if h.month > 1 else (h.year - 1, 12)
+    return f'{jahr}-{monat:02d}'
+
+
+def statusblock(n):
+    """F1: der einzige Zusatz auf der bestehenden Startseite."""
+    if n['rolle'] != 'mandant' or not n['mandant_id']:
+        return ''
+    jm = aktueller_monat()
+    p = pd.periode(n['mandant_id'], jm)
+    zustand = p['status'] if p else 'offen'
+    a = pd.ampel(n['mandant_id'], jm)
+    text, farbe = AMPEL_TEXT[a]
+    fehlend = pd.fehlende_pflichtslots(n['mandant_id'], jm)
+    zusatz = ('Alles da.' if not fehlend else
+              'Es fehlen noch: ' + escape(', '.join(f['bezeichnung'] for f in fehlend)) + '.')
+    return (f'<div class="karte" style="margin-bottom:18px">'
+            f'<h2 style="margin-top:0">Unterlagen {escape(pd.monatstext(jm))}</h2>'
+            f'<p class="lead" style="margin-bottom:10px">'
+            f'<span class="punkt" style="background:{farbe}"></span>'
+            f'{escape(pd.STATUS_TEXT[zustand])} · {text}. {zusatz}</p>'
+            f'<a class="knopf" href="/unterlagen/{jm}">Unterlagen hochladen</a></div>')
+
+
+def _mandant_pflicht(request):
+    n = angemeldet(request)
+    if not n or n['rolle'] != 'mandant' or not n['mandant_id']:
+        return None
+    return n
+
+
+def _zurueck(ziel, meldung='', fehler=''):
+    from urllib.parse import urlencode
+    teile = {}
+    if meldung:
+        teile['meldung'] = meldung
+    if fehler:
+        teile['fehler'] = fehler
+    return RedirectResponse(ziel + ('?' + urlencode(teile) if teile else ''),
+                            status_code=303)
+
+
+@app.get('/unterlagen', response_class=HTMLResponse)
+def unterlagen(request: Request):
+    n = _mandant_pflicht(request)
+    if not n:
+        return RedirectResponse('/anmelden', status_code=303)
+    heute = date.today()
+    monate = []
+    for zurueck in range(0, 12):
+        jahr, monat = heute.year, heute.month - zurueck
+        while monat < 1:
+            monat += 12
+            jahr -= 1
+        monate.append(f'{jahr}-{monat:02d}')
+    zeilen = ''
+    for jm in monate:
+        p = pd.periode(n['mandant_id'], jm)
+        a = pd.ampel(n['mandant_id'], jm)
+        text, farbe = AMPEL_TEXT[a]
+        zeilen += (f'<tr><td>{escape(pd.monatstext(jm))}</td>'
+                   f'<td><span class="punkt" style="background:{farbe}"></span>{text}</td>'
+                   f'<td>{escape(pd.STATUS_TEXT[p["status"]] if p else "offen")}</td>'
+                   f'<td class="num"><a class="knopf schmal stumm" '
+                   f'href="/unterlagen/{jm}">Öffnen</a></td></tr>')
+    return seite('Unterlagen', f'''
+      <h1>Unterlagen</h1>
+      <p class="lead">Für jeden Monat sehen Sie, was schon vorliegt. Auch für
+      zurückliegende Monate können Sie jederzeit noch etwas nachreichen.</p>
+      <div class="rahmen"><table><thead><tr><th>Monat</th><th>Vollständigkeit</th>
+      <th>Status</th><th class="num">&nbsp;</th></tr></thead>
+      <tbody>{zeilen}</tbody></table></div>''', n)
+
+
+@app.get('/unterlagen/{jahr_monat}', response_class=HTMLResponse)
+def monat(request: Request, jahr_monat: str, meldung: str = '', fehler: str = ''):
+    n = _mandant_pflicht(request)
+    if not n:
+        return RedirectResponse('/anmelden', status_code=303)
+    if not pd.gueltig(jahr_monat):
+        return RedirectResponse('/unterlagen', status_code=303)
+    s = pd.stand(n['mandant_id'], jahr_monat)
+    p = s['periode']
+    offen = pd.darf_hochladen(p) if p else True
+    t = csrf_token(n['id'])
+
+    kopf = ''
+    if meldung:
+        kopf += f'<div class="meldung gut">{escape(meldung)}</div>'
+    if fehler:
+        kopf += f'<div class="meldung fehler">{escape(fehler)}</div>'
+
+    reihen = ''
+    for slot in s['slots']:
+        if slot['dateien']:
+            d = slot['dateien'][-1]
+            zustand = (f'<a href="/datei/{d["id"]}">{escape(d["dateiname"])}</a>'
+                       f'<span class="marke-klein"> · Fassung {d["version"]} · '
+                       f'{d["groesse"] // 1024} KB</span>')
+        elif slot['entfaellt']:
+            zustand = (f'entfällt: {escape(slot["entfaellt"]["grund"])}'
+                       + (f' <form method="post" action="/unterlagen/{jahr_monat}/'
+                          f'entfaellt-aufheben" style="display:inline">'
+                          f'<input type="hidden" name="csrf" value="{t}">'
+                          f'<input type="hidden" name="slot" value="{slot["schluessel"]}">'
+                          f'<button class="knopf schmal stumm" type="submit">'
+                          f'zurücknehmen</button></form>' if offen else ''))
+        else:
+            zustand = '<span class="marke-klein">liegt noch nicht vor</span>'
+        pflicht = 'Pflicht' if slot['pflicht'] else 'optional'
+        werkzeug = ''
+        if offen and not slot['dateien'] and not slot['entfaellt']:
+            werkzeug = (f'<form method="post" action="/unterlagen/{jahr_monat}/entfaellt" '
+                        f'style="display:flex;gap:6px;align-items:center">'
+                        f'<input type="hidden" name="csrf" value="{t}">'
+                        f'<input type="hidden" name="slot" value="{slot["schluessel"]}">'
+                        f'<input name="grund" placeholder="Grund" '
+                        f'style="min-height:34px;font-size:.85rem">'
+                        f'<button class="knopf schmal stumm" type="submit">entfällt'
+                        f'</button></form>')
+        reihen += (f'<tr><td><b>{escape(slot["bezeichnung"])}</b>'
+                   f'<span class="marke-klein"> · {pflicht}</span></td>'
+                   f'<td>{zustand}</td><td>{werkzeug}</td></tr>')
+
+    hochladen = ''
+    if offen:
+        auswahl = ''.join(f'<option value="{s2["schluessel"]}">{escape(s2["bezeichnung"])}'
+                          f'</option>' for s2 in s['slots'])
+        hochladen = f'''
+        <h2>Dateien hochladen</h2>
+        <div class="karte">
+          <form method="post" action="/unterlagen/{jahr_monat}/hochladen"
+                enctype="multipart/form-data">
+            <input type="hidden" name="csrf" value="{t}">
+            <label for="slot">Wozu gehört die Datei?</label>
+            <select id="slot" name="slot">{auswahl}
+              <option value="">Sonstiges</option></select>
+            <label for="dateien">Dateien</label>
+            <input id="dateien" name="dateien" type="file" multiple
+                   accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xls,.csv,.txt,.zip">
+            <button class="knopf" type="submit">Hochladen</button>
+            <p class="marke-klein">PDF, Bilder, Excel, CSV, DATEV-Export oder ZIP,
+            bis {sp.GROESSTE_DATEI // 1048576} MB je Datei. Auf dem Telefon können
+            Sie die Kamera benutzen.</p>
+          </form>
+        </div>'''
+
+    fehlend = pd.fehlende_pflichtslots(n['mandant_id'], jahr_monat)
+    if offen:
+        warnung = ('<p class="marke-klein">Alle Pflichtunterlagen liegen vor.</p>'
+                   if not fehlend else
+                   '<p class="marke-klein">Noch offen: '
+                   + escape(', '.join(f['bezeichnung'] for f in fehlend)) + '. '
+                   'Sie können trotzdem einreichen, wir fragen dann nach.</p>')
+        abschluss = f'''
+        <h2>Einreichen</h2>
+        <div class="karte">{warnung}
+          <form method="post" action="/unterlagen/{jahr_monat}/einreichen">
+            <input type="hidden" name="csrf" value="{t}">
+            <button class="knopf" type="submit">Unterlagen einreichen</button>
+          </form>
+        </div>'''
+    else:
+        abschluss = f'''
+        <h2>Eingereicht</h2>
+        <div class="karte">
+          <p class="marke-klein">Eingereicht am
+          {escape((p["eingereicht_am"] or "")[:10])}. Zum Ändern brauchen Sie einen
+          Nachtrag, wir werden dann erneut benachrichtigt.</p>
+          <form method="post" action="/unterlagen/{jahr_monat}/nachtrag">
+            <input type="hidden" name="csrf" value="{t}">
+            <button class="knopf stumm" type="submit">Nachtrag</button>
+          </form>
+        </div>'''
+
+    return seite(pd.monatstext(jahr_monat), f'''{kopf}
+      <h1>Unterlagen {escape(pd.monatstext(jahr_monat))}</h1>
+      <p class="lead">Status: {escape(pd.STATUS_TEXT[p["status"]] if p else "offen")}.</p>
+      <div class="rahmen"><table><thead><tr><th>Unterlage</th><th>Stand</th>
+      <th>&nbsp;</th></tr></thead><tbody>{reihen}</tbody></table></div>
+      {hochladen}{abschluss}''', n)
+
+
+@app.post('/unterlagen/{jahr_monat}/hochladen')
+async def monat_hochladen(request: Request, jahr_monat: str,
+                          slot: str = Form(''), csrf: str = Form(...)):
+    n = _mandant_pflicht(request)
+    if not n or not csrf_ok(n['id'], csrf):
+        return RedirectResponse('/anmelden', status_code=303)
+    form = await request.form()
+    dateien = [f for f in form.getlist('dateien') if getattr(f, 'filename', '')]
+    if not dateien:
+        return _zurueck(f'/unterlagen/{jahr_monat}', fehler='Es war keine Datei dabei.')
+    gut, schlecht = 0, []
+    for f in dateien:
+        inhalt = await f.read()
+        try:
+            pd.dokument_ablegen(n['mandant_id'], jahr_monat, slot or None,
+                                f.filename, f.content_type or '', inhalt, n['id'])
+            gut += 1
+        except (pd.Verweigert, sp.Abgelehnt) as e:
+            schlecht.append(f'{f.filename}: {e}')
+    meldung = f'{gut} {"Datei" if gut == 1 else "Dateien"} hochgeladen.' if gut else ''
+    return _zurueck(f'/unterlagen/{jahr_monat}', meldung=meldung,
+                    fehler=' '.join(schlecht)[:400])
+
+
+@app.post('/unterlagen/{jahr_monat}/entfaellt')
+def monat_entfaellt(request: Request, jahr_monat: str, slot: str = Form(...),
+                    grund: str = Form(''), csrf: str = Form(...)):
+    n = _mandant_pflicht(request)
+    if not n or not csrf_ok(n['id'], csrf):
+        return RedirectResponse('/anmelden', status_code=303)
+    try:
+        pd.entfaellt_setzen(n['mandant_id'], jahr_monat, slot, grund, n['id'])
+        return _zurueck(f'/unterlagen/{jahr_monat}', meldung='Als entfallen vermerkt.')
+    except pd.Verweigert as e:
+        return _zurueck(f'/unterlagen/{jahr_monat}', fehler=str(e))
+
+
+@app.post('/unterlagen/{jahr_monat}/entfaellt-aufheben')
+def monat_entfaellt_weg(request: Request, jahr_monat: str, slot: str = Form(...),
+                        csrf: str = Form(...)):
+    n = _mandant_pflicht(request)
+    if not n or not csrf_ok(n['id'], csrf):
+        return RedirectResponse('/anmelden', status_code=303)
+    try:
+        pd.entfaellt_aufheben(n['mandant_id'], jahr_monat, slot, n['id'])
+        return _zurueck(f'/unterlagen/{jahr_monat}', meldung='Vermerk zurückgenommen.')
+    except pd.Verweigert as e:
+        return _zurueck(f'/unterlagen/{jahr_monat}', fehler=str(e))
+
+
+@app.post('/unterlagen/{jahr_monat}/einreichen')
+def monat_einreichen(request: Request, jahr_monat: str, csrf: str = Form(...)):
+    n = _mandant_pflicht(request)
+    if not n or not csrf_ok(n['id'], csrf):
+        return RedirectResponse('/anmelden', status_code=303)
+    try:
+        anzahl = pd.einreichen(n['mandant_id'], jahr_monat, n['id'])
+    except pd.Verweigert as e:
+        return _zurueck(f'/unterlagen/{jahr_monat}', fehler=str(e))
+    p = pd.periode(n['mandant_id'], jahr_monat)
+    name = next((m['name'] for m in db.mandanten() if m['id'] == n['mandant_id']), '')
+    bn.eingereicht(name, jahr_monat, anzahl, p['id'])
+    bn.bestaetigung(n['email'], name, jahr_monat, anzahl)
+    return _zurueck(f'/unterlagen/{jahr_monat}',
+                    meldung='Vielen Dank, wir haben Ihre Unterlagen erhalten.')
+
+
+@app.post('/unterlagen/{jahr_monat}/nachtrag')
+def monat_nachtrag(request: Request, jahr_monat: str, csrf: str = Form(...)):
+    n = _mandant_pflicht(request)
+    if not n or not csrf_ok(n['id'], csrf):
+        return RedirectResponse('/anmelden', status_code=303)
+    try:
+        pd.nachtrag_oeffnen(n['mandant_id'], jahr_monat, n['id'])
+    except pd.Verweigert as e:
+        return _zurueck(f'/unterlagen/{jahr_monat}', fehler=str(e))
+    p = pd.periode(n['mandant_id'], jahr_monat)
+    name = next((m['name'] for m in db.mandanten() if m['id'] == n['mandant_id']), '')
+    bn.nachtrag(name, jahr_monat, p['id'])
+    return _zurueck(f'/unterlagen/{jahr_monat}',
+                    meldung='Sie können jetzt weitere Unterlagen nachreichen.')
+
+
+@app.get('/datei/{dokument_id}')
+def datei(request: Request, dokument_id: int):
+    n = angemeldet(request)
+    if not n:
+        return RedirectResponse('/anmelden', status_code=303)
+    d = pd.dokument(dokument_id, None if n['rolle'] == 'admin' else n['mandant_id'])
+    if not d:
+        db.protokollieren('zugriff_verweigert', benutzer_id=n['id'],
+                          detail=f'dokument {dokument_id}')
+        return seite('Nicht gefunden', '<h1>Nicht gefunden</h1><p class="lead">'
+                     'Diese Datei existiert nicht oder gehört nicht zu Ihrem Zugang.'
+                     '</p>', n)
+    db.protokollieren('datei_geoeffnet', benutzer_id=n['id'], detail=f'dokument {d["id"]}')
+    from urllib.parse import quote
+    return Response(sp.lesen(d['speicher_schluessel']), media_type=d['mime'],
+                    headers={'Content-Disposition':
+                             f"attachment; filename*=UTF-8''{quote(d['dateiname'])}",
+                             'Cache-Control': 'no-store'})
+
+
+# ---------------------------------------------------------------- Admin M1/M2
+@app.get('/uebersicht', response_class=HTMLResponse)
+def uebersicht(request: Request, jahr: int = 0, filter: str = ''):
+    n = _nur_admin(request)
+    if not n:
+        return RedirectResponse('/anmelden', status_code=303)
+    jahr = jahr or date.today().year
+    zeilen = ''
+    for z in pd.matrix(jahr):
+        felder = ''
+        for m in z['monate']:
+            if filter and m['status'] != filter:
+                felder += '<td class="num" style="opacity:.25">·</td>'
+                continue
+            _, farbe = AMPEL_TEXT[m['ampel']]
+            titel = f'{pd.STATUS_TEXT[m["status"]]}, {m["ampel"]}'
+            inhalt = (f'<a href="/uebersicht/{m["periode_id"]}" title="{titel}">'
+                      f'<span class="punkt" style="background:{farbe}"></span></a>'
+                      if m['periode_id'] else
+                      f'<span class="punkt" style="background:#D9DBE2" title="ohne '
+                      f'Eintrag"></span>')
+            felder += f'<td class="num">{inhalt}</td>'
+        zeilen += f'<tr><td>{escape(z["mandant"]["name"])}</td>{felder}</tr>'
+    kopf = ''.join(f'<th class="num">{pd.MONATE[m - 1][:3]}</th>' for m in range(1, 13))
+    filterlinks = ' · '.join(
+        f'<a href="/uebersicht?jahr={jahr}&filter={k}">{escape(v)}</a>'
+        for k, v in [('', 'alle'), ('offen', 'offen'), ('eingereicht', 'eingereicht'),
+                     ('in_pruefung', 'in Bearbeitung')])
+    return seite('Monatsübersicht', f'''
+      <h1>Monatsübersicht {jahr}</h1>
+      <p class="lead">Ein Punkt je Mandant und Monat. Grün vollständig, gelb
+      unvollständig, rot fehlt, grau ohne Eintrag. Filter: {filterlinks}</p>
+      <p class="marke-klein"><a href="/uebersicht?jahr={jahr - 1}">← {jahr - 1}</a>
+      &nbsp;·&nbsp; <a href="/uebersicht?jahr={jahr + 1}">{jahr + 1} →</a></p>
+      <div class="rahmen"><table><thead><tr><th>Mandant</th>{kopf}</tr></thead>
+      <tbody>{zeilen}</tbody></table></div>''', n)
+
+
+@app.get('/uebersicht/{periode_id}', response_class=HTMLResponse)
+def periode_ansehen(request: Request, periode_id: int, meldung: str = ''):
+    n = _nur_admin(request)
+    if not n:
+        return RedirectResponse('/anmelden', status_code=303)
+    p = pd.periode_nach_id(periode_id)
+    if not p:
+        return seite('Nicht gefunden', '<h1>Nicht gefunden</h1>', n)
+    name = next((m['name'] for m in db.mandanten() if m['id'] == p['mandant_id']), '')
+    s = pd.stand(p['mandant_id'], p['jahr_monat'])
+    t = csrf_token(n['id'])
+    reihen = ''
+    for slot in s['slots'] + [{'bezeichnung': 'Sonstiges', 'schluessel': '',
+                               'dateien': s['ohne_slot'], 'entfaellt': None,
+                               'pflicht': 0}]:
+        for d in slot['dateien']:
+            reihen += (f'<tr><td>{escape(slot["bezeichnung"])}</td>'
+                       f'<td><a href="/datei/{d["id"]}">{escape(d["dateiname"])}</a></td>'
+                       f'<td>Fassung {d["version"]}</td>'
+                       f'<td class="num">{d["groesse"] // 1024} KB</td></tr>')
+        if slot['entfaellt']:
+            reihen += (f'<tr><td>{escape(slot["bezeichnung"])}</td>'
+                       f'<td colspan="3">entfällt: '
+                       f'{escape(slot["entfaellt"]["grund"])}</td></tr>')
+    auswahl = ''.join(f'<option value="{k}"{" selected" if k == p["status"] else ""}>'
+                      f'{escape(v)}</option>' for k, v in pd.STATUS_TEXT.items())
+    return seite(f'{name} {p["jahr_monat"]}', f'''
+      {f'<div class="meldung gut">{escape(meldung)}</div>' if meldung else ''}
+      <h1>{escape(name)}</h1>
+      <p class="lead">{escape(pd.monatstext(p["jahr_monat"]))} ·
+      {escape(pd.STATUS_TEXT[p["status"]])}
+      {' · Nachtrag offen' if p['nachtrag_offen'] else ''}</p>
+      <div class="rahmen"><table><thead><tr><th>Unterlage</th><th>Datei</th>
+      <th>Stand</th><th class="num">Größe</th></tr></thead>
+      <tbody>{reihen or '<tr><td colspan="4">Noch nichts vorhanden.</td></tr>'}</tbody>
+      </table></div>
+      <div class="karte" style="margin-top:14px">
+        <a class="knopf stumm" href="/uebersicht/{periode_id}/paket">Alle Dateien als ZIP</a>
+      </div>
+      <h2>Status und Notiz</h2>
+      <div class="karte"><form method="post" action="/uebersicht/{periode_id}/pflegen">
+        <input type="hidden" name="csrf" value="{t}">
+        <label for="st">Status</label>
+        <select id="st" name="status">{auswahl}</select>
+        <label for="no">Notiz</label>
+        <input id="no" name="notiz" value="{escape(p['notiz'] or '')}">
+        <button class="knopf" type="submit">Speichern</button>
+      </form></div>''', n)
+
+
+@app.post('/uebersicht/{periode_id}/pflegen')
+def periode_pflegen(request: Request, periode_id: int, status: str = Form(...),
+                    notiz: str = Form(''), csrf: str = Form(...)):
+    n = _nur_admin(request)
+    if not n or not csrf_ok(n['id'], csrf):
+        return RedirectResponse('/anmelden', status_code=303)
+    try:
+        pd.status_setzen(periode_id, status, n['id'])
+        pd.notiz_setzen(periode_id, notiz, n['id'])
+    except pd.Verweigert as e:
+        return _zurueck(f'/uebersicht/{periode_id}', meldung=str(e))
+    return _zurueck(f'/uebersicht/{periode_id}', meldung='Gespeichert.')
+
+
+@app.get('/uebersicht/{periode_id}/paket')
+def periode_paket(request: Request, periode_id: int):
+    n = _nur_admin(request)
+    if not n:
+        return RedirectResponse('/anmelden', status_code=303)
+    try:
+        daten, anzahl = pd.paket(periode_id)
+    except pd.Verweigert as e:
+        return seite('Nicht möglich', f'<h1>Nicht möglich</h1><p>{escape(str(e))}</p>', n)
+    p = pd.periode_nach_id(periode_id)
+    db.protokollieren('paket_geladen', benutzer_id=n['id'],
+                      detail=f'periode {periode_id}, {anzahl} Dateien')
+    return Response(daten, media_type='application/zip',
+                    headers={'Content-Disposition':
+                             f'attachment; filename="unterlagen-{p["jahr_monat"]}.zip"',
+                             'Cache-Control': 'no-store'})
