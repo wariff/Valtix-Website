@@ -71,11 +71,14 @@
     <!-- Statusgruppen -->
     <sc-for list="{{ gruppen }}" as="g" hint-placeholder-count="2">
       <div style="background: #ffffff; border: 1px solid rgba(35,41,65,.11); border-radius: 14px; box-shadow: 0 8px 24px rgba(35,41,65,.07); overflow: hidden">
-        <div style="display: flex; align-items: center; gap: 10px; padding: 14px 22px; background: {{ g.kopfgrund }}; border-bottom: 1px solid rgba(35,41,65,.11)">
-          <span style="width: 22px; height: 22px; border-radius: 999px; background: {{ g.farbe }}; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">{{ g.zeichen }}</span>
+        <button onClick="{{ g.klappen }}" style="width: 100%; display: flex; align-items: center; gap: 10px; padding: 14px 22px; min-height: 52px; background: {{ g.kopfgrund }}; border: 0; border-bottom: 1px solid rgba(35,41,65,.11); cursor: pointer; text-align: left">
+          <span style="width: 22px; height: 22px; border-radius: 999px; background: {{ g.farbe }}; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0">{{ g.zeichen }}</span>
           <span style="font-size: 15px; font-weight: 700; letter-spacing: -0.02em; color: {{ g.textfarbe }}">{{ g.titel }}</span>
           <span style="font-size: 13px; color: #565D73">{{ g.anzahlText }}</span>
-        </div>
+          <span style="flex-grow: 1"></span>
+          <span style="font-size: 13px; color: #565D73">{{ g.klapptext }}</span>
+        </button>
+        <sc-if value="{{ g.offen }}" hint-placeholder-val="{{ true }}">
         <sc-for list="{{ g.posten }}" as="p" hint-placeholder-count="3">
           <div class="zr" style="display: grid; grid-template-columns: minmax(0, 1fr) 168px 148px 168px; gap: 16px; align-items: center; padding: 15px 22px; border-bottom: 1px solid rgba(35,41,65,.08)">
             <div>
@@ -97,6 +100,7 @@
             </div>
           </div>
         </sc-for>
+        </sc-if>
       </div>
     </sc-for>
 
@@ -157,11 +161,12 @@
 </div>
 </x-dc>
 
-<script data-dc-script data-props='{"$preview":{"width":1440,"height":1120},"dichte":{"editor":"enum","options":["luftig","kompakt"],"default":"luftig","section":"Darstellung"}}'>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":1600},"dichte":{"editor":"enum","options":["luftig","kompakt"],"default":"luftig","section":"Darstellung"}}'>
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { monat: 6, reiter: 'ueberblick', offen: { variabel: false, fix: false } };
+    this.state = { monat: 6, reiter: 'ueberblick', offen: { variabel: false, fix: false },
+      aufG: { rot: true, gelb: true, gruen: false } };
   }
 
   eur(w, nk) {
@@ -170,7 +175,7 @@ class Component extends DCLogic {
     t[0] = t[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     return (w < 0 ? '−' : '') + t.join(',') + ' €';
   }
-  proz(w) { return w.toFixed(1).replace('.', ',') + ' %'; }
+  proz(w) { return w.toFixed(1).replace('.', ',').replace('-', '−') + ' %'; }
 
   renderVals() {
     var kompakt = this.props.dichte === 'kompakt';
@@ -218,13 +223,13 @@ class Component extends DCLogic {
     }
 
     var kommentare = [
-      'Der Start ins Jahr endet mit einem Verlust von 4.855 €. Die Fixkosten liegen über dem Deckungsbeitrag. Das sollten wir uns gemeinsam ansehen, bevor sich das Muster im Februar wiederholt.',
-      'Erstmals ein positives Ergebnis, wenn auch knapp. Der Umsatz zieht leicht an, die Kosten bleiben stabil. Der Kontostand sinkt trotzdem weiter.',
-      'Ein deutlicher Sprung auf 12.038 € Ergebnis bei gestiegener Auslastung. Am Kontostand ändert das noch nichts, weil Ihre Kunden weiter mit 44 Tagen zahlen.',
-      'Etwas schwächer als im März, aber weiter im Plus. Ihre Kunden zahlen jetzt im Schnitt zwei Tage später als zuletzt.',
-      'Der Umsatz wächst, das Ergebnis nicht: die Fixkosten sind gegenüber April um rund 7.800 € gestiegen. Wir sollten über die Personalkosten sprechen.',
-      'Ein gutes Ergebnis von 18.520 €. Die Deckungsbeitragsquote ist erstmals unter 62 % gefallen, das liegt am höheren Materialanteil.',
-      'Der Umsatz ist den sechsten Monat in Folge gestiegen und liegt erstmals über Ihrem Monatsziel. Zwei Dinge sollten wir besprechen: der Kontostand sinkt seit Januar, und Ihre Kunden zahlen im Schnitt acht Tage später als vereinbart.'
+      'Der Start ins Jahr endet mit einem Verlust von 4.855 €. Vor Abschreibungen und Zinsen steht ein Plus von 4.671 €, das reicht aber nicht, um beides zu decken.',
+      'Erstmals ein positives Ergebnis, wenn auch knapp. Der Kontostand sinkt trotzdem weiter, um 7.100 € gegenüber Januar.',
+      'Ein deutlicher Sprung auf 12.038 € Ergebnis bei gestiegener Auslastung. Der Kontostand sinkt trotzdem, weil Ihre Kunden unverändert erst nach 44 Tagen zahlen.',
+      'Etwas schwächer als im März: der Umsatz geht leicht zurück, das Ergebnis auf 9.927 €. Ihre Kunden zahlen jetzt nach 46 statt nach 44 Tagen.',
+      'Der Umsatz wächst, das Ergebnis nicht: die festen Kosten liegen rund 7.800 € über dem April. Wir sollten über die Personalkosten sprechen.',
+      'Ein gutes Ergebnis von 18.519 €. Die Deckungsbeitragsquote ist erstmals unter 62 % gefallen, das liegt am höheren Materialanteil.',
+      'Der Umsatz liegt erstmals über Ihrem Monatsziel, das Ergebnis hat sich gegenüber Juni fast verdoppelt. Zwei Dinge sollten wir besprechen: der Kontostand sinkt seit Januar, und Ihre Kunden zahlen im Schnitt nach 48 Tagen, acht Tage über Ihrem eigenen Ziel.'
     ];
 
     var self = this;
@@ -233,14 +238,14 @@ class Component extends DCLogic {
     // Kennzahlen mit Klarnamen, Ziel und Bewertung
     var roh = [
       { klar: 'Umsatz', erklaerung: 'Was Sie im Monat in Rechnung gestellt haben', reihe: umsatz, art: 'eur', ziel: 335000, richtung: 'hoch' },
-      { klar: 'Gewinn vor Steuern', erklaerung: 'Anteil am Umsatz, Fachbegriff EBT-Marge', reihe: marge, art: 'proz', ziel: 8, richtung: 'hoch' },
-      { klar: 'Was nach Material und Fremdleistung bleibt', erklaerung: 'Anteil am Umsatz, Fachbegriff Deckungsbeitragsquote', reihe: dbQuote, art: 'proz', ziel: 40, richtung: 'hoch' },
+      { klar: 'Gewinnmarge vor Steuern', erklaerung: 'Gewinn vor Steuern, gemessen am Umsatz. Fachbegriff EBT-Marge', reihe: marge, art: 'proz', ziel: 8, richtung: 'hoch' },
+      { klar: 'Was nach Material und Fremdleistung bleibt', erklaerung: 'Anteil an der Gesamtleistung. Fachbegriff Deckungsbeitragsquote', reihe: dbQuote, art: 'proz', ziel: 40, richtung: 'hoch' },
       { klar: 'Kontostand', erklaerung: 'Bank und Kasse am Monatsende', reihe: d.liquide, art: 'eur', ziel: 150000, richtung: 'hoch' },
       { klar: 'Eigenkapitalquote', erklaerung: 'Anteil des Eigenkapitals an der Bilanzsumme', reihe: d.ekQuote, art: 'proz', ziel: 35, richtung: 'hoch' },
       { klar: 'Ihre Kunden zahlen nach', erklaerung: 'Durchschnitt in Tagen, Fachbegriff Debitorenlaufzeit', reihe: d.dso, art: 'tage', ziel: 40, richtung: 'runter' },
       { klar: 'Auslastung', erklaerung: 'Geleistete Monteurstunden gemessen an Ihrer Kapazität', reihe: d.auslastung, art: 'proz', ziel: 78, richtung: 'hoch' },
       { klar: 'Aktive Kunden', erklaerung: 'Objekte und Mandate mit Umsatz im Monat', reihe: d.kunden, art: 'zahl', ziel: 40, richtung: 'hoch' },
-      { klar: 'Neukunden', erklaerung: 'Neue Aufträge im Monat', reihe: d.neukunden, art: 'zahl', ziel: 8, richtung: 'hoch' }
+      { klar: 'Neukunden', erklaerung: 'Neue Kunden oder Aufträge im Monat', reihe: d.neukunden, art: 'zahl', ziel: 8, richtung: 'hoch' }
     ];
 
     var fmt = function (art, w) {
@@ -254,11 +259,12 @@ class Component extends DCLogic {
     for (var q = 0; q < roh.length; q++) {
       var r = roh[q];
       var ist = r.reihe[i];
-      var erf = r.richtung === 'hoch' ? ist / r.ziel : r.ziel / ist;
-      var stufe = erf >= 1 ? 'gruen' : (erf >= 0.9 ? 'gelb' : 'rot');
-      var abstand = r.richtung === 'hoch'
-        ? fmt(r.art, ist - r.ziel) + ' über Ziel'
-        : fmt(r.art, r.ziel - ist) + ' unter Ziel';
+      // Abweichung immer als Anteil des Ziels, damit die Gelbschwelle in
+      // beide Richtungen bei zehn Prozent liegt.
+      var erreicht = r.richtung === 'hoch' ? ist >= r.ziel : ist <= r.ziel;
+      var daneben = r.ziel ? Math.abs(ist - r.ziel) / Math.abs(r.ziel) : 0;
+      var stufe = erreicht ? 'gruen' : (daneben <= 0.1 ? 'gelb' : 'rot');
+      var abstand = fmt(r.art, Math.abs(ist - r.ziel)) + (erreicht ? ' besser als Ziel' : ' vom Ziel entfernt');
       var posten = {
         klar: r.klar,
         erklaerung: r.erklaerung,
@@ -275,10 +281,25 @@ class Component extends DCLogic {
     }
 
     var zaehl = function (a) { return a.length === 1 ? '1 Kennzahl' : a.length + ' Kennzahlen'; };
-    var gruppen = [];
-    if (rot.length) gruppen.push({ titel: 'Braucht Aufmerksamkeit', anzahlText: zaehl(rot), zeichen: '!', farbe: '#D03B3B', textfarbe: '#A32C2C', kopfgrund: 'rgba(208,59,59,.07)', posten: rot });
-    if (gelb.length) gruppen.push({ titel: 'Im Blick behalten', anzahlText: zaehl(gelb), zeichen: '•', farbe: '#FAB219', textfarbe: '#8A6100', kopfgrund: 'rgba(250,178,25,.12)', posten: gelb });
-    if (gruen.length) gruppen.push({ titel: 'Läuft nach Plan', anzahlText: zaehl(gruen), zeichen: '✓', farbe: '#0CA30C', textfarbe: '#0A7A0A', kopfgrund: 'rgba(12,163,12,.08)', posten: gruen });
+    var aufG = this.state.aufG;
+    var bauen = function (schluessel, titel, zeichen, farbe, textfarbe, kopfgrund, posten) {
+      if (!posten.length) return null;
+      return {
+        titel: titel, anzahlText: zaehl(posten), zeichen: zeichen, farbe: farbe,
+        textfarbe: textfarbe, kopfgrund: kopfgrund, posten: posten,
+        offen: aufG[schluessel],
+        klapptext: aufG[schluessel] ? 'zuklappen' : 'anzeigen',
+        klappen: function () {
+          var o = {}; o[schluessel] = !aufG[schluessel];
+          self.setState({ aufG: Object.assign({}, aufG, o) });
+        }
+      };
+    };
+    var gruppen = [
+      bauen('rot', 'Braucht Aufmerksamkeit', '!', '#D03B3B', '#A32C2C', 'rgba(208,59,59,.07)', rot),
+      bauen('gelb', 'Im Blick behalten', '•', '#FAB219', '#8A6100', 'rgba(250,178,25,.12)', gelb),
+      bauen('gruen', 'Läuft nach Plan', '✓', '#0CA30C', '#0A7A0A', 'rgba(12,163,12,.08)', gruen)
+    ].filter(function (g) { return g; });
 
     // Balken
     var hoch = Math.max.apply(null, umsatz);
@@ -310,7 +331,11 @@ class Component extends DCLogic {
           var v = o.reihe[i] - o.reihe[vor];
           if (o.art === 'proz') return (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(1).replace('.', ',') + ' %-Pkt.';
           var p = o.reihe[vor] ? v / Math.abs(o.reihe[vor]) * 100 : 0;
-          return (v >= 0 ? '+' : '−') + Math.abs(p).toFixed(1).replace('.', ',') + ' %';
+          var z = Math.abs(p).toFixed(1).replace('.', ',') + ' %';
+          // Kostenzeilen stehen negativ in der Spalte. Ein Vorzeichen davor
+          // waere doppeldeutig, deshalb steht dort mehr oder weniger.
+          if (o.minus) return z + (v >= 0 ? ' mehr' : ' weniger');
+          return (v >= 0 ? '+' : '−') + z;
         })(),
         deltaFarbe: vor === null ? '#8A8FA3' : ((o.reihe[i] - o.reihe[vor]) * (o.gutHoch === false ? -1 : 1) >= 0 ? '#0A7A0A' : '#A32C2C'),
         farbe: o.minus ? '#7A6238' : '#232941',

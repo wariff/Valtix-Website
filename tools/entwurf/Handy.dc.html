@@ -64,7 +64,8 @@
                 <div style="flex-grow: 1; font-size: 15px; font-weight: 600; letter-spacing: -0.01em">{{ p.klar }}</div>
                 <div style="font-size: 19px; font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; white-space: nowrap">{{ p.wert }}</div>
               </div>
-              <div style="display: flex; align-items: baseline; gap: 12px; margin-top: 3px">
+              <div style="font-size: 12.5px; color: #565D73; margin-top: 2px">{{ p.erklaerung }}</div>
+              <div style="display: flex; align-items: baseline; gap: 12px; margin-top: 5px">
                 <div style="flex-grow: 1; font-size: 12.5px; color: #565D73">{{ p.ziel }}</div>
                 <div style="font-size: 12.5px; color: {{ p.abstandFarbe }}; font-variant-numeric: tabular-nums; white-space: nowrap">{{ p.abstand }}</div>
               </div>
@@ -95,7 +96,7 @@
 </div>
 </x-dc>
 
-<script data-dc-script data-props='{"$preview":{"width":390,"height":1360}}'>
+<script data-dc-script data-props='{"$preview":{"width":390,"height":1970}}'>
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -105,7 +106,7 @@ class Component extends DCLogic {
     var s = Math.abs(w).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     return (w < 0 ? '−' : '') + s + ' €';
   }
-  proz(w) { return w.toFixed(1).replace('.', ',') + ' %'; }
+  proz(w) { return w.toFixed(1).replace('.', ',').replace('-', '−') + ' %'; }
 
   renderVals() {
     var self = this;
@@ -123,25 +124,25 @@ class Component extends DCLogic {
     var neukunden = [7, 5, 9, 6, 8, 7, 6];
 
     var kommentare = [
-      'Der Start ins Jahr endet mit einem Verlust von 4.855 €. Die Fixkosten liegen über dem Deckungsbeitrag.',
-      'Erstmals ein positives Ergebnis, wenn auch knapp. Der Kontostand sinkt trotzdem weiter.',
+      'Der Start ins Jahr endet mit einem Verlust von 4.855 €. Vor Abschreibungen und Zinsen stünde ein Plus von 4.671 €.',
+      'Erstmals ein positives Ergebnis, wenn auch knapp. Der Kontostand sinkt trotzdem um 7.100 €.',
       'Ein deutlicher Sprung auf 12.038 € Ergebnis bei gestiegener Auslastung.',
-      'Etwas schwächer als im März, aber weiter im Plus. Ihre Kunden zahlen zwei Tage später als zuletzt.',
-      'Der Umsatz wächst, das Ergebnis nicht: die Fixkosten sind um rund 7.800 € gestiegen.',
-      'Ein gutes Ergebnis von 18.520 €. Die Deckungsbeitragsquote ist erstmals unter 62 % gefallen.',
-      'Der Umsatz ist den sechsten Monat in Folge gestiegen und liegt erstmals über Ihrem Monatsziel. Zwei Dinge sollten wir besprechen: der Kontostand sinkt seit Januar, und Ihre Kunden zahlen acht Tage später als vereinbart.'
+      'Etwas schwächer als im März: der Umsatz geht leicht zurück, das Ergebnis auf 9.927 €.',
+      'Der Umsatz wächst, das Ergebnis nicht: die festen Kosten liegen rund 7.800 € über dem April.',
+      'Ein gutes Ergebnis von 18.519 €. Die Deckungsbeitragsquote ist erstmals unter 62 % gefallen.',
+      'Der Umsatz liegt erstmals über Ihrem Monatsziel, das Ergebnis hat sich gegenüber Juni fast verdoppelt. Zwei Dinge sollten wir besprechen: der Kontostand sinkt seit Januar, und Ihre Kunden zahlen nach 48 Tagen, acht Tage über Ihrem eigenen Ziel.'
     ];
 
     var roh = [
-      { klar: 'Umsatz', reihe: umsatz, art: 'eur', ziel: 335000, richtung: 'hoch' },
-      { klar: 'Gewinn vor Steuern', reihe: marge, art: 'proz', ziel: 8, richtung: 'hoch' },
-      { klar: 'Deckungsbeitragsquote', reihe: dbQuote, art: 'proz', ziel: 40, richtung: 'hoch' },
-      { klar: 'Kontostand', reihe: liquide, art: 'eur', ziel: 150000, richtung: 'hoch' },
-      { klar: 'Eigenkapitalquote', reihe: ekQuote, art: 'proz', ziel: 35, richtung: 'hoch' },
-      { klar: 'Ihre Kunden zahlen nach', reihe: dso, art: 'tage', ziel: 40, richtung: 'runter' },
-      { klar: 'Auslastung', reihe: auslastung, art: 'proz', ziel: 78, richtung: 'hoch' },
-      { klar: 'Aktive Kunden', reihe: kunden, art: 'zahl', ziel: 40, richtung: 'hoch' },
-      { klar: 'Neukunden', reihe: neukunden, art: 'zahl', ziel: 8, richtung: 'hoch' }
+      { klar: 'Umsatz', erklaerung: 'Was Sie im Monat in Rechnung gestellt haben', reihe: umsatz, art: 'eur', ziel: 335000, richtung: 'hoch' },
+      { klar: 'Gewinnmarge vor Steuern', erklaerung: 'Gewinn vor Steuern, gemessen am Umsatz', reihe: marge, art: 'proz', ziel: 8, richtung: 'hoch' },
+      { klar: 'Was nach Material und Fremdleistung bleibt', erklaerung: 'Anteil an der Gesamtleistung', reihe: dbQuote, art: 'proz', ziel: 40, richtung: 'hoch' },
+      { klar: 'Kontostand', erklaerung: 'Bank und Kasse am Monatsende', reihe: liquide, art: 'eur', ziel: 150000, richtung: 'hoch' },
+      { klar: 'Eigenkapitalquote', erklaerung: 'Anteil des Eigenkapitals an der Bilanzsumme', reihe: ekQuote, art: 'proz', ziel: 35, richtung: 'hoch' },
+      { klar: 'Ihre Kunden zahlen nach', erklaerung: 'Durchschnitt in Tagen', reihe: dso, art: 'tage', ziel: 40, richtung: 'runter' },
+      { klar: 'Auslastung', erklaerung: 'Monteurstunden gemessen an Ihrer Kapazität', reihe: auslastung, art: 'proz', ziel: 78, richtung: 'hoch' },
+      { klar: 'Aktive Kunden', erklaerung: 'Objekte und Mandate mit Umsatz im Monat', reihe: kunden, art: 'zahl', ziel: 40, richtung: 'hoch' },
+      { klar: 'Neukunden', erklaerung: 'Neue Kunden oder Aufträge im Monat', reihe: neukunden, art: 'zahl', ziel: 8, richtung: 'hoch' }
     ];
     var fmt = function (art, w) {
       if (art === 'eur') return self.eur(w);
@@ -154,15 +155,17 @@ class Component extends DCLogic {
     for (var q = 0; q < roh.length; q++) {
       var r = roh[q];
       var ist = r.reihe[i];
-      var erf = r.richtung === 'hoch' ? ist / r.ziel : r.ziel / ist;
-      var stufe = erf >= 1 ? 'gruen' : (erf >= 0.9 ? 'gelb' : 'rot');
+      // Wie am Rechner: die Gelbschwelle liegt in beide Richtungen bei
+      // zehn Prozent Abweichung vom Ziel.
+      var erreicht = r.richtung === 'hoch' ? ist >= r.ziel : ist <= r.ziel;
+      var daneben = r.ziel ? Math.abs(ist - r.ziel) / Math.abs(r.ziel) : 0;
+      var stufe = erreicht ? 'gruen' : (daneben <= 0.1 ? 'gelb' : 'rot');
       var posten = {
         klar: r.klar,
+        erklaerung: r.erklaerung,
         wert: fmt(r.art, ist),
         ziel: (r.richtung === 'hoch' ? 'Ziel ab ' : 'Ziel bis ') + fmt(r.art, r.ziel),
-        abstand: r.richtung === 'hoch'
-          ? fmt(r.art, Math.abs(ist - r.ziel)) + (ist >= r.ziel ? ' darüber' : ' darunter')
-          : fmt(r.art, Math.abs(r.ziel - ist)) + (ist <= r.ziel ? ' darunter' : ' darüber'),
+        abstand: fmt(r.art, Math.abs(ist - r.ziel)) + (erreicht ? ' besser' : ' entfernt'),
         abstandFarbe: stufe === 'gruen' ? '#0A7A0A' : (stufe === 'gelb' ? '#8A6100' : '#A32C2C')
       };
       if (stufe === 'rot') rot.push(posten);

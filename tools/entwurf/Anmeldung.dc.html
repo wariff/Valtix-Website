@@ -47,16 +47,16 @@
       </sc-if>
 
       <label for="mail" style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px">E-Mail-Adresse</label>
-      <input id="mail" type="email" autocomplete="username" value="{{ mail }}" onChange="{{ mailTippen }}" style="width: 100%; min-height: 50px; font-size: 16px; color: #232941; background: #ffffff; border: 1px solid {{ mailRand }}; border-radius: 12px; padding: 10px 14px; margin-bottom: 16px">
+      <input id="mail" type="email" autocomplete="username" value="{{ mail }}" onChange="{{ mailTippen }}" onKeyDown="{{ taste }}" style="width: 100%; min-height: 50px; font-size: 16px; color: #232941; background: #ffffff; border: 1px solid {{ mailRand }}; border-radius: 12px; padding: 10px 14px; margin-bottom: 16px">
 
       <label for="pw" style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px">Passwort</label>
       <div style="display: flex; gap: 8px; align-items: stretch; margin-bottom: 14px">
-        <input id="pw" type="{{ pwTyp }}" autocomplete="current-password" value="{{ pw }}" onChange="{{ pwTippen }}" style="flex-grow: 1; min-width: 0; min-height: 50px; font-size: 16px; color: #232941; background: #ffffff; border: 1px solid {{ pwRand }}; border-radius: 12px; padding: 10px 14px">
+        <input id="pw" type="{{ pwTyp }}" autocomplete="current-password" value="{{ pw }}" onChange="{{ pwTippen }}" onKeyDown="{{ taste }}" style="flex-grow: 1; min-width: 0; min-height: 50px; font-size: 16px; color: #232941; background: #ffffff; border: 1px solid {{ pwRand }}; border-radius: 12px; padding: 10px 14px">
         <button onClick="{{ sichtbarkeit }}" style="min-height: 50px; padding: 0 16px; border-radius: 12px; border: 1px solid rgba(35,41,65,.18); background: #ffffff; color: #565D73; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap">{{ sichtText }}</button>
       </div>
 
       <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px">
-        <button onClick="{{ merken }}" style="display: flex; align-items: center; gap: 9px; min-height: 44px; padding: 0 4px; border: 0; background: none; cursor: pointer; color: #232941; font-size: 14px">
+        <button role="checkbox" aria-checked="{{ gemerktText }}" onClick="{{ merken }}" style="display: flex; align-items: center; gap: 9px; min-height: 44px; padding: 0 4px; border: 0; background: none; cursor: pointer; color: #232941; font-size: 14px">
           <span style="width: 22px; height: 22px; border-radius: 7px; border: 1px solid {{ hakenRand }}; background: {{ hakenGrund }}; color: #ffffff; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
             <sc-if value="{{ gemerkt }}" hint-placeholder-val="{{ true }}">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>
@@ -79,7 +79,7 @@
 </div>
 </x-dc>
 
-<script data-dc-script data-props='{"$preview":{"width":560,"height":720}}'>
+<script data-dc-script data-props='{"$preview":{"width":560,"height":780}}'>
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -95,6 +95,14 @@ class Component extends DCLogic {
   renderVals() {
     var self = this;
     var s = this.state;
+    var pruefen = function () {
+      if (!s.mail) { self.setState({ fehler: 'Bitte tragen Sie Ihre E-Mail-Adresse ein.' }); return; }
+      if (s.pw !== 'Vorschau2026') {
+        self.setState({ fehler: 'Das Passwort stimmt nicht. Prüfen Sie die Groß- und Kleinschreibung.' });
+        return;
+      }
+      self.setState({ angemeldet: true, fehler: '' });
+    };
     var randMail = s.fehler && !s.mail ? '#D03B3B' : 'rgba(35,41,65,.18)';
     var randPw = s.fehler && s.mail ? '#D03B3B' : 'rgba(35,41,65,.18)';
     return {
@@ -109,6 +117,7 @@ class Component extends DCLogic {
       pwTyp: s.sichtbar ? 'text' : 'password',
       sichtText: s.sichtbar ? 'Verbergen' : 'Anzeigen',
       gemerkt: s.gemerkt,
+      gemerktText: s.gemerkt ? 'true' : 'false',
       hakenRand: s.gemerkt ? '#232941' : 'rgba(35,41,65,.28)',
       hakenGrund: s.gemerkt ? '#232941' : '#ffffff',
       mailTippen: function (e) { self.setState({ mail: e.target.value, fehler: '' }); },
@@ -116,14 +125,8 @@ class Component extends DCLogic {
       sichtbarkeit: function () { self.setState({ sichtbar: !s.sichtbar }); },
       merken: function () { self.setState({ gemerkt: !s.gemerkt }); },
       zurueck: function () { self.setState({ angemeldet: false, fehler: '' }); },
-      anmelden: function () {
-        if (!s.mail) { self.setState({ fehler: 'Bitte tragen Sie Ihre E-Mail-Adresse ein.' }); return; }
-        if (s.pw !== 'Vorschau2026') {
-          self.setState({ fehler: 'Das Passwort stimmt nicht. Prüfen Sie die Groß- und Kleinschreibung.' });
-          return;
-        }
-        self.setState({ angemeldet: true, fehler: '' });
-      }
+      taste: function (e) { if (e && e.key === 'Enter') pruefen(); },
+      anmelden: function () { pruefen(); }
     };
   }
 }

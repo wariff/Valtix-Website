@@ -5,7 +5,7 @@
       "x": 0,
       "y": 0,
       "w": 560,
-      "h": 760,
+      "h": 780,
       "title": "Anmeldung"
     },
     {
@@ -13,7 +13,7 @@
       "x": 680,
       "y": 0,
       "w": 1440,
-      "h": 1560,
+      "h": 1600,
       "title": "Auswertung am Rechner"
     },
     {
@@ -21,7 +21,7 @@
       "x": 2240,
       "y": 0,
       "w": 390,
-      "h": 1720,
+      "h": 1970,
       "title": "Handyansicht"
     }
   ],
@@ -38,14 +38,14 @@
       "x": 680,
       "y": -300,
       "w": 700,
-      "text": "Auswertung\n\nStatt einer Tabelle zuerst ein Satz vom Berater, dann die Kennzahlen nach Status gruppiert: was Aufmerksamkeit braucht steht oben, was läuft ist zusammengeklappt. Fachbegriffe stehen klein neben dem Klarnamen.\n\nProbieren Sie es: Monat wechseln, Reiter wechseln, im Detail die Kostenblöcke öffnen, auf einen Balken klicken."
+      "text": "Auswertung\n\nStatt einer Tabelle zuerst ein Satz vom Berater, dann die Kennzahlen nach Status gruppiert: was Aufmerksamkeit braucht steht oben und ist offen, was läuft ist zugeklappt. Fachbegriffe stehen klein neben dem Klarnamen.\n\nProbieren Sie es: Monat wechseln, Gruppen auf- und zuklappen, Reiter wechseln, im Detail die Kostenblöcke öffnen, auf einen Balken klicken."
     },
     {
       "id": "note-3",
       "x": 2240,
       "y": -300,
       "w": 370,
-      "text": "Handyansicht\n\nKeine Tabelle mehr, sondern Karten. Alle Knöpfe mindestens 44 Pixel hoch.\n\nProbieren Sie es: Gruppen auf- und zuklappen, Monat wechseln."
+      "text": "Handyansicht\n\nKeine Tabelle mehr, sondern Karten mit denselben Klarnamen wie am Rechner. Alle Knöpfe mindestens 44 Pixel hoch.\n\nProbieren Sie es: Gruppen auf- und zuklappen, Monat wechseln."
     }
   ],
   "launch": {
