@@ -81,6 +81,12 @@ Die Datenbank enthält Zahlen fremder Unternehmen. Sie gehört **nicht ins
 Repository**; `.gitignore` schließt `*.sqlite3` aus.
 
 
+## Stand M1
+
+Seit dem 10.09.2026 enthält der Prototyp die Periodenlogik, den Upload, die
+Checkliste je Mandant und das Einreichen. Was gebaut ist und was fehlt, steht
+in `docs/m1-notiz.md`. Tests: `python3 -m pytest portal/tests -q`.
+
 ## Verhältnis zur Portalvorschau
 
 `portal-vorschau.html` im Wurzelverzeichnis zeigt einen Entwurf der Oberfläche:

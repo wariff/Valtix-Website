@@ -9,3 +9,6 @@ portal/portal.sqlite3
 package.json
 package-lock.json
 tools/entwurf/mandantenportal-entwurf.html
+portal/ablage/
+portal/tests/__pycache__/
+.pytest_cache/
