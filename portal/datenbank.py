@@ -113,6 +113,41 @@ CREATE TABLE IF NOT EXISTS meldung (
 );
 CREATE INDEX IF NOT EXISTS idx_periode_mandant ON periode(mandant_id, jahr_monat);
 CREATE INDEX IF NOT EXISTS idx_dokument_periode ON dokument(periode_id, aktiv);
+
+-- ---------------------------------------------------------------- M2 / M3
+-- Einstellungen, die sich zur Laufzeit aendern lassen sollen.
+CREATE TABLE IF NOT EXISTS einstellung (
+  schluessel TEXT PRIMARY KEY,
+  wert       TEXT NOT NULL
+);
+-- Warteschlange. Verarbeitet wird ausserhalb der Anfrage, mit Wiederholung.
+CREATE TABLE IF NOT EXISTS aufgabe (
+  id          INTEGER PRIMARY KEY,
+  art         TEXT NOT NULL,
+  dokument_id INTEGER REFERENCES dokument(id),
+  status      TEXT NOT NULL DEFAULT 'wartet'
+              CHECK (status IN ('wartet','laeuft','fertig','fehler')),
+  versuche    INTEGER NOT NULL DEFAULT 0,
+  fehler      TEXT,
+  erstellt_am TEXT NOT NULL,
+  beendet_am  TEXT
+);
+-- Ergebnis der Extraktion. Roh, noch nicht gemappt und nie automatisch produktiv.
+CREATE TABLE IF NOT EXISTS extraktion (
+  id          INTEGER PRIMARY KEY,
+  dokument_id INTEGER NOT NULL REFERENCES dokument(id),
+  weg         TEXT NOT NULL,        -- xlsx, csv, datev, pdf_text, ocr
+  seiten      INTEGER,
+  tabellen    TEXT,                 -- JSON
+  rohtext     TEXT,
+  konfidenz   REAL,
+  status      TEXT NOT NULL DEFAULT 'roh'
+              CHECK (status IN ('roh','geprueft','verworfen','ocr_noetig')),
+  hinweis     TEXT,
+  erstellt_am TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_aufgabe_status ON aufgabe(status, id);
+CREATE INDEX IF NOT EXISTS idx_extraktion_dokument ON extraktion(dokument_id);
 '''
 
 
@@ -133,6 +168,8 @@ SPALTEN_NACHTRAG = [
     # Ein Nachtrag oeffnet das Hochladen wieder, ohne dass die Periode ihren
     # Status verliert. Sonst waere nicht mehr zu sehen, dass schon eingereicht war.
     ('periode', 'nachtrag_offen', 'INTEGER NOT NULL DEFAULT 0'),
+    # Stichtag fuer die Erinnerung, je Mandant. Leer heisst: globaler Wert.
+    ('mandant', 'erinnerung_tag', 'INTEGER'),
 ]
 
 
@@ -276,6 +313,20 @@ def _standardcheckliste(con):
         con.execute('INSERT INTO checkliste_slot '
                     '(mandant_id, schluessel, bezeichnung, pflicht, reihenfolge) '
                     'VALUES (NULL,?,?,?,?)', (schluessel, bezeichnung, pflicht, i))
+
+
+def einstellung(schluessel, standard=None):
+    with verbinden() as con:
+        r = con.execute('SELECT wert FROM einstellung WHERE schluessel=?',
+                        (schluessel,)).fetchone()
+        return r['wert'] if r else standard
+
+
+def einstellung_setzen(schluessel, wert):
+    with verbinden() as con:
+        con.execute('INSERT INTO einstellung (schluessel, wert) VALUES (?,?) '
+                    'ON CONFLICT(schluessel) DO UPDATE SET wert=excluded.wert',
+                    (schluessel, str(wert)))
 
 
 def protokollieren(ereignis, benutzer_id=None, email=None, detail=None,

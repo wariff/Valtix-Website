@@ -1,0 +1,4 @@
+"EXTF";700;21;"Buchungsstapel";13;20260806;;"";"";"";1000;1;20260101;4;20260701;20260731;"Juli";"";1;0;0;"EUR"
+Umsatz;Soll/Haben;WKZ;Kurs;Basisumsatz;WKZ Basis;Konto;Gegenkonto;BU;Belegdatum;Belegfeld1;Buchungstext
+1234,56;S;EUR;;;;1200;4000;;0107;RE-1001;"Verkauf Juli"
+890,10;H;EUR;;;;4000;1200;;1507;RE-1002;"Gutschrift"

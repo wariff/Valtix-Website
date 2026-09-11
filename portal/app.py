@@ -22,6 +22,7 @@ import datenbank as db                                   # noqa: E402
 import perioden as pd                                    # noqa: E402
 import speicher as sp                                    # noqa: E402
 import benachrichtigung as bn                            # noqa: E402
+import aufgaben as af                                    # noqa: E402
 
 GEHEIM = os.environ.get('VALTIX_SECRET')
 if not GEHEIM:
@@ -799,6 +800,26 @@ def periode_ansehen(request: Request, periode_id: int, meldung: str = ''):
                        f'{escape(slot["entfaellt"]["grund"])}</td></tr>')
     auswahl = ''.join(f'<option value="{k}"{" selected" if k == p["status"] else ""}>'
                       f'{escape(v)}</option>' for k, v in pd.STATUS_TEXT.items())
+
+    WEG_TEXT = {'xlsx': 'Excel', 'csv': 'CSV', 'datev': 'DATEV',
+                'pdf_text': 'PDF mit Text', 'bild': 'Bild', 'zip': 'Archiv'}
+    LESE_TEXT = {'roh': 'gelesen', 'geprueft': 'geprüft', 'verworfen': 'verworfen',
+                 'ocr_noetig': 'braucht OCR'}
+    leseliste = ''
+    for z in af.stand(periode_id):
+        if z['aufgabe'] in (None, 'wartet'):
+            stand_text = 'wartet'
+        elif z['aufgabe'] == 'laeuft':
+            stand_text = 'wird gelesen'
+        elif z['aufgabe'] == 'fehler':
+            stand_text = f'Fehler: {escape((z["fehler"] or "")[:80])}'
+        else:
+            stand_text = escape(LESE_TEXT.get(z['extraktion'] or '', z['extraktion'] or ''))
+        leseliste += (f'<tr><td>{escape(z["dateiname"])}</td>'
+                      f'<td>{escape(WEG_TEXT.get(z["weg"] or "", z["weg"] or "–"))}</td>'
+                      f'<td>{stand_text}</td>'
+                      f'<td>{escape((z["hinweis"] or "")[:90])}</td></tr>')
+    leseliste = leseliste or '<tr><td colspan="4">Noch nichts gelesen.</td></tr>'
     return seite(f'{name} {p["jahr_monat"]}', f'''
       {f'<div class="meldung gut">{escape(meldung)}</div>' if meldung else ''}
       <h1>{escape(name)}</h1>
@@ -812,6 +833,11 @@ def periode_ansehen(request: Request, periode_id: int, meldung: str = ''):
       <div class="karte" style="margin-top:14px">
         <a class="knopf stumm" href="/uebersicht/{periode_id}/paket">Alle Dateien als ZIP</a>
       </div>
+      <h2>Auslesen</h2>
+      <p class="marke-klein">Was das Portal aus den Dateien lesen konnte. Nichts
+      davon wird produktiv, bevor es geprüft und freigegeben ist.</p>
+      <div class="rahmen"><table><thead><tr><th>Datei</th><th>Weg</th>
+      <th>Stand</th><th>Hinweis</th></tr></thead><tbody>{leseliste}</tbody></table></div>
       <h2>Status und Notiz</h2>
       <div class="karte"><form method="post" action="/uebersicht/{periode_id}/pflegen">
         <input type="hidden" name="csrf" value="{t}">

@@ -212,6 +212,14 @@ def dokument_ablegen(mandant_id, jahr_monat, slot, dateiname, mime, daten, von):
     db.protokollieren('dokument_hochgeladen', benutzer_id=von,
                       detail=f'periode {p["id"]}, dokument {neu_id}, {dateiname}',
                       nachher=f'version {version}')
+    # Gelesen wird ausserhalb der Anfrage. Faellt das Einreihen um, ist der
+    # Upload trotzdem gelungen; nachgeholt wird es vom Arbeiter.
+    try:
+        import aufgaben
+        aufgaben.einreihen(neu_id)
+    except Exception as e:                       # noqa: BLE001
+        db.protokollieren('aufgabe_nicht_eingereiht', detail=f'dokument {neu_id}',
+                          nachher=str(e)[:200])
     return neu_id
 
 
