@@ -1,0 +1,12 @@
+# Portal. Stand M3.
+fastapi
+uvicorn[standard]
+python-multipart
+itsdangerous
+argon2-cffi
+openpyxl
+pdfplumber
+
+# Nur fuer die Tests
+pytest
+httpx

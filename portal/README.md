@@ -81,11 +81,15 @@ Die Datenbank enthält Zahlen fremder Unternehmen. Sie gehört **nicht ins
 Repository**; `.gitignore` schließt `*.sqlite3` aus.
 
 
-## Stand M1
+## Stand
 
-Seit dem 10.09.2026 enthält der Prototyp die Periodenlogik, den Upload, die
-Checkliste je Mandant und das Einreichen. Was gebaut ist und was fehlt, steht
-in `docs/m1-notiz.md`. Tests: `python3 -m pytest portal/tests -q`.
+M1 bis M3 sind gebaut: Periodenlogik, Upload, Checkliste, Einreichen,
+Monatsübersicht, Erinnerungen, Warteschlange und das Auslesen der
+strukturierten Formate. Was gebaut ist und was fehlt, steht in
+`docs/m1-notiz.md` und `docs/m2-m3-notiz.md`.
+
+    pip install -r portal/requirements.txt
+    python3 -m pytest portal/tests -q
 
 ## Verhältnis zur Portalvorschau
 
