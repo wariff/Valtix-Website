@@ -152,6 +152,151 @@ def daten():
 
 
 
+def portalkette():
+    """Laesst die echte Portalkette einmal ueber die Beispieldateien laufen.
+
+    Nichts davon wird erfunden: Datenbank und Ablage liegen in einem
+    Wegwerfordner, die Dateien sind dieselben anonymisierten Beispiele wie
+    in den Tests, und was hier zurueckkommt, hat M1 bis M4 wirklich
+    ausgerechnet. Danach ist der Ordner weg und die Umgebung wieder wie
+    vorher.
+    """
+    import shutil
+    import tempfile
+
+    ordner = tempfile.mkdtemp(prefix='valtix-vorschau-')
+    vorher = {k: os.environ.get(k) for k in ('VALTIX_DB', 'VALTIX_ABLAGE')}
+    os.environ['VALTIX_DB'] = os.path.join(ordner, 'portal.sqlite3')
+    os.environ['VALTIX_ABLAGE'] = os.path.join(ordner, 'ablage')
+    for weg in (os.path.join(ROOT, 'portal'),
+                os.path.join(ROOT, 'portal', 'tests', 'beispiele')):
+        if weg not in sys.path:
+            sys.path.insert(0, weg)
+    try:
+        import datenbank as db
+        import perioden as pd
+        import aufgaben as auf
+        import uebernahme as ue
+        import erzeugen
+
+        db.anlegen()
+        mid = db.mandant_anlegen(M.firma)
+        pd.checkliste_uebernehmen(mid)
+
+        dateien = [
+            ('bwa', 'BWA Juni.xlsx', erzeugen.bwa_xlsx(),
+             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
+            ('susa', 'Summen und Salden.csv', erzeugen.susa_csv(), 'text/csv'),
+            ('opos_debitoren', 'Offene Posten.pdf', erzeugen.bwa_pdf_mit_text(),
+             'application/pdf'),
+            ('opos_kreditoren', 'EXTF_Buchungsstapel.txt', erzeugen.datev_txt(),
+             'text/plain'),
+            ('kontensalden', 'Kontoauszug Scan.pdf', erzeugen.scan_pdf_ohne_text(),
+             'application/pdf'),
+        ]
+        for slot, name, daten, mime in dateien:
+            pd.dokument_ablegen(mid, '2026-06', slot, name, mime, daten, None)
+        pd.entfaellt_setzen(mid, '2026-06', 'bestandsliste',
+                            'Wir führen kein Lager', None)
+        pd.einreichen(mid, '2026-06', None)
+        p6 = pd.periode(mid, '2026-06')
+        pd.status_setzen(p6['id'], 'in_pruefung', None)
+        p6 = pd.periode_nach_id(p6['id'])
+
+        # Zwei weitere Monate, damit die Monatsuebersicht etwas zu zeigen hat.
+        pd.dokument_ablegen(mid, '2026-07', 'bwa', 'BWA Juli.xlsx',
+                            dateien[0][3], dateien[0][2], None)
+        pd.periode(mid, '2026-05', anlegen=True)
+
+        auf.abarbeiten()
+
+        stand = pd.stand(mid, '2026-06')
+        unterlagen = []
+        for s in stand['slots']:
+            unterlagen.append({
+                'bezeichnung': s['bezeichnung'],
+                'pflicht': bool(s['pflicht']),
+                'erledigt': bool(s['erledigt']),
+                'grund': (s['entfaellt'] or {}).get('grund', ''),
+                'dateien': [{'name': d['dateiname'],
+                             'groesse': _bytes(d['groesse'])}
+                            for d in s['dateien']],
+            })
+
+        leseliste = []
+        for z in auf.stand(p6['id']):
+            leseliste.append({
+                'datei': z['dateiname'],
+                'weg': WEGE.get(z['weg'], z['weg'] or '–'),
+                'zustand': ('gelesen' if z['extraktion'] == 'roh'
+                            else 'braucht OCR' if z['extraktion'] == 'ocr_noetig'
+                            else z['extraktion'] or 'offen'),
+                'hinweis': z['hinweis'] or '',
+            })
+
+        liste = ue.pruefliste(p6['id'])
+        zeilen = []
+        for z in liste['zeilen']:
+            if z['wert'] is None and not z['warnungen']:
+                continue
+            quellen = sorted({pos['datei'] for pos in z['posten']})
+            zeilen.append({
+                'klartext': z['klartext'], 'blatt': z['blatt'], 'zeile': z['zeile'],
+                'wert': z['wert'], 'konfidenz': z['konfidenz'],
+                'quelle': ', '.join(quellen) or '–',
+                'warnungen': z['warnungen'],
+            })
+
+        uebersicht = []
+        for zeile in pd.matrix(2026):
+            uebersicht.append({
+                'mandant': zeile['mandant']['name'],
+                'monate': [{'kurz': MONATSKURZ[i], 'ampel': m['ampel'],
+                            'status': pd.STATUS_TEXT.get(m['status'], m['status'])}
+                           for i, m in enumerate(zeile['monate'])],
+            })
+
+        return {
+            'monat': pd.monatstext('2026-06'),
+            'status': pd.STATUS_TEXT.get(p6['status'], p6['status']),
+            'unterlagen': unterlagen,
+            'leseliste': leseliste,
+            'rahmen': liste['rahmen'],
+            'posten': liste['posten_gesamt'],
+            'zeilen': zeilen,
+            'klaerliste': [{'quelle': k['quelle'], 'bezeichnung': k['bezeichnung'] or '',
+                            'betrag': k['betrag']} for k in liste['klaerliste'][:8]],
+            'klaerzahl': len(liste['klaerliste']),
+            'hinweise': liste.get('hinweise', []),
+            'matrix': uebersicht,
+        }
+    finally:
+        for k, v in vorher.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        shutil.rmtree(ordner, ignore_errors=True)
+
+
+MONATSKURZ = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep',
+              'Okt', 'Nov', 'Dez']
+WEGE = {'xlsx': 'Tabelle', 'csv': 'Textdatei mit Trennzeichen',
+        'datev': 'DATEV-Export', 'pdf_text': 'PDF mit Text',
+        'bild': 'Bild', 'zip': 'Archiv'}
+
+
+def _bytes(zahl):
+    if not zahl:
+        return '–'
+    if zahl < 1024:
+        return f'{zahl} B'
+    if zahl < 1024 * 1024:
+        return f'{zahl / 1024:.0f} kB'
+    return f'{zahl / 1048576:.1f} MB'.replace('.', ',')
+
+
+
 # Kennzahlen der Kopfzeile. Wenige, grosse Werte, damit die Seite einen
 # Anfang hat, bevor die Bewertung kommt.
 KOPFZAHLEN = ['umsatz', 'ebt', 'liquide']
@@ -476,6 +621,58 @@ td.minus{color:var(--gold-deep)}
 .hoch{color:var(--gruen-text)} .runter{color:var(--rot-text)}
 .tabellenfuss{padding:14px 24px 18px;font-size:.8rem;color:var(--ink-soft)}
 
+/* Unterlagen: Checkliste des Monats */
+.slotliste{padding:6px 24px 24px;display:grid;gap:12px;
+  grid-template-columns:repeat(auto-fill,minmax(268px,1fr))}
+.slot{border-radius:var(--r-md);padding:16px 18px;display:flex;gap:13px;
+  align-items:flex-start;background:rgba(255,255,255,.6);
+  border:1px solid rgba(255,255,255,.85);
+  box-shadow:0 8px 22px rgba(35,41,65,.07), inset 0 1px 0 rgba(255,255,255,.9);
+  transition:transform .28s ease,box-shadow .28s ease}
+.slot:hover{transform:translateY(-3px);
+  box-shadow:0 20px 44px rgba(35,41,65,.14), inset 0 1px 0 rgba(255,255,255,.9)}
+.slothaken{width:26px;height:26px;border-radius:9px;flex:none;display:flex;
+  align-items:center;justify-content:center;color:#fff;
+  background:linear-gradient(160deg,#2FA85C,#1E7C43);
+  box-shadow:0 5px 12px rgba(30,124,67,.3), inset 0 1px 0 rgba(255,255,255,.35)}
+.slot.fehlt .slothaken,.slot.entfaellt .slothaken{background:rgba(35,41,65,.08);
+  color:var(--muted);box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+  font-weight:700;font-size:.8rem}
+.slot-text{min-width:0;flex:1}
+.slot-text b{display:block;font-size:.9rem;font-weight:700;line-height:1.35;
+  overflow-wrap:anywhere}
+.slot-text .marke-klein{display:block;margin-top:3px}
+.marke-klein{font-size:.76rem;color:var(--ink-soft)}
+.slotdatei{margin-top:7px;font-size:.78rem;color:var(--ink-soft);
+  display:flex;justify-content:space-between;gap:10px;overflow-wrap:anywhere}
+.slotdatei b{font-weight:600;color:var(--ink)}
+
+/* Monatsuebersicht: Mandanten gegen Monate */
+table.matrix{min-width:620px}
+table.matrix td,table.matrix th{padding:11px 10px;text-align:center}
+table.matrix td:first-child,table.matrix th:first-child{text-align:left;
+  white-space:normal;min-width:200px}
+.punkt{display:inline-block;width:13px;height:13px;border-radius:50%;
+  background:rgba(35,41,65,.13);box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+  transition:transform .2s ease}
+tbody tr:hover .punkt{transform:scale(1.18)}
+.punkt.vollstaendig{background:linear-gradient(160deg,#2FA85C,#1E7C43);
+  box-shadow:0 3px 8px rgba(30,124,67,.32)}
+.punkt.unvollstaendig{background:linear-gradient(160deg,#D9A63C,var(--gold-deep));
+  box-shadow:0 3px 8px rgba(122,98,56,.3)}
+
+/* Pruefansicht */
+.klaerbetrag{font-variant-numeric:tabular-nums;font-weight:600}
+.warnung{display:block;margin-top:4px;font-size:.78rem;color:var(--rot-text)}
+.hinweiszelle{white-space:normal;max-width:420px;color:var(--ink-soft);
+  font-size:.82rem}
+.hinweisliste{padding:0 24px 20px;margin:0;list-style:none;
+  display:flex;flex-direction:column;gap:8px}
+.hinweisliste li{border-radius:var(--r-md);padding:12px 15px;font-size:.84rem;
+  color:var(--ink-soft);background:rgba(166,129,63,.08);
+  border:1px solid rgba(166,129,63,.2)}
+.hinweisliste li b{color:var(--ink)}
+
 /* Verwaltung */
 .status.gut{color:var(--gruen-text);font-weight:600;font-size:.86rem}
 .status.offen{color:var(--gold-deep);font-weight:600;font-size:.86rem}
@@ -643,12 +840,34 @@ JS = r'''
     return { stufe: erreicht ? 'gruen' : (daneben <= 0.1 ? 'gelb' : 'rot'), erreicht: erreicht };
   }
 
+  // Der Monatswechsler gehoert zum Bericht. Ansichten, die einen festen
+  // Monat zeigen, schalten ihn ab, damit die Kopfzeile nicht etwas anderes
+  // behauptet als die Karte darunter.
+  var MIT_MONAT = ['ueberblick', 'detail'];
+
+  var FESTE_KOEPFE = {
+    unterlagen: ['feste Ansicht'],
+    pruefen: ['feste Ansicht'],
+    monatsuebersicht: ['Jahr', 'alle Mandanten'],
+    mandanten: ['Verwaltung', 'alle Mandanten'],
+    zugaenge: ['Verwaltung', 'alle Zugänge'],
+    protokoll: ['Verwaltung', 'letzte Ereignisse']
+  };
+
   function kopf() {
     var m = D.monate[stand.monat];
-    document.getElementById('monat-name').textContent = m.lang + ' ' + D.jahr;
-    document.getElementById('monat-stand').textContent = 'Bericht vom ' + m.eingestellt;
-    document.getElementById('pfeil-zurueck').disabled = stand.monat === 0;
-    document.getElementById('pfeil-vor').disabled = stand.monat === D.monate.length - 1;
+    var wechselbar = MIT_MONAT.indexOf(stand.reiter) >= 0;
+    var fest = FESTE_KOEPFE[stand.reiter] || ['', ''];
+    document.getElementById('monat-name').textContent =
+      wechselbar ? m.lang + ' ' + D.jahr
+        : fest[0] === 'feste Ansicht' ? D.festmonat
+        : fest[0] === 'Jahr' ? 'Jahr ' + D.jahr : fest[0];
+    document.getElementById('monat-stand').textContent =
+      wechselbar ? 'Bericht vom ' + m.eingestellt : (fest[1] || fest[0]);
+    document.getElementById('pfeil-zurueck').disabled =
+      !wechselbar || stand.monat === 0;
+    document.getElementById('pfeil-vor').disabled =
+      !wechselbar || stand.monat === D.monate.length - 1;
   }
 
   function kacheln(i, vor) {
@@ -1052,7 +1271,7 @@ JS = r'''
     document.querySelectorAll('.reiter button').forEach(function (b) {
       b.setAttribute('aria-selected', String(b.dataset.reiter === stand.reiter));
     });
-    document.querySelectorAll('.verwaltung').forEach(function (v) {
+    document.querySelectorAll('.blatt').forEach(function (v) {
       v.hidden = v.dataset.reiter !== stand.reiter;
     });
     var ziel = document.getElementById('flaeche');
@@ -1121,12 +1340,13 @@ JS = r'''
   // Die Verwaltung ist nur ueber die Adresse erreichbar, nicht ueber die
   // Anmeldung. Ihre Reiter erscheinen auch nur dann.
   var start = location.hash.replace('#ansicht-', '');
-  if (['mandanten', 'zugaenge', 'protokoll'].indexOf(start) >= 0) {
+  if (['monatsuebersicht', 'pruefen', 'mandanten', 'zugaenge',
+       'protokoll'].indexOf(start) >= 0) {
     stand.reiter = start;
     document.querySelectorAll('.nur-admin').forEach(function (e) { e.hidden = false; });
     oeffnen('app');
-  } else if (start === 'detail') {
-    stand.reiter = 'detail';
+  } else if (['detail', 'unterlagen'].indexOf(start) >= 0) {
+    stand.reiter = start;
   }
 })();
 '''
@@ -1207,6 +1427,115 @@ ANMELDEN = f'''<section id="bs-anmelden"><div class="tuer bahn">
 </div></section>'''
 
 
+def _karte(kennung, titel, unterzeile, inhalt):
+    unter = f'<p class="lead">{unterzeile}</p>' if unterzeile else ''
+    return (f'<section class="tabellenkarte glass blatt" data-reiter="{kennung}" hidden>'
+            f'<div class="tabellenkopf"><h2>{titel}</h2>{unter}</div>'
+            f'{inhalt}</section>')
+
+
+def _tabelle(kopf, zeilen, klasse=''):
+    spalten = ''.join(f'<th class="num">{h}</th>' if n else f'<th>{h}</th>'
+                      for h, n in kopf)
+    k = f' class="{klasse}"' if klasse else ''
+    return (f'<div class="rahmen"><table{k}><thead><tr>{spalten}</tr></thead>'
+            f'<tbody>{zeilen}</tbody></table></div>')
+
+
+def _geld(wert):
+    if wert is None:
+        return '–'
+    return f'{wert:,.2f} €'.replace(',', '@').replace('.', ',').replace('@', '.')
+
+
+def blaetter(k):
+    """Die drei Ansichten, die die echte Portalkette fuellt."""
+    slots = ''
+    for s in k['unterlagen']:
+        abgewaehlt = bool(s['grund']) and not s['dateien']
+        haken = '–' if abgewaehlt else HAKEN if s['erledigt'] else '+'
+        klasse = ('slot entfaellt' if abgewaehlt
+                  else 'slot' if s['erledigt'] else 'slot fehlt')
+        art = 'Pflicht' if s['pflicht'] else 'freiwillig'
+        zusatz = f' · entfällt: {s["grund"]}' if s['grund'] and not s['dateien'] else ''
+        dateien = ''.join(
+            f'<span class="slotdatei"><b>{d["name"]}</b>'
+            f'<span>{d["groesse"]}</span></span>'
+            for d in s['dateien'])
+        slots += (f'<div class="{klasse}"><span class="slothaken">{haken}</span>'
+                  f'<span class="slot-text"><b>{s["bezeichnung"]}</b>'
+                  f'<span class="marke-klein">{art}{zusatz}</span>{dateien}'
+                  f'</span></div>')
+
+    lese = ''
+    for z in k['leseliste']:
+        lese += (f'<tr><td class="pos">{z["datei"]}</td><td>{z["weg"]}</td>'
+                 f'<td>{z["zustand"]}</td>'
+                 f'<td class="hinweiszelle">{z["hinweis"] or "–"}</td></tr>')
+
+    unterlagen = _karte(
+        'unterlagen', f'Unterlagen {k["monat"]}',
+        f'Stand {k["status"]}. Was hier steht, hat das Portal wirklich '
+        f'eingelesen, Datei für Datei.',
+        f'<div class="slotliste">{slots}</div>'
+        + _tabelle([('Datei', 0), ('Erkannt als', 0), ('Zustand', 0), ('Hinweis', 0)],
+                   lese)
+        + '<p class="tabellenfuss">Ein Scan ohne Textebene wird gemeldet, nicht '
+          'geraten. Er geht in die Texterkennung, das Ergebnis bleibt ein Vorschlag.</p>')
+
+    matrixzeilen = ''
+    for m in k['matrix']:
+        punkte = ''.join(
+            f'<td title="{x["kurz"]}: {x["status"]}">'
+            f'<span class="punkt {x["ampel"]}"></span></td>' for x in m['monate'])
+        matrixzeilen += f'<tr><td>{m["mandant"]}</td>{punkte}</tr>'
+    monatsuebersicht = _karte(
+        'monatsuebersicht', 'Monatsübersicht 2026',
+        'Alle Mandanten gegen alle Monate. Grün heißt: alle Pflichtunterlagen '
+        'liegen vor. Gelb heißt: etwas fehlt noch.',
+        _tabelle([('Mandant', 0)] + [(m, 0) for m in MONATSKURZ],
+                 matrixzeilen, 'matrix'))
+
+    pruefzeilen = ''
+    for z in k['zeilen']:
+        warn = ''.join(f'<span class="warnung">{w}</span>' for w in z['warnungen'])
+        konf = '–' if z['konfidenz'] is None else f'{z["konfidenz"] * 100:.0f} %'
+        pruefzeilen += (f'<tr><td class="pos"><b>{z["klartext"]}</b>'
+                        f'<span class="fach">{z["blatt"]} Zeile {z["zeile"]}</span>'
+                        f'{warn}</td>'
+                        f'<td class="hinweiszelle">{z["quelle"]}</td>'
+                        f'<td class="num">{konf}</td>'
+                        f'<td class="num">{_geld(z["wert"])}</td></tr>')
+    klaer = ''
+    for c in k['klaerliste']:
+        klaer += (f'<tr><td>{c["quelle"]}</td><td class="pos">{c["bezeichnung"]}</td>'
+                  f'<td class="num klaerbetrag">{_geld(c["betrag"])}</td></tr>')
+    klaer = klaer or '<tr><td colspan="3">Nichts offen.</td></tr>'
+    hinweise = ''
+    if k['hinweise']:
+        punkte = ''.join(f'<li><b>{h["datei"]}</b>: {h["text"]}</li>'
+                         for h in k['hinweise'])
+        hinweise = f'<ul class="hinweisliste">{punkte}</ul>'
+
+    pruefen = _karte(
+        'pruefen', f'Werte prüfen {k["monat"]}',
+        f'Kontenrahmen {k["rahmen"]} erkannt, {k["posten"]} Posten gelesen. '
+        f'Jeder Wert hier ist ein Vorschlag und wird erst durch die Freigabe '
+        f'gültig.',
+        _tabelle([('Position', 0), ('Herkunft', 0), ('Konfidenz', 1), ('Wert', 1)],
+                 pruefzeilen)
+        + hinweise
+        + '<div class="tabellenkopf"><h2>Klärliste</h2>'
+          f'<p class="lead">{k["klaerzahl"]} Posten ohne Zuordnung. Was der '
+          'Berater hier zuordnet, gilt ab dem nächsten Monat von allein.</p></div>'
+        + _tabelle([('Konto', 0), ('Bezeichnung', 0), ('Betrag', 1)], klaer)
+        + '<p class="tabellenfuss">Die Kontenbereiche hinter der Zuordnung sind '
+          'eine fachliche Schätzung und an echten Mandantendaten noch nicht '
+          'geprüft. Deshalb geht kein Wert ohne Freigabe weiter.</p>')
+
+    return unterlagen + monatsuebersicht + pruefen
+
+
 def verwaltung():
     """Ansichten der Verwaltung. Nicht ueber die Anmeldung erreichbar, nur
     ueber die Adresse, weil die Seite oeffentlich steht."""
@@ -1238,7 +1567,7 @@ def verwaltung():
     def block(kennung, titel, kopf, zeilen, zusatz=''):
         spalten = ''.join('<th class="num">' + h + '</th>' if n
                           else '<th>' + h + '</th>' for h, n in kopf)
-        return (f'<section class="tabellenkarte glass verwaltung" '
+        return (f'<section class="tabellenkarte glass blatt" '
                 f'data-reiter="{kennung}" hidden>'
                 f'<div class="tabellenkopf"><h2>{titel}</h2></div>'
                 f'<div class="rahmen"><table><thead><tr>{spalten}</tr></thead>'
@@ -1268,6 +1597,8 @@ def verwaltung():
 def bauen():
     d = daten()
     d['kopfzahlen'] = kopfzahlen()
+    kette = portalkette()
+    d['festmonat'] = kette['monat']
 
     def knopf(k, t, admin):
         gewaehlt = 'true' if k == 'ueberblick' else 'false'
@@ -1276,6 +1607,9 @@ def bauen():
                 f'aria-selected="{gewaehlt}"{zusatz}>{t}</button>')
 
     reiter = [('ueberblick', 'Überblick', False), ('detail', 'Zahlen im Detail', False),
+              ('unterlagen', 'Unterlagen', False),
+              ('monatsuebersicht', 'Monatsübersicht', True),
+              ('pruefen', 'Werte prüfen', True),
               ('mandanten', 'Mandanten', True), ('zugaenge', 'Zugänge', True),
               ('protokoll', 'Protokoll', True)]
     knoepfe = ''.join(knopf(*r) for r in reiter)
@@ -1299,6 +1633,7 @@ def bauen():
   <div class="reiter bahn"><div class="reiter-innen glass" role="tablist">{knoepfe}</div></div>
   <div class="flaeche bahn">
     <div id="flaeche"></div>
+    {blaetter(kette)}
     {verwaltung()}
   </div>
 </section>'''
