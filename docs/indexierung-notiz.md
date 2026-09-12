@@ -52,11 +52,25 @@ Anzahl passt: eine. Sehr wahrscheinlich ist die gemeldete Seite also
 die Adressliste. Die Ursache ist mit der Umstellung aller Verweise auf `/`
 in jedem Fall weg.
 
+### Gecrawlt – zurzeit nicht indexiert: geklärt
+
+Die eine Adresse ist `https://valtixfm.de/feed.xml`, zuletzt gecrawlt am
+01.09.2026. Das ist kein Fehler und nichts zu beheben. Der Feed ist eine
+RSS-Datei, die von den Ratgeberseiten über `rel="alternate"` verlinkt ist.
+Google liest sie, um neue Beiträge zu finden, nimmt XML-Feeds aber nicht als
+Suchergebnis auf. „Gecrawlt, nicht indexiert" ist damit genau das richtige
+Ergebnis, und diese Zeile wird auch nicht verschwinden.
+
+Der Feed selbst ist in Ordnung: wohlgeformtes RSS 2.0, 13 Beiträge, keine
+doppelten Adressen, jede Adresse steht auch in der sitemap.xml, und der Feed
+steht richtigerweise nicht in der Sitemap. Der letzte Crawl vom 01.09. liegt
+vor dem jüngsten Beitrag vom 09.09., Google hat den Feed seitdem also noch
+nicht neu geholt.
+
 **Die anderen beiden Gründe sind keine Fehler.** „Gefunden – zurzeit nicht
 indexiert" heißt: Google kennt die Adresse, hat sie aber noch nicht gelesen.
-„Gecrawlt – zurzeit nicht indexiert" heißt: gelesen, aber noch nicht
-aufgenommen. Beides ist bei einer Domain, die seit Ende August Daten
-liefert, der Normalfall und lässt sich nicht erzwingen. Eine verwaiste Seite
+Bei einer Domain, die seit Ende August Daten liefert, ist das der Normalfall
+und lässt sich nicht erzwingen. Eine verwaiste Seite
 als Ursache fällt aus: jede der 21 Sitemap-Adressen ist von mindestens zwei
 anderen Seiten verlinkt, am schwächsten
 `ratgeber/kundenerlebnis-schuhgeschaeft.html` und
