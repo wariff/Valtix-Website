@@ -23,6 +23,56 @@ weg, der Grund steht als Kommentar in der Datei.
 - `og:url` stimmt auf jeder Seite mit dem Canonical überein, ebenso die
   Adressen in den JSON-LD-Blöcken und in der feed.xml.
 
+## Was der Coverage-Export vom 12.09.2026 sagt
+
+Die Datei enthält nur die Zusammenfassung, keine Adressliste. Stand der
+Zahlen ist der 04.09.2026, also vor den Korrekturen oben.
+
+| Grund | Quelle | Seiten |
+|---|---|---|
+| Seite mit Weiterleitung | Website | 1 |
+| Gefunden – zurzeit nicht indexiert | Google-Systeme | 4 |
+| Gecrawlt – zurzeit nicht indexiert | Google-Systeme | 1 |
+
+Dazu 11 indexierte und 6 nicht indexierte Seiten bei 17 Google bekannten
+Adressen. Die sitemap.xml nennt 21, vier davon kennt Google also noch nicht.
+
+**Es ist genau eine Seite mit Weiterleitung, nicht zwanzig.** Das ändert die
+Lage: im Quellcode gibt es keine einzige Weiterleitung, kein
+`meta http-equiv="refresh"` und kein `location.href`. Die Weiterleitung kommt
+also vom Server, und GitHub Pages leitet nur in vier Fällen um: bei
+`/index.html` auf `/`, bei `http://` auf `https://`, von der
+github.io-Adresse auf die eigene Domain und, falls ein CNAME für www
+gesetzt ist, von www auf die Domain ohne www.
+
+Bis heute verlinkten fünf Seiten die Startseite als `index.html`. Das ist
+die einzige dieser vier Adressen, die überhaupt intern verlinkt war, und die
+Anzahl passt: eine. Sehr wahrscheinlich ist die gemeldete Seite also
+`https://valtixfm.de/index.html`. Bewiesen ist das nicht, dazu braucht es
+die Adressliste. Die Ursache ist mit der Umstellung aller Verweise auf `/`
+in jedem Fall weg.
+
+**Die anderen beiden Gründe sind keine Fehler.** „Gefunden – zurzeit nicht
+indexiert" heißt: Google kennt die Adresse, hat sie aber noch nicht gelesen.
+„Gecrawlt – zurzeit nicht indexiert" heißt: gelesen, aber noch nicht
+aufgenommen. Beides ist bei einer Domain, die seit Ende August Daten
+liefert, der Normalfall und lässt sich nicht erzwingen. Eine verwaiste Seite
+als Ursache fällt aus: jede der 21 Sitemap-Adressen ist von mindestens zwei
+anderen Seiten verlinkt, am schwächsten
+`ratgeber/kundenerlebnis-schuhgeschaeft.html` und
+`ratgeber/kontokorrent-dauerhaft-ausgeschoepft.html` mit je zwei.
+
+## So kommt die Adressliste zustande
+
+Der Export der Übersichtsseite enthält sie nicht. In der Search Console
+unter Seitenindexierung die Zeile „Seite mit Weiterleitung" anklicken, dann
+erscheint die Tabelle mit den Beispieladressen, und dort gibt es einen
+eigenen Export. Alternativ die Adresse
+`https://valtixfm.de/index.html` in die URL-Prüfung eingeben; steht dort
+„Seite mit Weiterleitung", ist die Vermutung bestätigt.
+
+Danach die Validierung starten. Im Export steht sie auf „Nicht gestartet".
+
 ## Was von hier aus nicht zu prüfen ist
 
 Diese Arbeitsumgebung kommt weder an valtixfm.de noch an die
