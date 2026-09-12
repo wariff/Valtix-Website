@@ -1,9 +1,9 @@
 User-agent: *
 Allow: /
-Disallow: /impressum.html
-Disallow: /datenschutz.html
-Disallow: /newsletter-danke.html
-Disallow: /portal-vorschau.html
-Disallow: /portal-vorschau-bericht.html
+
+# Kein Disallow fuer die noindex-Seiten. Ein noindex wirkt nur, wenn die Seite
+# gelesen werden darf. Mit Disallow kann Google das Meta nie sehen und nimmt
+# die Adresse trotzdem auf, wenn irgendwo ein Link darauf zeigt.
+# Betrifft impressum, datenschutz, newsletter-danke und die Portalseiten.
 
 Sitemap: https://valtixfm.de/sitemap.xml
