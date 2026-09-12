@@ -148,6 +148,46 @@ CREATE TABLE IF NOT EXISTS extraktion (
 );
 CREATE INDEX IF NOT EXISTS idx_aufgabe_status ON aufgabe(status, id);
 CREATE INDEX IF NOT EXISTS idx_extraktion_dokument ON extraktion(dokument_id);
+
+-- ---------------------------------------------------------------- M4
+-- Gelernte Zuordnung je Mandant. Beim Folgemonat wird sie wiederverwendet.
+CREATE TABLE IF NOT EXISTS mapping_regel (
+  id             INTEGER PRIMARY KEY,
+  mandant_id     INTEGER NOT NULL REFERENCES mandant(id),
+  quelle         TEXT NOT NULL,          -- Kontonummer oder Zeilenbezeichnung
+  quellbezeichnung TEXT,
+  zielfeld       TEXT NOT NULL,
+  gesetzt_von    INTEGER REFERENCES benutzer(id),
+  gesetzt_am     TEXT NOT NULL,
+  UNIQUE (mandant_id, quelle)
+);
+-- Der freigegebene Wert je Periode und Feld. Genau ein aktueller Wert,
+-- jede Aenderung steht zusaetzlich im Protokoll.
+CREATE TABLE IF NOT EXISTS kennzahl_wert (
+  id                 INTEGER PRIMARY KEY,
+  periode_id         INTEGER NOT NULL REFERENCES periode(id),
+  feldschluessel     TEXT NOT NULL,
+  wert               REAL,
+  quelle_dokument_id INTEGER REFERENCES dokument(id),
+  herkunft           TEXT,
+  konfidenz          REAL,
+  freigegeben_von    INTEGER REFERENCES benutzer(id),
+  freigegeben_am     TEXT,
+  UNIQUE (periode_id, feldschluessel)
+);
+-- Was sich nicht zuordnen liess. Wird in der Pruefansicht als Klaerliste gezeigt.
+CREATE TABLE IF NOT EXISTS klaerfall (
+  id          INTEGER PRIMARY KEY,
+  periode_id  INTEGER NOT NULL REFERENCES periode(id),
+  dokument_id INTEGER REFERENCES dokument(id),
+  quelle      TEXT NOT NULL,
+  bezeichnung TEXT,
+  betrag      REAL,
+  erledigt    INTEGER NOT NULL DEFAULT 0,
+  erstellt_am TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_kennzahl_periode ON kennzahl_wert(periode_id);
+CREATE INDEX IF NOT EXISTS idx_klaerfall_periode ON klaerfall(periode_id, erledigt);
 '''
 
 

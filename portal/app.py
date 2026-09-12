@@ -23,6 +23,8 @@ import perioden as pd                                    # noqa: E402
 import speicher as sp                                    # noqa: E402
 import benachrichtigung as bn                            # noqa: E402
 import aufgaben as af                                    # noqa: E402
+import mapping as mp                                     # noqa: E402
+import uebernahme as ue                                  # noqa: E402
 
 GEHEIM = os.environ.get('VALTIX_SECRET')
 if not GEHEIM:
@@ -838,6 +840,9 @@ def periode_ansehen(request: Request, periode_id: int, meldung: str = ''):
       davon wird produktiv, bevor es geprüft und freigegeben ist.</p>
       <div class="rahmen"><table><thead><tr><th>Datei</th><th>Weg</th>
       <th>Stand</th><th>Hinweis</th></tr></thead><tbody>{leseliste}</tbody></table></div>
+      <div class="karte" style="margin-top:14px">
+        <a class="knopf" href="/uebersicht/{periode_id}/pruefen">Werte prüfen und freigeben</a>
+      </div>
       <h2>Status und Notiz</h2>
       <div class="karte"><form method="post" action="/uebersicht/{periode_id}/pflegen">
         <input type="hidden" name="csrf" value="{t}">
@@ -879,3 +884,169 @@ def periode_paket(request: Request, periode_id: int):
                     headers={'Content-Disposition':
                              f'attachment; filename="unterlagen-{p["jahr_monat"]}.zip"',
                              'Cache-Control': 'no-store'})
+
+
+# ======================================================================
+# M4: Pruefen, Zuordnen, Freigeben, Ausgeben
+# ======================================================================
+@app.get('/uebersicht/{periode_id}/pruefen', response_class=HTMLResponse)
+def pruefen(request: Request, periode_id: int, meldung: str = '', fehler: str = ''):
+    n = _nur_admin(request)
+    if not n:
+        return RedirectResponse('/anmelden', status_code=303)
+    p = pd.periode_nach_id(periode_id)
+    if not p:
+        return seite('Nicht gefunden', '<h1>Nicht gefunden</h1>', n)
+    name = next((m['name'] for m in db.mandanten() if m['id'] == p['mandant_id']), '')
+    liste = ue.pruefliste(periode_id)
+    t = csrf_token(n['id'])
+
+    kopf = ''
+    if meldung:
+        kopf += f'<div class="meldung gut">{escape(meldung)}</div>'
+    if fehler:
+        kopf += f'<div class="meldung fehler">{escape(fehler)}</div>'
+
+    zeilen = ''
+    for z in liste['zeilen']:
+        if z['wert'] is None and not z['warnungen']:
+            continue
+        wert = '' if z['wert'] is None else f'{z["wert"]:.2f}'
+        herkunft = ', '.join(sorted({pos['datei'] for pos in z['posten']})) or '–'
+        konten = ', '.join(f'{pos["quelle"]}' for pos in z['posten'][:6])
+        warn = ('<br><span style="color:#A32C2C">'
+                + escape(' · '.join(z['warnungen'])) + '</span>') if z['warnungen'] else ''
+        haken = '✓' if z['freigegeben'] else ''
+        konf = '' if z['konfidenz'] is None else f'{z["konfidenz"] * 100:.0f} %'
+        zeilen += (f'<tr><td><b>{escape(z["klartext"])}</b>'
+                   f'<span class="marke-klein"> · {z["blatt"]} Zeile {z["zeile"]}</span>'
+                   f'{warn}</td>'
+                   f'<td><span class="marke-klein">{escape(herkunft)}<br>'
+                   f'{escape(konten)}</span></td>'
+                   f'<td class="num">{konf}</td>'
+                   f'<td class="num">{haken}</td>'
+                   f'<td><form method="post" action="/uebersicht/{periode_id}/wert" '
+                   f'style="display:flex;gap:6px">'
+                   f'<input type="hidden" name="csrf" value="{t}">'
+                   f'<input type="hidden" name="feld" value="{z["schluessel"]}">'
+                   f'<input name="wert" value="{wert}" inputmode="decimal" '
+                   f'style="min-height:34px;max-width:130px;text-align:right">'
+                   f'<button class="knopf schmal stumm" type="submit">setzen</button>'
+                   f'</form></td></tr>')
+
+    auswahl = ''.join(f'<option value="{k}">{escape(v[2])}</option>'
+                      for k, v in mp.ZIELFELDER.items())
+    klaer = ''
+    for k in liste['klaerliste']:
+        klaer += (f'<tr><td>{escape(k["quelle"])}</td>'
+                  f'<td>{escape(k["bezeichnung"] or "")}</td>'
+                  f'<td class="num">{k["betrag"]:,.2f}</td>'.replace(',', '.')
+                  + f'<td><form method="post" action="/uebersicht/{periode_id}/klaerfall" '
+                    f'style="display:flex;gap:6px">'
+                    f'<input type="hidden" name="csrf" value="{t}">'
+                    f'<input type="hidden" name="klaerfall" value="{k["id"]}">'
+                    f'<select name="feld">{auswahl}</select>'
+                    f'<button class="knopf schmal stumm" type="submit">zuordnen</button>'
+                    f'</form></td></tr>')
+    klaer = klaer or '<tr><td colspan="4">Nichts offen.</td></tr>'
+
+    return seite(f'Prüfen {p["jahr_monat"]}', f'''{kopf}
+      <h1>Werte prüfen</h1>
+      <p class="lead">{escape(name)} · {escape(pd.monatstext(p["jahr_monat"]))} ·
+      Kontenrahmen {escape(liste["rahmen"])} · {liste["posten_gesamt"]} Posten gelesen</p>
+      <p class="marke-klein">Die Kontenbereiche sind eine fachliche Schätzung und an
+      echten Daten noch nicht geprüft. Jeder Wert hier ist ein Vorschlag. Erst die
+      Freigabe macht ihn gültig, jede Korrektur wird protokolliert und für den
+      Folgemonat gemerkt.</p>
+      <div class="rahmen"><table><thead><tr><th>Position</th><th>Herkunft</th>
+      <th class="num">Konfidenz</th><th class="num">frei</th><th>Wert</th>
+      </tr></thead><tbody>{zeilen}</tbody></table></div>
+
+      <h2>Klärliste</h2>
+      <p class="marke-klein">Posten, für die es noch keine Zuordnung gibt. Was Sie
+      hier zuordnen, gilt ab dem nächsten Monat automatisch.</p>
+      <div class="rahmen"><table><thead><tr><th>Konto</th><th>Bezeichnung</th>
+      <th class="num">Betrag</th><th>Zuordnen</th></tr></thead>
+      <tbody>{klaer}</tbody></table></div>
+
+      <h2>Freigeben und ausgeben</h2>
+      <div class="karte">
+        <form method="post" action="/uebersicht/{periode_id}/freigeben">
+          <input type="hidden" name="csrf" value="{t}">
+          <button class="knopf" type="submit">Alle Vorschläge freigeben</button>
+        </form>
+        <p class="marke-klein" style="margin-top:12px">
+          <a href="/uebersicht/{periode_id}/export.xlsx">Als Eingabevorlage (.xlsx)</a>
+          &nbsp;·&nbsp;
+          <a href="/uebersicht/{periode_id}/export.json">Als JSON</a></p>
+      </div>''', n)
+
+
+@app.post('/uebersicht/{periode_id}/wert')
+def wert_setzen(request: Request, periode_id: int, feld: str = Form(...),
+                wert: str = Form(''), csrf: str = Form(...)):
+    n = _nur_admin(request)
+    if not n or not csrf_ok(n['id'], csrf):
+        return RedirectResponse('/anmelden', status_code=303)
+    import leser
+    zahl = leser._zahl(wert) if wert.strip() else None
+    if wert.strip() and zahl is None:
+        return _zurueck(f'/uebersicht/{periode_id}/pruefen',
+                        fehler=f'„{wert}" ist keine Zahl.')
+    try:
+        ue.wert_setzen(periode_id, feld, zahl, n['id'])
+    except pd.Verweigert as e:
+        return _zurueck(f'/uebersicht/{periode_id}/pruefen', fehler=str(e))
+    return _zurueck(f'/uebersicht/{periode_id}/pruefen', meldung='Wert gesetzt.')
+
+
+@app.post('/uebersicht/{periode_id}/klaerfall')
+def klaerfall(request: Request, periode_id: int, klaerfall: int = Form(...),
+              feld: str = Form(...), csrf: str = Form(...)):
+    n = _nur_admin(request)
+    if not n or not csrf_ok(n['id'], csrf):
+        return RedirectResponse('/anmelden', status_code=303)
+    try:
+        ue.klaerfall_zuordnen(periode_id, klaerfall, feld, n['id'])
+    except (pd.Verweigert, ValueError) as e:
+        return _zurueck(f'/uebersicht/{periode_id}/pruefen', fehler=str(e))
+    return _zurueck(f'/uebersicht/{periode_id}/pruefen',
+                    meldung='Zugeordnet und für den Folgemonat gemerkt.')
+
+
+@app.post('/uebersicht/{periode_id}/freigeben')
+def freigeben(request: Request, periode_id: int, csrf: str = Form(...)):
+    n = _nur_admin(request)
+    if not n or not csrf_ok(n['id'], csrf):
+        return RedirectResponse('/anmelden', status_code=303)
+    try:
+        anzahl = ue.freigeben(periode_id, n['id'])
+    except pd.Verweigert as e:
+        return _zurueck(f'/uebersicht/{periode_id}/pruefen', fehler=str(e))
+    return _zurueck(f'/uebersicht/{periode_id}/pruefen',
+                    meldung=f'{anzahl} Werte freigegeben.')
+
+
+@app.get('/uebersicht/{periode_id}/export.json')
+def export_json(request: Request, periode_id: int):
+    n = _nur_admin(request)
+    if not n:
+        return RedirectResponse('/anmelden', status_code=303)
+    p = pd.periode_nach_id(periode_id)
+    return Response(ue.als_json(periode_id), media_type='application/json',
+                    headers={'Content-Disposition':
+                             f'attachment; filename="valtix-{p["jahr_monat"]}.json"'})
+
+
+@app.get('/uebersicht/{periode_id}/export.xlsx')
+def export_xlsx(request: Request, periode_id: int):
+    n = _nur_admin(request)
+    if not n:
+        return RedirectResponse('/anmelden', status_code=303)
+    p = pd.periode_nach_id(periode_id)
+    db.protokollieren('export_xlsx', benutzer_id=n['id'], detail=f'periode {periode_id}')
+    return Response(
+        ue.als_xlsx(periode_id),
+        media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        headers={'Content-Disposition':
+                 f'attachment; filename="valtix-{p["jahr_monat"]}.xlsx"'})
