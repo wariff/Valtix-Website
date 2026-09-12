@@ -1159,7 +1159,7 @@ BAND = '''<div class="band"><div class="bahn">
   <b>Demonstration</b>
   <span>Diese Ansicht dient der Vorführung. Es wird nichts gespeichert und nichts
     übertragen. Firma und Zahlen sind erfunden.</span>
-  <a href="index.html">Zurück zur Website</a>
+  <a href="/">Zurück zur Website</a>
 </div></div>'''
 
 ANMELDEN = f'''<section id="bs-anmelden"><div class="tuer bahn">
@@ -1202,7 +1202,7 @@ ANMELDEN = f'''<section id="bs-anmelden"><div class="tuer bahn">
     </form>
     <p class="hinweis" style="margin-top:18px">Noch keinen Zugang? Ihren Zugang richten
       wir im Rahmen der monatlichen Betreuung ein.
-      <a href="index.html#kontakt">Schreiben Sie uns</a>.</p>
+      <a href="/#kontakt">Schreiben Sie uns</a>.</p>
   </div>
 </div></section>'''
 
