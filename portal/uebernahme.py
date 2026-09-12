@@ -79,8 +79,17 @@ def vorschlagen(periode_id):
             "WHERE d.periode_id=? AND d.aktiv=1 AND e.status='roh'",
             (periode_id,)).fetchall()]
 
-    alle = []
+    alle, hinweise = [], []
     for d in dokumente:
+        if d['weg'] == 'datev':
+            # Ein Buchungsstapel listet einzelne Buchungen, keine Periodensummen.
+            # Die Spaltenfolge ist eine andere als in BWA und Saldenliste, eine
+            # Summe daraus waere geraten. Deshalb bleibt die Datei hier liegen.
+            hinweise.append({'datei': d['dateiname'],
+                             'text': 'Buchungsstapel, daraus werden keine Werte '
+                                     'vorgeschlagen. Bitte BWA oder Summen- und '
+                                     'Saldenliste hochladen.'})
+            continue
         for tabelle in json.loads(d['tabellen'] or '[]'):
             for quelle, text, betrag in posten(tabelle):
                 alle.append({'dokument_id': d['id'], 'datei': d['dateiname'],
@@ -131,7 +140,7 @@ def vorschlagen(periode_id):
                         (periode_id, a['dokument_id'], a['quelle'],
                          a['bezeichnung'], a['betrag'], db.jetzt()))
     return {'rahmen': rahmen, 'felder': felder, 'offen': offen,
-            'posten_gesamt': len(alle)}
+            'hinweise': hinweise, 'posten_gesamt': len(alle)}
 
 
 def _vormonat(p):
@@ -193,6 +202,7 @@ def pruefliste(periode_id):
             'SELECT * FROM klaerfall WHERE periode_id=? AND erledigt=0 ORDER BY id',
             (periode_id,)).fetchall()]
     return {'rahmen': vorschlag['rahmen'], 'zeilen': zeilen, 'klaerliste': offen,
+            'hinweise': vorschlag.get('hinweise', []),
             'posten_gesamt': vorschlag['posten_gesamt']}
 
 

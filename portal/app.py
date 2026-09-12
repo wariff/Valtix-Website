@@ -950,6 +950,13 @@ def pruefen(request: Request, periode_id: int, meldung: str = '', fehler: str = 
                     f'</form></td></tr>')
     klaer = klaer or '<tr><td colspan="4">Nichts offen.</td></tr>'
 
+    hinweise = ''
+    if liste.get('hinweise'):
+        punkte = ''.join(f'<li><b>{escape(h["datei"])}</b>: {escape(h["text"])}</li>'
+                         for h in liste['hinweise'])
+        hinweise = ('<div class="meldung">Aus diesen Dateien wurde nichts '
+                    f'vorgeschlagen:<ul>{punkte}</ul></div>')
+
     return seite(f'Prüfen {p["jahr_monat"]}', f'''{kopf}
       <h1>Werte prüfen</h1>
       <p class="lead">{escape(name)} · {escape(pd.monatstext(p["jahr_monat"]))} ·
@@ -962,6 +969,7 @@ def pruefen(request: Request, periode_id: int, meldung: str = '', fehler: str = 
       <th class="num">Konfidenz</th><th class="num">frei</th><th>Wert</th>
       </tr></thead><tbody>{zeilen}</tbody></table></div>
 
+      {hinweise}
       <h2>Klärliste</h2>
       <p class="marke-klein">Posten, für die es noch keine Zuordnung gibt. Was Sie
       hier zuordnen, gilt ab dem nächsten Monat automatisch.</p>
