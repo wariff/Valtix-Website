@@ -74,6 +74,42 @@ def eingereicht(mandant_name, jahr_monat, anzahl, periode_id):
         mail(a['email'], f'Unterlagen {jahr_monat}: {mandant_name}', text)
 
 
+def hochgeladen(mandant_name, jahr_monat, namen, periode_id):
+    """Nach jedem Upload, nicht erst beim Einreichen.
+
+    Eine Meldung je Vorgang, nicht je Datei. Wer fuenf Dateien auf einmal
+    hochlaedt, loest eine Meldung aus, keine fuenf.
+    """
+    anzahl = len(namen)
+    liste = ', '.join(namen[:4]) + (' und weitere' if anzahl > 4 else '')
+    text = (f'{mandant_name} hat für {jahr_monat} '
+            f'{anzahl} {"Datei" if anzahl == 1 else "Dateien"} hochgeladen: {liste}.')
+    in_app(text, rolle='admin', ziel=f'/uebersicht/{periode_id}')
+    for a in admins():
+        mail(a['email'], f'Neue Dateien {jahr_monat}: {mandant_name}', text)
+
+
+def kommentar_an_admin(mandant_name, dateiname, monat, text, periode_id):
+    """Der Mandant hat etwas zu einer Datei geschrieben."""
+    meldung = f'{mandant_name} hat „{dateiname}" ({monat}) kommentiert: {text[:200]}'
+    in_app(meldung, rolle='admin', ziel=f'/uebersicht/{periode_id}')
+    for a in admins():
+        mail(a['email'], f'Anmerkung zu {dateiname}', meldung)
+
+
+def kommentar_an_mandant(mandant_id, dateiname, monat, text, jahr_monat):
+    """Wir haben zu einer Datei nachgefragt."""
+    meldung = f'Anmerkung zu „{dateiname}" ({monat}): {text[:200]}'
+    ziel = f'/unterlagen/{jahr_monat}'
+    for b in db.benutzer_liste():
+        if b['rolle'] == 'mandant' and b['mandant_id'] == mandant_id and b['aktiv']:
+            in_app(meldung, benutzer_id=b['id'], ziel=ziel)
+            mail(b['email'], f'Rückfrage zu Ihren Unterlagen {monat}',
+                 f'Guten Tag,\n\n{meldung}\n\n'
+                 f'Antworten können Sie im Portal direkt an der Datei.\n\n'
+                 f'Valtix Financial Management')
+
+
 def nachtrag(mandant_name, jahr_monat, periode_id):
     text = f'{mandant_name} hat für {jahr_monat} einen Nachtrag angekündigt.'
     in_app(text, rolle='admin', ziel=f'/uebersicht/{periode_id}')
