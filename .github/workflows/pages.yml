@@ -25,5 +25,8 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
           publish_branch: gh-pages
-          exclude_assets: '.github,tools,docs,PLATZHALTER.md,README.md'
+          # portal/ ist Servercode und gehoert nicht auf eine statische Seite.
+          # Es steht kein Passwort darin, alles kommt aus der Umgebung, aber
+          # ausgeliefert werden soll er trotzdem nicht.
+          exclude_assets: '.github,tools,docs,portal,.gitignore,PLATZHALTER.md,README.md'
           cname: valtixfm.de
