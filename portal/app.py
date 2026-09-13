@@ -878,7 +878,8 @@ def periode_ansehen(request: Request, periode_id: int, meldung: str = '',
                       f'{escape(v)}</option>' for k, v in pd.STATUS_TEXT.items())
 
     WEG_TEXT = {'xlsx': 'Excel', 'csv': 'CSV', 'datev': 'DATEV',
-                'pdf_text': 'PDF mit Text', 'bild': 'Bild', 'zip': 'Archiv'}
+                'pdf_text': 'PDF mit Text', 'bild': 'Bild', 'zip': 'Archiv',
+                'ki': 'Scan, maschinell gelesen'}
     LESE_TEXT = {'roh': 'gelesen', 'geprueft': 'geprüft', 'verworfen': 'verworfen',
                  'ocr_noetig': 'braucht OCR'}
     leseliste = ''

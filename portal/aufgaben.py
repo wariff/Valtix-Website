@@ -75,6 +75,39 @@ def _ablegen(dokument_id, ergebnis):
              ergebnis.get('hinweis'), db.jetzt()))
 
 
+def _erkennung_anstossen(dokument_id, ergebnis):
+    """Ein Scan ohne Textebene bekommt einen zweiten Anlauf, falls die
+    Erkennung eingerichtet ist. Ist sie es nicht, bleibt der Hinweis stehen
+    und jemand kuemmert sich von Hand darum."""
+    if ergebnis.get('status') != 'ocr_noetig':
+        return
+    try:
+        import erkennung
+    except ImportError:
+        return
+    if erkennung.verfuegbar():
+        einreihen(dokument_id, 'erkennen')
+
+
+def _lesen(d):
+    daten = sp.lesen(d['speicher_schluessel'])
+    ergebnis = leser.lesen(d['dateiname'], daten)
+    _ablegen(d['id'], ergebnis)
+    db.protokollieren('dokument_gelesen',
+                      detail=f'dokument {d["id"]}, Weg {ergebnis.get("weg")}',
+                      nachher=ergebnis.get('hinweis'))
+    _erkennung_anstossen(d['id'], ergebnis)
+
+
+def _erkennen(d):
+    import erkennung
+    daten = sp.lesen(d['speicher_schluessel'])
+    _ablegen(d['id'], erkennung.nachholen(d['id'], daten, d['dateiname']))
+
+
+ARTEN = {'lesen': _lesen, 'erkennen': _erkennen}
+
+
 def bearbeiten(aufgabe):
     d = None
     with db.verbinden() as con:
@@ -84,19 +117,18 @@ def bearbeiten(aufgabe):
     if not d:
         _fertig(aufgabe['id'], 'Das Dokument gibt es nicht mehr.')
         return False
+    tun = ARTEN.get(aufgabe['art'])
+    if not tun:
+        _fertig(aufgabe['id'], f'Unbekannte Art „{aufgabe["art"]}".')
+        return False
     try:
-        daten = sp.lesen(d['speicher_schluessel'])
-        ergebnis = leser.lesen(d['dateiname'], daten)
-        _ablegen(d['id'], ergebnis)
+        tun(d)
         _fertig(aufgabe['id'])
-        db.protokollieren('dokument_gelesen',
-                          detail=f'dokument {d["id"]}, Weg {ergebnis.get("weg")}',
-                          nachher=ergebnis.get('hinweis'))
         return True
     except Exception as e:                       # noqa: BLE001
         _fertig(aufgabe['id'], e)
-        db.protokollieren('lesen_fehlgeschlagen', detail=f'dokument {d["id"]}',
-                          nachher=str(e)[:200])
+        db.protokollieren(f'{aufgabe["art"]}_fehlgeschlagen',
+                          detail=f'dokument {d["id"]}', nachher=str(e)[:200])
         return False
 
 
@@ -122,7 +154,10 @@ def stand(periode_id):
             'a.status AS aufgabe, a.fehler, '
             'e.weg, e.seiten, e.konfidenz, e.status AS extraktion, e.hinweis '
             'FROM dokument d '
-            'LEFT JOIN aufgabe a ON a.dokument_id=d.id AND a.art=\'lesen\' '
+            # Die jeweils letzte Aufgabe, damit ein zweiter Anlauf ueber die
+            # Erkennung den Stand des ersten nicht verdeckt.
+            'LEFT JOIN aufgabe a ON a.id = (SELECT MAX(id) FROM aufgabe '
+            'WHERE dokument_id=d.id) '
             'LEFT JOIN extraktion e ON e.dokument_id=d.id '
             'WHERE d.periode_id=? AND d.aktiv=1 ORDER BY d.id', (periode_id,)).fetchall()]
 

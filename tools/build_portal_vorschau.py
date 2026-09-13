@@ -308,7 +308,7 @@ MONATSKURZ = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep',
               'Okt', 'Nov', 'Dez']
 WEGE = {'xlsx': 'Tabelle', 'csv': 'Textdatei mit Trennzeichen',
         'datev': 'DATEV-Export', 'pdf_text': 'PDF mit Text',
-        'bild': 'Bild', 'zip': 'Archiv'}
+        'bild': 'Bild', 'zip': 'Archiv', 'ki': 'Scan, maschinell gelesen'}
 
 
 def _bytes(zahl):

@@ -1,4 +1,4 @@
-# Portal. Stand M3.
+# Portal. Stand M4.
 fastapi
 uvicorn[standard]
 python-multipart
@@ -6,6 +6,10 @@ itsdangerous
 argon2-cffi
 openpyxl
 pdfplumber
+
+# Nur fuer die Erkennung gescannter Belege. Fehlt das Paket oder der
+# Schluessel, bleibt ein Scan ohne Textebene einfach liegen.
+anthropic
 
 # Nur fuer die Tests
 pytest
