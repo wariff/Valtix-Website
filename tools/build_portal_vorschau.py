@@ -177,11 +177,20 @@ def portalkette():
         import perioden as pd
         import aufgaben as auf
         import uebernahme as ue
+        import kommentare as km
         import erzeugen
 
         db.anlegen()
         mid = db.mandant_anlegen(M.firma)
         pd.checkliste_uebernehmen(mid)
+
+        def konto(email, name, rolle, mandant_id=None):
+            db.benutzer_anlegen(email, name, rolle, mandant_id)
+            return next(b for b in db.benutzer_liste() if b['email'] == email)
+
+        kunde = konto('mandant@vorschau.valtix', 'Ansprechpartner Muster',
+                      'mandant', mid)
+        berater = konto('berater@vorschau.valtix', 'Valtix', 'admin')
 
         dateien = [
             ('bwa', 'BWA Juni.xlsx', erzeugen.bwa_xlsx(),
@@ -194,8 +203,19 @@ def portalkette():
             ('kontensalden', 'Kontoauszug Scan.pdf', erzeugen.scan_pdf_ohne_text(),
              'application/pdf'),
         ]
+        abgelegt = {}
         for slot, name, daten, mime in dateien:
-            pd.dokument_ablegen(mid, '2026-06', slot, name, mime, daten, None)
+            abgelegt[slot] = pd.dokument_ablegen(mid, '2026-06', slot, name, mime,
+                                                 daten, kunde['id'])
+
+        # Zwei Anmerkungen an einer Datei, damit die Vorschau zeigt, wie eine
+        # Rueckfrage aussieht. Der Wortlaut ist erfunden, der Weg ist echt.
+        km.schreiben(abgelegt['kontensalden'],
+                     'Der Auszug ist ein Scan, unser Drucker gibt nichts anderes her.',
+                     kunde)
+        km.schreiben(abgelegt['kontensalden'],
+                     'Danke, wir lassen ihn durch die Texterkennung laufen und '
+                     'melden uns, falls etwas unklar bleibt.', berater)
         pd.entfaellt_setzen(mid, '2026-06', 'bestandsliste',
                             'Wir führen kein Lager', None)
         pd.einreichen(mid, '2026-06', None)
@@ -211,6 +231,7 @@ def portalkette():
         auf.abarbeiten()
 
         stand = pd.stand(mid, '2026-06')
+        anmerkungen = km.je_dokument(p6['id'])
         unterlagen = []
         for s in stand['slots']:
             unterlagen.append({
@@ -219,7 +240,11 @@ def portalkette():
                 'erledigt': bool(s['erledigt']),
                 'grund': (s['entfaellt'] or {}).get('grund', ''),
                 'dateien': [{'name': d['dateiname'],
-                             'groesse': _bytes(d['groesse'])}
+                             'groesse': _bytes(d['groesse']),
+                             'anmerkungen': [{'wer': k['verfasser'],
+                                              'rolle': k['rolle'],
+                                              'text': k['text']}
+                                             for k in anmerkungen.get(d['id'], [])]}
                             for d in s['dateien']],
             })
 
@@ -622,7 +647,7 @@ td.minus{color:var(--gold-deep)}
 .tabellenfuss{padding:14px 24px 18px;font-size:.8rem;color:var(--ink-soft)}
 
 /* Unterlagen: Checkliste des Monats */
-.slotliste{padding:6px 24px 24px;display:grid;gap:12px;
+.slotliste{padding:6px 24px 24px;display:grid;gap:12px;align-items:start;
   grid-template-columns:repeat(auto-fill,minmax(268px,1fr))}
 .slot{border-radius:var(--r-md);padding:16px 18px;display:flex;gap:13px;
   align-items:flex-start;background:rgba(255,255,255,.6);
@@ -646,6 +671,17 @@ td.minus{color:var(--gold-deep)}
 .slotdatei{margin-top:7px;font-size:.78rem;color:var(--ink-soft);
   display:flex;justify-content:space-between;gap:10px;overflow-wrap:anywhere}
 .slotdatei b{font-weight:600;color:var(--ink)}
+.anmerkungen{display:flex;flex-direction:column;gap:5px;margin-top:7px}
+.anmerkung{border-radius:11px;padding:8px 11px;font-size:.79rem;line-height:1.45;
+  color:var(--ink-soft);background:rgba(35,41,65,.05);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+.anmerkung.von-uns{background:rgba(166,129,63,.1);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.anmerkung b{display:block;font-size:.71rem;font-weight:700;color:var(--ink);
+  margin-bottom:2px}
+.anmerkungfeld{display:block;margin-top:8px;border-radius:var(--r-pill);
+  padding:8px 14px;font-size:.78rem;color:var(--muted);
+  background:rgba(255,255,255,.75);border:1px dashed rgba(35,41,65,.18)}
 
 /* Monatsuebersicht: Mandanten gegen Monate */
 table.matrix{min-width:620px}
@@ -1458,10 +1494,18 @@ def blaetter(k):
                   else 'slot' if s['erledigt'] else 'slot fehlt')
         art = 'Pflicht' if s['pflicht'] else 'freiwillig'
         zusatz = f' · entfällt: {s["grund"]}' if s['grund'] and not s['dateien'] else ''
-        dateien = ''.join(
-            f'<span class="slotdatei"><b>{d["name"]}</b>'
-            f'<span>{d["groesse"]}</span></span>'
-            for d in s['dateien'])
+        dateien = ''
+        for d in s['dateien']:
+            faden = ''.join(
+                f'<span class="anmerkung{" von-uns" if a["rolle"] == "admin" else ""}">'
+                f'<b>{a["wer"]}</b>{a["text"]}</span>'
+                for a in d['anmerkungen'])
+            if faden:
+                faden = f'<span class="anmerkungen">{faden}</span>'
+            dateien += (f'<span class="slotdatei"><b>{d["name"]}</b>'
+                        f'<span>{d["groesse"]}</span></span>{faden}')
+        if s['dateien']:
+            dateien += ('<span class="anmerkungfeld">Anmerkung zu dieser Datei</span>')
         slots += (f'<div class="{klasse}"><span class="slothaken">{haken}</span>'
                   f'<span class="slot-text"><b>{s["bezeichnung"]}</b>'
                   f'<span class="marke-klein">{art}{zusatz}</span>{dateien}'

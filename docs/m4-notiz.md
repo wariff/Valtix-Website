@@ -61,3 +61,27 @@ Angleichen der Portalseiten an das Aussehen der Website.
 **M0** Hosting, Datenbank, Objektspeicher, Mailversand, TLS, 2FA, Virenscan,
 Anbieter für die Texterkennung samt Auftragsverarbeitungsvertrag. Ohne
 diesen Schritt geht nichts online.
+
+## Nachtrag: Anmerkungen zu einzelnen Dateien
+
+Zu jeder hochgeladenen Datei gibt es einen Verlauf, in den beide Seiten
+schreiben. Der Mandant erklärt damit seinen Upload („der Auszug ist ein
+Scan"), wir fragen damit nach. Beide sehen denselben Verlauf an derselben
+Datei, und wer schreibt, löst bei der anderen Seite eine Meldung im Portal
+und eine Mail aus.
+
+`portal/kommentare.py` prüft dabei dreierlei: die Datei muss zum Zugang
+gehören, der Text darf nicht leer und nicht länger als 2000 Zeichen sein.
+Ein fremder Mandant bekommt weder den Verlauf zu sehen noch kann er
+hineinschreiben. Jede Anmerkung steht im Protokoll.
+
+Der Verlauf hängt an der Datei, nicht am Slot. Lädt jemand eine neue Fassung
+hoch, bleibt die Anmerkung an der alten Fassung stehen, wo sie hingehört.
+
+Neu ist außerdem die Meldung beim Hochladen. Bisher erfuhren wir erst beim
+Einreichen von neuen Dateien. Jetzt kommt eine Meldung je Vorgang, nicht je
+Datei: wer fünf Dateien auf einmal hochlädt, löst eine Meldung aus.
+
+Das Rückziel des Formulars kommt aus einem Formularfeld und wird deshalb
+gegen ein Muster geprüft. Nur `/unterlagen/JJJJ-MM` und `/uebersicht/<Zahl>`
+sind erlaubt, alles andere landet auf der Startseite der jeweiligen Rolle.

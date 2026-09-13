@@ -114,6 +114,21 @@ CREATE TABLE IF NOT EXISTS meldung (
 CREATE INDEX IF NOT EXISTS idx_periode_mandant ON periode(mandant_id, jahr_monat);
 CREATE INDEX IF NOT EXISTS idx_dokument_periode ON dokument(periode_id, aktiv);
 
+-- Anmerkung zu einer einzelnen Datei. Beide Seiten schreiben hier hinein:
+-- der Mandant, um seinen Upload zu erklaeren, wir, um nachzufragen. Die Rolle
+-- steht mit in der Zeile, damit die Anzeige sie ohne Verbund einfaerben kann.
+-- Dass der Verfasser geloescht wird, macht die Anmerkung nicht wertlos, darum
+-- keine Loeschweitergabe.
+CREATE TABLE IF NOT EXISTS dateikommentar (
+  id          INTEGER PRIMARY KEY,
+  dokument_id INTEGER NOT NULL REFERENCES dokument(id),
+  benutzer_id INTEGER REFERENCES benutzer(id),
+  rolle       TEXT NOT NULL,
+  text        TEXT NOT NULL,
+  erstellt_am TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_dateikommentar ON dateikommentar(dokument_id, id);
+
 -- ---------------------------------------------------------------- M2 / M3
 -- Einstellungen, die sich zur Laufzeit aendern lassen sollen.
 CREATE TABLE IF NOT EXISTS einstellung (

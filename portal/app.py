@@ -8,7 +8,7 @@ Berichte hoch. Ein Mandant sieht ausschliesslich die Berichte des eigenen
 Unternehmens. Registrierung von aussen gibt es nicht: Zugaenge werden angelegt,
 die Person setzt ihr Passwort ueber einen einmaligen Einladungslink selbst.
 """
-import os, secrets, sys, time
+import os, re, secrets, sys, time
 from html import escape
 
 from fastapi import FastAPI, Form, Request, UploadFile, File
@@ -25,6 +25,7 @@ import benachrichtigung as bn                            # noqa: E402
 import aufgaben as af                                    # noqa: E402
 import mapping as mp                                     # noqa: E402
 import uebernahme as ue                                  # noqa: E402
+import kommentare as km                                  # noqa: E402
 
 GEHEIM = os.environ.get('VALTIX_SECRET')
 if not GEHEIM:
@@ -123,7 +124,43 @@ td.num,th.num{text-align:right}
 code{background:rgba(35,41,65,.06);padding:2px 6px;border-radius:6px;font-size:.86rem;
      word-break:break-all}
 .fuss{max-width:1000px;margin:0 auto;padding:0 24px 40px;font-size:.8rem;color:var(--ink-soft)}
+/* Anmerkungen zu einer Datei */
+.verlauf{margin:6px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.verlauf li{padding:9px 12px;border-radius:12px;font-size:.86rem;
+  background:#F2F3F7;border:1px solid var(--hairline)}
+.verlauf li.von-admin{background:#F6F1E6;border-color:#E3D6BC}
+.verlauf .wer{display:block;font-size:.72rem;color:var(--ink-soft);margin-bottom:2px}
+.anmerkung{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.anmerkung input[name=text]{flex:1;min-width:180px;min-height:38px}
+.anmerkung .knopf{margin:0}
 '''
+
+
+def verlauf(dokument_id, eintraege, t, zurueck, schreiben=True):
+    """Anmerkungen zu einer Datei, dazu das Feld fuer die naechste.
+
+    Beide Rollen sehen denselben Verlauf. Wer von wem ist, steht dran, damit
+    eine Rueckfrage von uns nicht wie eine Notiz des Mandanten aussieht.
+    """
+    punkte = ''
+    for k in eintraege:
+        wer = escape(k['verfasser'] or ('Valtix' if k['rolle'] == 'admin' else 'Mandant'))
+        klasse = ' class="von-admin"' if k['rolle'] == 'admin' else ''
+        punkte += (f'<li{klasse}><span class="wer">{wer} · '
+                   f'{escape((k["erstellt_am"] or "")[:16])}</span>'
+                   f'{escape(k["text"])}</li>')
+    liste = f'<ul class="verlauf">{punkte}</ul>' if punkte else ''
+    feld = ''
+    if schreiben:
+        feld = (f'<form class="anmerkung" method="post" action="/kommentar">'
+                f'<input type="hidden" name="csrf" value="{t}">'
+                f'<input type="hidden" name="dokument" value="{dokument_id}">'
+                f'<input type="hidden" name="zurueck" value="{escape(zurueck)}">'
+                f'<input name="text" maxlength="{km.LAENGSTE}" '
+                f'placeholder="Anmerkung zu dieser Datei">'
+                f'<button class="knopf schmal stumm" type="submit">Senden</button>'
+                f'</form>')
+    return liste + feld
 
 
 def seite(titel, inhalt, nutzer=None, breit=True):
@@ -544,13 +581,16 @@ def monat(request: Request, jahr_monat: str, meldung: str = '', fehler: str = ''
     if fehler:
         kopf += f'<div class="meldung fehler">{escape(fehler)}</div>'
 
+    anmerkungen = km.je_dokument(p['id']) if p else {}
     reihen = ''
     for slot in s['slots']:
         if slot['dateien']:
             d = slot['dateien'][-1]
             zustand = (f'<a href="/datei/{d["id"]}">{escape(d["dateiname"])}</a>'
                        f'<span class="marke-klein"> · Fassung {d["version"]} · '
-                       f'{d["groesse"] // 1024} KB</span>')
+                       f'{d["groesse"] // 1024} KB</span>'
+                       + verlauf(d['id'], anmerkungen.get(d['id'], []), t,
+                                 f'/unterlagen/{jahr_monat}'))
         elif slot['entfaellt']:
             zustand = (f'entfällt: {escape(slot["entfaellt"]["grund"])}'
                        + (f' <form method="post" action="/unterlagen/{jahr_monat}/'
@@ -645,15 +685,21 @@ async def monat_hochladen(request: Request, jahr_monat: str,
     dateien = [f for f in form.getlist('dateien') if getattr(f, 'filename', '')]
     if not dateien:
         return _zurueck(f'/unterlagen/{jahr_monat}', fehler='Es war keine Datei dabei.')
-    gut, schlecht = 0, []
+    gut, schlecht, namen = 0, [], []
     for f in dateien:
         inhalt = await f.read()
         try:
             pd.dokument_ablegen(n['mandant_id'], jahr_monat, slot or None,
                                 f.filename, f.content_type or '', inhalt, n['id'])
             gut += 1
+            namen.append(f.filename)
         except (pd.Verweigert, sp.Abgelehnt) as e:
             schlecht.append(f'{f.filename}: {e}')
+    if gut:
+        pp = pd.periode(n['mandant_id'], jahr_monat)
+        name = next((m['name'] for m in db.mandanten()
+                     if m['id'] == n['mandant_id']), '')
+        bn.hochgeladen(name, pd.monatstext(jahr_monat), namen, pp['id'])
     meldung = f'{gut} {"Datei" if gut == 1 else "Dateien"} hochgeladen.' if gut else ''
     return _zurueck(f'/unterlagen/{jahr_monat}', meldung=meldung,
                     fehler=' '.join(schlecht)[:400])
@@ -738,6 +784,30 @@ def datei(request: Request, dokument_id: int):
                              'Cache-Control': 'no-store'})
 
 
+ZURUECK_ERLAUBT = re.compile(r'^/(unterlagen/\d{4}-\d{2}|uebersicht/\d+)$')
+
+
+def _zurueckziel(wert, ersatz):
+    """Nur eigene Seiten. Das Ziel kommt aus einem Formularfeld, also wird es
+    gegen ein Muster geprueft und sonst verworfen."""
+    wert = (wert or '').strip()
+    return wert if ZURUECK_ERLAUBT.match(wert) else ersatz
+
+
+@app.post('/kommentar')
+def kommentar(request: Request, dokument: int = Form(...), text: str = Form(''),
+              zurueck: str = Form(''), csrf: str = Form(...)):
+    n = angemeldet(request)
+    if not n or not csrf_ok(n['id'], csrf):
+        return RedirectResponse('/anmelden', status_code=303)
+    ziel = _zurueckziel(zurueck, '/' if n['rolle'] == 'admin' else '/unterlagen')
+    try:
+        km.schreiben(dokument, text, n)
+    except pd.Verweigert as e:
+        return _zurueck(ziel, fehler=str(e))
+    return _zurueck(ziel, meldung='Ihre Anmerkung ist gespeichert.')
+
+
 # ---------------------------------------------------------------- Admin M1/M2
 @app.get('/uebersicht', response_class=HTMLResponse)
 def uebersicht(request: Request, jahr: int = 0, filter: str = ''):
@@ -777,7 +847,8 @@ def uebersicht(request: Request, jahr: int = 0, filter: str = ''):
 
 
 @app.get('/uebersicht/{periode_id}', response_class=HTMLResponse)
-def periode_ansehen(request: Request, periode_id: int, meldung: str = ''):
+def periode_ansehen(request: Request, periode_id: int, meldung: str = '',
+                    fehler: str = ''):
     n = _nur_admin(request)
     if not n:
         return RedirectResponse('/anmelden', status_code=303)
@@ -788,12 +859,15 @@ def periode_ansehen(request: Request, periode_id: int, meldung: str = ''):
     s = pd.stand(p['mandant_id'], p['jahr_monat'])
     t = csrf_token(n['id'])
     reihen = ''
+    anmerkungen = km.je_dokument(periode_id)
     for slot in s['slots'] + [{'bezeichnung': 'Sonstiges', 'schluessel': '',
                                'dateien': s['ohne_slot'], 'entfaellt': None,
                                'pflicht': 0}]:
         for d in slot['dateien']:
             reihen += (f'<tr><td>{escape(slot["bezeichnung"])}</td>'
-                       f'<td><a href="/datei/{d["id"]}">{escape(d["dateiname"])}</a></td>'
+                       f'<td><a href="/datei/{d["id"]}">{escape(d["dateiname"])}</a>'
+                       + verlauf(d['id'], anmerkungen.get(d['id'], []), t,
+                                 f'/uebersicht/{periode_id}') + '</td>'
                        f'<td>Fassung {d["version"]}</td>'
                        f'<td class="num">{d["groesse"] // 1024} KB</td></tr>')
         if slot['entfaellt']:
@@ -824,6 +898,7 @@ def periode_ansehen(request: Request, periode_id: int, meldung: str = ''):
     leseliste = leseliste or '<tr><td colspan="4">Noch nichts gelesen.</td></tr>'
     return seite(f'{name} {p["jahr_monat"]}', f'''
       {f'<div class="meldung gut">{escape(meldung)}</div>' if meldung else ''}
+      {f'<div class="meldung fehler">{escape(fehler)}</div>' if fehler else ''}
       <h1>{escape(name)}</h1>
       <p class="lead">{escape(pd.monatstext(p["jahr_monat"]))} ·
       {escape(pd.STATUS_TEXT[p["status"]])}
