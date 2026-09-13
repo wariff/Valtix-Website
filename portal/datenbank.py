@@ -129,6 +129,34 @@ CREATE TABLE IF NOT EXISTS dateikommentar (
 );
 CREATE INDEX IF NOT EXISTS idx_dateikommentar ON dateikommentar(dokument_id, id);
 
+-- Der Massnahmenplan, an dem beide Seiten arbeiten. Er haengt am Mandanten,
+-- nicht am Monat: eine Massnahme laeuft ueber mehrere Berichte hinweg, und
+-- genau das soll man ihr ansehen. Erledigtes wird nicht geloescht, sonst
+-- waere spaeter nicht mehr zu sehen, was schon abgearbeitet wurde.
+CREATE TABLE IF NOT EXISTS massnahme (
+  id            INTEGER PRIMARY KEY,
+  mandant_id    INTEGER NOT NULL REFERENCES mandant(id),
+  titel         TEXT NOT NULL,
+  beschreibung  TEXT,
+  status        TEXT NOT NULL DEFAULT 'offen',
+  rang          INTEGER NOT NULL DEFAULT 2,
+  faellig_am    TEXT,
+  erstellt_von  INTEGER REFERENCES benutzer(id),
+  erstellt_am   TEXT NOT NULL,
+  erledigt_am   TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_massnahme_mandant ON massnahme(mandant_id, status);
+
+CREATE TABLE IF NOT EXISTS massnahme_notiz (
+  id           INTEGER PRIMARY KEY,
+  massnahme_id INTEGER NOT NULL REFERENCES massnahme(id),
+  benutzer_id  INTEGER REFERENCES benutzer(id),
+  rolle        TEXT NOT NULL,
+  text         TEXT NOT NULL,
+  erstellt_am  TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_massnahme_notiz ON massnahme_notiz(massnahme_id, id);
+
 -- ---------------------------------------------------------------- M2 / M3
 -- Einstellungen, die sich zur Laufzeit aendern lassen sollen.
 CREATE TABLE IF NOT EXISTS einstellung (
@@ -225,6 +253,8 @@ SPALTEN_NACHTRAG = [
     ('periode', 'nachtrag_offen', 'INTEGER NOT NULL DEFAULT 0'),
     # Stichtag fuer die Erinnerung, je Mandant. Leer heisst: globaler Wert.
     ('mandant', 'erinnerung_tag', 'INTEGER'),
+    # Gebuchtes Paket. Bestimmt, was der Mandant im Portal zu sehen bekommt.
+    ('mandant', 'paket', "TEXT NOT NULL DEFAULT 'analyse'"),
 ]
 
 
@@ -304,11 +334,17 @@ def benutzer_sperren(bid, aktiv):
 
 
 # ---------- Mandanten und Berichte ----------
-def mandant_anlegen(name):
+def mandant_anlegen(name, paket='analyse'):
     with verbinden() as con:
-        cur = con.execute('INSERT INTO mandant (name,angelegt_am) VALUES (?,?)',
-                          (name.strip(), jetzt()))
+        cur = con.execute('INSERT INTO mandant (name,paket,angelegt_am) VALUES (?,?,?)',
+                          (name.strip(), paket, jetzt()))
         return cur.lastrowid
+
+
+def mandant(mandant_id):
+    with verbinden() as con:
+        r = con.execute('SELECT * FROM mandant WHERE id=?', (mandant_id,)).fetchone()
+    return dict(r) if r else None
 
 
 def mandanten():

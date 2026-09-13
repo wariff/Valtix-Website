@@ -178,10 +178,14 @@ def portalkette():
         import aufgaben as auf
         import uebernahme as ue
         import kommentare as km
+        import massnahmen as msn
+        import pakete as pkt
         import erzeugen
 
         db.anlegen()
-        mid = db.mandant_anlegen(M.firma)
+        # Die Vorfuehrung zeigt das Paket Betreuung, weil nur dort der
+        # Massnahmenplan und der Verlauf ueber mehrere Monate offen sind.
+        mid = db.mandant_anlegen(M.firma, 'betreuung')
         pd.checkliste_uebernehmen(mid)
 
         def konto(email, name, rolle, mandant_id=None):
@@ -227,6 +231,20 @@ def portalkette():
         pd.dokument_ablegen(mid, '2026-07', 'bwa', 'BWA Juli.xlsx',
                             dateien[0][3], dateien[0][2], None)
         pd.periode(mid, '2026-05', anlegen=True)
+
+        # Zwei Massnahmen, wie sie aus einem Health Check folgen. Die Texte
+        # sind erfunden, der Weg dorthin ist echt.
+        eins = msn.anlegen(mid, 'Zahlungsziele von 48 auf 30 Tage senken',
+                           'Betrifft die zehn größten Kunden. Neue '
+                           'Zahlungsbedingungen ab dem nächsten Angebot.',
+                           berater, rang=1)
+        msn.status_setzen(eins, 'laeuft', kunde)
+        msn.notiz(eins, 'Mit vier Kunden gesprochen, drei haben zugestimmt.', kunde)
+        msn.notiz(eins, 'Gut. Den vierten nehmen wir im nächsten Pitch durch.',
+                  berater)
+        zwei = msn.anlegen(mid, 'Materialeinkauf bündeln',
+                           'Der Materialanteil ist im Juni gestiegen.',
+                           berater, rang=2)
 
         auf.abarbeiten()
 
@@ -281,7 +299,22 @@ def portalkette():
                            for i, m in enumerate(zeile['monate'])],
             })
 
+        notizen = msn.je_massnahme(mid)
+        plan = []
+        for m in msn.liste(mid):
+            plan.append({
+                'titel': m['titel'], 'text': m['beschreibung'] or '',
+                'status': m['status'],
+                'statustext': msn.STATUS_TEXT[m['status']],
+                'rang': msn.RANG_TEXT.get(m['rang'], ''),
+                'notizen': [{'wer': n['verfasser'], 'rolle': n['rolle'],
+                             'text': n['text']} for n in notizen.get(m['id'], [])],
+            })
+
         return {
+            'paket': pkt.klar(mid),
+            'plan': plan,
+            'planstand': msn.stand(mid),
             'monat': pd.monatstext('2026-06'),
             'status': pd.STATUS_TEXT.get(p6['status'], p6['status']),
             'unterlagen': unterlagen,
@@ -683,6 +716,27 @@ td.minus{color:var(--gold-deep)}
   padding:8px 14px;font-size:.78rem;color:var(--muted);
   background:rgba(255,255,255,.75);border:1px dashed rgba(35,41,65,.18)}
 
+/* Massnahmenplan */
+.planliste{padding:6px 24px 24px;display:grid;gap:12px;align-items:start;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+.plan{border-radius:var(--r-md);padding:17px 19px;background:rgba(255,255,255,.6);
+  border:1px solid rgba(255,255,255,.85);border-left:4px solid var(--muted);
+  box-shadow:0 8px 22px rgba(35,41,65,.07), inset 0 1px 0 rgba(255,255,255,.9);
+  transition:transform .28s ease,box-shadow .28s ease}
+.plan:hover{transform:translateY(-3px);
+  box-shadow:0 20px 44px rgba(35,41,65,.14), inset 0 1px 0 rgba(255,255,255,.9)}
+.plan.offen{border-left-color:var(--gold)}
+.plan.laeuft{border-left-color:#404D97}
+.plan.erledigt{border-left-color:#1E7C43}
+.plan b{display:block;font-size:.95rem;font-weight:700;line-height:1.4;margin-top:7px}
+.planmarke{display:inline-block;border-radius:var(--r-pill);padding:3px 11px;
+  font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  background:rgba(35,41,65,.07);color:var(--ink-soft)}
+.plan.laeuft .planmarke{background:rgba(64,77,151,.12);color:#313B78}
+.plan.erledigt .planmarke{background:rgba(30,124,67,.12);color:#166138}
+.plantext{display:block;margin-top:6px;font-size:.84rem;color:var(--ink-soft);
+  line-height:1.5}
+
 /* Monatsuebersicht: Mandanten gegen Monate */
 table.matrix{min-width:620px}
 table.matrix td,table.matrix th{padding:11px 10px;text-align:center}
@@ -883,6 +937,7 @@ JS = r'''
 
   var FESTE_KOEPFE = {
     unterlagen: ['feste Ansicht'],
+    massnahmen: ['Maßnahmen', 'laufend, nicht je Monat'],
     pruefen: ['feste Ansicht'],
     monatsuebersicht: ['Jahr', 'alle Mandanten'],
     mandanten: ['Verwaltung', 'alle Mandanten'],
@@ -1381,7 +1436,7 @@ JS = r'''
     stand.reiter = start;
     document.querySelectorAll('.nur-admin').forEach(function (e) { e.hidden = false; });
     oeffnen('app');
-  } else if (['detail', 'unterlagen'].indexOf(start) >= 0) {
+  } else if (['detail', 'unterlagen', 'massnahmen'].indexOf(start) >= 0) {
     stand.reiter = start;
   }
 })();
@@ -1577,7 +1632,28 @@ def blaetter(k):
           'eine fachliche Schätzung und an echten Mandantendaten noch nicht '
           'geprüft. Deshalb geht kein Wert ohne Freigabe weiter.</p>')
 
-    return unterlagen + monatsuebersicht + pruefen
+    plankarten = ''
+    for m in k['plan']:
+        faden = ''.join(
+            f'<span class="anmerkung{" von-uns" if n["rolle"] == "admin" else ""}">'
+            f'<b>{n["wer"]}</b>{n["text"]}</span>' for n in m['notizen'])
+        if faden:
+            faden = f'<span class="anmerkungen">{faden}</span>'
+        text = f'<span class="plantext">{m["text"]}</span>' if m['text'] else ''
+        plankarten += (f'<div class="plan {m["status"]}">'
+                       f'<span class="planmarke">{m["statustext"]}</span>'
+                       f'<b>{m["titel"]}</b>'
+                       f'<span class="marke-klein">Priorität {m["rang"]}</span>'
+                       f'{text}{faden}</div>')
+    st = k['planstand']
+    plan = _karte(
+        'massnahmen', 'Maßnahmen',
+        f'{st["offen"]} offen · {st["laeuft"]} in Arbeit · {st["erledigt"]} erledigt. '
+        f'Was hier steht, folgt aus dem Health Check. Status und Notizen setzen '
+        f'beide Seiten. Gehört zu den Paketen Betreuung und Intensiv.',
+        f'<div class="planliste">{plankarten}</div>')
+
+    return unterlagen + plan + monatsuebersicht + pruefen
 
 
 def verwaltung():
@@ -1652,6 +1728,7 @@ def bauen():
 
     reiter = [('ueberblick', 'Überblick', False), ('detail', 'Zahlen im Detail', False),
               ('unterlagen', 'Unterlagen', False),
+              ('massnahmen', 'Maßnahmen', False),
               ('monatsuebersicht', 'Monatsübersicht', True),
               ('pruefen', 'Werte prüfen', True),
               ('mandanten', 'Mandanten', True), ('zugaenge', 'Zugänge', True),

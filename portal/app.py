@@ -26,6 +26,8 @@ import aufgaben as af                                    # noqa: E402
 import mapping as mp                                     # noqa: E402
 import uebernahme as ue                                  # noqa: E402
 import kommentare as km                                  # noqa: E402
+import pakete as pk                                      # noqa: E402
+import massnahmen as ms                                  # noqa: E402
 
 GEHEIM = os.environ.get('VALTIX_SECRET')
 if not GEHEIM:
@@ -133,7 +135,31 @@ code{background:rgba(35,41,65,.06);padding:2px 6px;border-radius:6px;font-size:.
 .anmerkung{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
 .anmerkung input[name=text]{flex:1;min-width:180px;min-height:38px}
 .anmerkung .knopf{margin:0}
+/* Massnahmen */
+.massnahme{border-left:4px solid var(--hairline)}
+.massnahme.offen{border-left-color:#C9871C}
+.massnahme.laeuft{border-left-color:#404D97}
+.massnahme.erledigt{border-left-color:#1E7C43}
+.massnahme.verworfen{border-left-color:#B9BDC9;opacity:.72}
+.mkopf b{font-size:1rem}
+.mkopf .marke-klein{display:block}
+.mtext{margin-top:6px;font-size:.9rem;color:var(--ink-soft)}
+.mknoepfe{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;margin-top:10px}
+.mknoepfe form{margin:0}
+.mknoepfe .anmerkung{margin-top:0;flex:1;min-width:200px}
 '''
+
+
+def _faden(eintraege):
+    """Ein Verlauf als Liste. Wer von wem ist, steht dran und faerbt die Zeile."""
+    punkte = ''
+    for k in eintraege:
+        wer = escape(k['verfasser'] or ('Valtix' if k['rolle'] == 'admin' else 'Mandant'))
+        klasse = ' class="von-admin"' if k['rolle'] == 'admin' else ''
+        punkte += (f'<li{klasse}><span class="wer">{wer} · '
+                   f'{escape((k["erstellt_am"] or "")[:16])}</span>'
+                   f'{escape(k["text"])}</li>')
+    return f'<ul class="verlauf">{punkte}</ul>' if punkte else ''
 
 
 def verlauf(dokument_id, eintraege, t, zurueck, schreiben=True):
@@ -142,14 +168,7 @@ def verlauf(dokument_id, eintraege, t, zurueck, schreiben=True):
     Beide Rollen sehen denselben Verlauf. Wer von wem ist, steht dran, damit
     eine Rueckfrage von uns nicht wie eine Notiz des Mandanten aussieht.
     """
-    punkte = ''
-    for k in eintraege:
-        wer = escape(k['verfasser'] or ('Valtix' if k['rolle'] == 'admin' else 'Mandant'))
-        klasse = ' class="von-admin"' if k['rolle'] == 'admin' else ''
-        punkte += (f'<li{klasse}><span class="wer">{wer} · '
-                   f'{escape((k["erstellt_am"] or "")[:16])}</span>'
-                   f'{escape(k["text"])}</li>')
-    liste = f'<ul class="verlauf">{punkte}</ul>' if punkte else ''
+    liste = _faden(eintraege)
     feld = ''
     if schreiben:
         feld = (f'<form class="anmerkung" method="post" action="/kommentar">'
@@ -173,6 +192,8 @@ def seite(titel, inhalt, nutzer=None, breit=True):
             links.append('<a href="/protokoll">Protokoll</a>')
         else:
             links.append('<a href="/unterlagen">Unterlagen</a>')
+            if pk.kann(nutzer.get('mandant_id'), 'massnahmen'):
+                links.append('<a href="/massnahmen">Maßnahmen</a>')
         nav = ('<nav>' + ''.join(links) +
                f'<form method="post" action="/abmelden" style="display:inline">'
                f'<button type="submit">Abmelden</button></form></nav>')
@@ -309,16 +330,28 @@ def start(request: Request, meldung: str = ''):
           <div class="rahmen"><table><thead><tr><th>Mandant</th><th>Zeitraum</th>
           <th>Eingestellt</th><th class="num">&nbsp;</th></tr></thead>
           <tbody>{zeilen}</tbody></table></div>''', n)
+    alle = db.berichte(n['mandant_id'])
+    # Der Verlauf ueber mehrere Monate gehoert zu den laufenden Paketen. Wer den
+    # Health Check einmalig gebucht hat, sieht seinen Bericht, nicht die Reihe.
+    verlauf = pk.kann(n['mandant_id'], 'verlauf')
+    sichtbar = alle if verlauf else alle[:1]
     zeilen = ''.join(
         f'<tr><td>{escape(b["zeitraum"])}</td><td>{escape(b["erstellt_am"][:10])}</td>'
         f'<td class="num"><a class="knopf schmal stumm" href="/bericht/{b["id"]}">Ansehen</a></td></tr>'
-        for b in db.berichte(n['mandant_id'])) or \
+        for b in sichtbar) or \
         '<tr><td colspan="3">Ihr erster Bericht erscheint hier, sobald er vorliegt.</td></tr>'
+    weitere = ''
+    if not verlauf and len(alle) > 1:
+        weitere = (f'<p class="marke-klein">Sie haben {len(alle)} Berichte. Die '
+                   f'Entwicklung über alle Monate gehört zum Paket Betreuung. '
+                   f'Sprechen Sie uns an, wenn Sie sie sehen möchten.</p>')
     return seite('Ihre Berichte', f'''{hinweis}{statusblock(n)}
       <h1>Ihre Berichte</h1>
-      <p class="lead">Angemeldet als {escape(n["name"])}.</p>
+      <p class="lead">Angemeldet als {escape(n["name"])} ·
+      Paket {escape(pk.klar(n["mandant_id"]))}.</p>
       <div class="rahmen"><table><thead><tr><th>Zeitraum</th><th>Eingestellt</th>
-      <th class="num">&nbsp;</th></tr></thead><tbody>{zeilen}</tbody></table></div>''', n)
+      <th class="num">&nbsp;</th></tr></thead><tbody>{zeilen}</tbody></table></div>
+      {weitere}''', n)
 
 
 @app.get('/bericht/{bid}', response_class=HTMLResponse)
@@ -343,18 +376,37 @@ def _nur_admin(request):
 
 
 @app.get('/verwaltung', response_class=HTMLResponse)
-def verwaltung(request: Request, meldung: str = '', link: str = ''):
+def verwaltung(request: Request, meldung: str = '', link: str = '',
+               fehler: str = ''):
     n = _nur_admin(request)
     if not n:
         return RedirectResponse('/anmelden', status_code=303)
     hinweis = f'<div class="meldung gut">{escape(meldung)}</div>' if meldung else ''
+    if fehler:
+        hinweis += f'<div class="meldung fehler">{escape(fehler)}</div>'
     if link:
         hinweis += (f'<div class="meldung gut">Einladungslink, einmalig gültig, bitte an die '
                     f'Person weitergeben:<br><code>{escape(link)}</code></div>')
     mand = db.mandanten()
     auswahl = ''.join(f'<option value="{m["id"]}">{escape(m["name"])}</option>' for m in mand)
-    m_zeilen = ''.join(f'<tr><td>{escape(m["name"])}</td><td class="num">{m["anzahl"]}</td></tr>'
-                       for m in mand) or '<tr><td colspan="2">Noch keine Mandanten.</td></tr>'
+    paketauswahl = ''.join(f'<option value="{k}">{escape(v["klar"])}</option>'
+                           for k, v in pk.PAKETE.items())
+    m_zeilen = ''
+    for m in mand:
+        wahl = ''.join(f'<option value="{k}"'
+                       f'{" selected" if k == pk.paket(m["id"]) else ""}>'
+                       f'{escape(v["klar"])}</option>' for k, v in pk.PAKETE.items())
+        m_zeilen += (
+            f'<tr><td>{escape(m["name"])}</td><td class="num">{m["anzahl"]}</td>'
+            f'<td><form method="post" action="/paket" style="display:flex;gap:6px">'
+            f'<input type="hidden" name="csrf" value="{csrf_token(n["id"])}">'
+            f'<input type="hidden" name="mandant_id" value="{m["id"]}">'
+            f'<select name="paket">{wahl}</select>'
+            f'<button class="knopf schmal stumm" type="submit">setzen</button>'
+            f'</form></td>'
+            f'<td><a class="knopf schmal stumm" href="/massnahmen/{m["id"]}">'
+            f'Maßnahmen</a></td></tr>')
+    m_zeilen = m_zeilen or '<tr><td colspan="4">Noch keine Mandanten.</td></tr>'
     b_zeilen = ''.join(
         f'<tr><td>{escape(b["name"])}</td><td>{escape(b["email"])}</td>'
         f'<td>{"Administrator" if b["rolle"]=="admin" else escape(b["mandant_name"] or "")}</td>'
@@ -374,12 +426,15 @@ def verwaltung(request: Request, meldung: str = '', link: str = ''):
       </form></div>
 
       <h2>Mandanten</h2>
-      <div class="rahmen"><table><thead><tr><th>Name</th><th class="num">Berichte</th></tr>
+      <div class="rahmen"><table><thead><tr><th>Name</th><th class="num">Berichte</th>
+      <th>Paket</th><th>&nbsp;</th></tr>
       </thead><tbody>{m_zeilen}</tbody></table></div>
       <div class="karte" style="margin-top:14px"><form method="post" action="/mandant">
         <input type="hidden" name="csrf" value="{t}">
         <label for="mn">Neuer Mandant</label>
         <input id="mn" name="name" required placeholder="Firmenname">
+        <label for="mp">Paket</label>
+        <select id="mp" name="paket">{paketauswahl}</select>
         <button class="knopf" type="submit">Anlegen</button>
       </form></div>
 
@@ -402,13 +457,30 @@ def verwaltung(request: Request, meldung: str = '', link: str = ''):
 
 
 @app.post('/mandant')
-def mandant_neu(request: Request, name: str = Form(...), csrf: str = Form(...)):
+def mandant_neu(request: Request, name: str = Form(...), paket: str = Form('analyse'),
+                csrf: str = Form(...)):
     n = _nur_admin(request)
     if not n or not csrf_ok(n['id'], csrf):
         return RedirectResponse('/anmelden', status_code=303)
-    db.mandant_anlegen(name)
-    db.protokollieren('mandant_angelegt', benutzer_id=n['id'], detail=name)
+    if not pk.gueltig(paket):
+        paket = pk.STANDARD
+    db.mandant_anlegen(name, paket)
+    db.protokollieren('mandant_angelegt', benutzer_id=n['id'], detail=name,
+                      nachher=paket)
     return RedirectResponse('/verwaltung?meldung=Mandant+angelegt.', status_code=303)
+
+
+@app.post('/paket')
+def paket_setzen(request: Request, mandant_id: int = Form(...),
+                 paket: str = Form(...), csrf: str = Form(...)):
+    n = _nur_admin(request)
+    if not n or not csrf_ok(n['id'], csrf):
+        return RedirectResponse('/anmelden', status_code=303)
+    try:
+        pk.setzen(mandant_id, paket, n['id'])
+    except ValueError as e:
+        return _zurueck('/verwaltung', fehler=str(e))
+    return _zurueck('/verwaltung', meldung='Paket gesetzt.')
 
 
 @app.post('/zugang')
@@ -784,7 +856,8 @@ def datei(request: Request, dokument_id: int):
                              'Cache-Control': 'no-store'})
 
 
-ZURUECK_ERLAUBT = re.compile(r'^/(unterlagen/\d{4}-\d{2}|uebersicht/\d+)$')
+ZURUECK_ERLAUBT = re.compile(
+    r'^/(unterlagen/\d{4}-\d{2}|uebersicht/\d+|massnahmen(/\d+)?)$')
 
 
 def _zurueckziel(wert, ersatz):
@@ -806,6 +879,146 @@ def kommentar(request: Request, dokument: int = Form(...), text: str = Form(''),
     except pd.Verweigert as e:
         return _zurueck(ziel, fehler=str(e))
     return _zurueck(ziel, meldung='Ihre Anmerkung ist gespeichert.')
+
+
+# ------------------------------------------------------------- Massnahmen
+def _massnahmenseite(request, n, mandant_id, meldung, fehler):
+    """Dieselbe Ansicht fuer beide Seiten. Wer darf, sieht dieselbe Liste."""
+    name = (db.mandant(mandant_id) or {}).get('name', '')
+    t = csrf_token(n['id'])
+    notizen = ms.je_massnahme(mandant_id)
+    zaehler = ms.stand(mandant_id)
+    zurueck = f'/massnahmen/{mandant_id}' if n['rolle'] == 'admin' else '/massnahmen'
+
+    karten = ''
+    for m in ms.liste(mandant_id):
+        wahl = ''.join(f'<option value="{k}"{" selected" if k == m["status"] else ""}>'
+                       f'{escape(v)}</option>' for k, v in ms.STATUS_TEXT.items())
+        faden = _faden(notizen.get(m['id'], []))
+        karten += f'''<div class="karte massnahme {escape(m["status"])}">
+          <div class="mkopf"><b>{escape(m["titel"])}</b>
+            <span class="marke-klein">Priorität {escape(ms.RANG_TEXT.get(m["rang"], ""))}
+            {f' · fällig {escape(m["faellig_am"])}' if m["faellig_am"] else ''}</span></div>
+          {f'<p class="mtext">{escape(m["beschreibung"])}</p>' if m["beschreibung"] else ''}
+          {faden}
+          <div class="mknoepfe">
+            <form method="post" action="/massnahme/status" style="display:flex;gap:6px">
+              <input type="hidden" name="csrf" value="{t}">
+              <input type="hidden" name="massnahme" value="{m["id"]}">
+              <input type="hidden" name="zurueck" value="{escape(zurueck)}">
+              <select name="status">{wahl}</select>
+              <button class="knopf schmal stumm" type="submit">setzen</button>
+            </form>
+            <form class="anmerkung" method="post" action="/massnahme/notiz">
+              <input type="hidden" name="csrf" value="{t}">
+              <input type="hidden" name="massnahme" value="{m["id"]}">
+              <input type="hidden" name="zurueck" value="{escape(zurueck)}">
+              <input name="text" maxlength="{ms.LAENGSTE_NOTIZ}" placeholder="Notiz">
+              <button class="knopf schmal stumm" type="submit">Senden</button>
+            </form>
+          </div></div>'''
+    karten = karten or ('<div class="karte"><p class="marke-klein">Noch keine '
+                        'Maßnahmen. Sie entstehen aus dem Health Check.</p></div>')
+
+    neue = ''
+    if n['rolle'] == 'admin':
+        raenge = ''.join(f'<option value="{k}"{" selected" if k == 2 else ""}>'
+                         f'{escape(v)}</option>' for k, v in ms.RANG_TEXT.items())
+        neue = f'''<h2>Neue Maßnahme</h2>
+        <div class="karte"><form method="post" action="/massnahme">
+          <input type="hidden" name="csrf" value="{t}">
+          <input type="hidden" name="mandant_id" value="{mandant_id}">
+          <label for="mt">Titel</label>
+          <input id="mt" name="titel" required maxlength="{ms.LAENGSTER_TITEL}">
+          <label for="mb">Beschreibung</label>
+          <input id="mb" name="beschreibung">
+          <label for="mr">Priorität</label>
+          <select id="mr" name="rang">{raenge}</select>
+          <label for="mf">Fällig</label>
+          <input id="mf" name="faellig_am" type="date">
+          <button class="knopf" type="submit">Anlegen</button>
+        </form></div>'''
+
+    kopf = ''
+    if meldung:
+        kopf += f'<div class="meldung gut">{escape(meldung)}</div>'
+    if fehler:
+        kopf += f'<div class="meldung fehler">{escape(fehler)}</div>'
+    titel = f'Maßnahmen {name}' if n['rolle'] == 'admin' else 'Ihre Maßnahmen'
+    return seite(titel, f'''{kopf}
+      <h1>{escape(titel)}</h1>
+      <p class="lead">{zaehler["offen"]} offen · {zaehler["laeuft"]} in Arbeit ·
+      {zaehler["erledigt"]} erledigt. Was hier steht, folgt aus dem Health Check.
+      Status und Notizen können beide Seiten setzen.</p>
+      {karten}{neue}''', n)
+
+
+@app.get('/massnahmen', response_class=HTMLResponse)
+def massnahmen_mandant(request: Request, meldung: str = '', fehler: str = ''):
+    n = _mandant_pflicht(request)
+    if not n:
+        return RedirectResponse('/anmelden', status_code=303)
+    if not pk.kann(n['mandant_id'], 'massnahmen'):
+        return seite('Maßnahmen', '<h1>Maßnahmen</h1><p class="lead">Der gemeinsame '
+                     'Maßnahmenplan gehört zu den Paketen Betreuung und Intensiv. '
+                     'Sprechen Sie uns an, wenn Sie damit arbeiten möchten.</p>', n)
+    return _massnahmenseite(request, n, n['mandant_id'], meldung, fehler)
+
+
+@app.get('/massnahmen/{mandant_id}', response_class=HTMLResponse)
+def massnahmen_admin(request: Request, mandant_id: int, meldung: str = '',
+                     fehler: str = ''):
+    n = _nur_admin(request)
+    if not n:
+        return RedirectResponse('/anmelden', status_code=303)
+    if not db.mandant(mandant_id):
+        return seite('Nicht gefunden', '<h1>Nicht gefunden</h1>', n)
+    return _massnahmenseite(request, n, mandant_id, meldung, fehler)
+
+
+@app.post('/massnahme')
+def massnahme_neu(request: Request, mandant_id: int = Form(...),
+                  titel: str = Form(...), beschreibung: str = Form(''),
+                  rang: int = Form(2), faellig_am: str = Form(''),
+                  csrf: str = Form(...)):
+    n = _nur_admin(request)
+    if not n or not csrf_ok(n['id'], csrf):
+        return RedirectResponse('/anmelden', status_code=303)
+    try:
+        ms.anlegen(mandant_id, titel, beschreibung, n, rang, faellig_am or None)
+    except ms.Verweigert as e:
+        return _zurueck(f'/massnahmen/{mandant_id}', fehler=str(e))
+    return _zurueck(f'/massnahmen/{mandant_id}', meldung='Maßnahme angelegt.')
+
+
+@app.post('/massnahme/status')
+def massnahme_status(request: Request, massnahme: int = Form(...),
+                     status: str = Form(...), zurueck: str = Form(''),
+                     csrf: str = Form(...)):
+    n = angemeldet(request)
+    if not n or not csrf_ok(n['id'], csrf):
+        return RedirectResponse('/anmelden', status_code=303)
+    ziel = _zurueckziel(zurueck, '/massnahmen')
+    try:
+        ms.status_setzen(massnahme, status, n)
+    except ms.Verweigert as e:
+        return _zurueck(ziel, fehler=str(e))
+    return _zurueck(ziel, meldung='Status gesetzt.')
+
+
+@app.post('/massnahme/notiz')
+def massnahme_notiz(request: Request, massnahme: int = Form(...),
+                    text: str = Form(''), zurueck: str = Form(''),
+                    csrf: str = Form(...)):
+    n = angemeldet(request)
+    if not n or not csrf_ok(n['id'], csrf):
+        return RedirectResponse('/anmelden', status_code=303)
+    ziel = _zurueckziel(zurueck, '/massnahmen')
+    try:
+        ms.notiz(massnahme, text, n)
+    except ms.Verweigert as e:
+        return _zurueck(ziel, fehler=str(e))
+    return _zurueck(ziel, meldung='Notiz gespeichert.')
 
 
 # ---------------------------------------------------------------- Admin M1/M2
