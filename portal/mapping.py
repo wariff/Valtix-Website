@@ -75,8 +75,9 @@ SKR03 = [
     (8000, 8799, 'hauptleistung'),
     (8800, 8899, 'warenverkauf'),
     (8900, 8999, 'sonstige_ertrag'),
-    (3000, 3499, 'wareneinsatz'),
-    (3500, 3999, 'fremdleistung'),
+    (3000, 3099, 'wareneinsatz'),
+    (3100, 3199, 'fremdleistung'),
+    (3200, 3499, 'wareneinsatz'),
     (4100, 4199, 'personal'),
     (4200, 4249, 'miete'),
     (4250, 4299, 'energie'),
@@ -92,17 +93,33 @@ SKR03 = [
     (2100, 2199, 'zinsaufwand'),
     (2650, 2699, 'zinsertrag'),
 ]
-# Bilanzkonten, in beiden Rahmen aehnlich genug fuer eine Schaetzung.
-BILANZ = [
-    (1200, 1299, 'liquide'),
+# Bilanzkonten. Frueher stand hier ein Bereich fuer beide Rahmen, das war
+# falsch: SKR03 und SKR04 legen die Bilanz voellig verschieden an. Im SKR03
+# liegt die Kasse bei 1000 und das Eigenkapital bei 0800, im SKR04 die Kasse
+# bei 1600 und das Eigenkapital bei 2000. Ein gemeinsamer Bereich trifft in
+# jedem Rahmen etwas anderes.
+BILANZ03 = [
+    (100, 899, 'eigenkapital'),        # 0800 bis 0899 Kapital, davor Anlagen
+    (1000, 1099, 'liquide'),           # Kasse
+    (1200, 1299, 'liquide'),           # Bank
     (1400, 1499, 'forderungen'),
     (1600, 1699, 'kurzfr_verb'),
+]
+BILANZ04 = [
+    (1200, 1299, 'forderungen'),
+    (1600, 1699, 'liquide'),           # Kasse
+    (1800, 1899, 'liquide'),           # Bank
     (2000, 2099, 'eigenkapital'),
+    (3300, 3399, 'kurzfr_verb'),
 ]
 
 # Wortmuster fuer BWA-Zeilen, wenn keine Kontonummer dabeisteht.
 WORTREGELN = [
     (r'umsatzerl|erl[öo]se aus|haupterl', 'hauptleistung'),
+    (r'so\. betr\. erl|sonstige betriebliche erl', 'sonstige_ertrag'),
+    (r'material-/wareneinkauf|wareneinkauf|materialeinkauf', 'wareneinsatz'),
+    (r'personalkosten', 'personal'),
+    (r'kosten warenabgabe', 'sonst_variabel'),
     (r'warenverkauf|handelswaren', 'warenverkauf'),
     (r'sonstige.*ertr[äa]g|übrige ertr', 'sonstige_ertrag'),
     (r'wareneinsatz|materialaufwand|rohstoffe|bezogene waren', 'wareneinsatz'),
@@ -119,7 +136,7 @@ WORTREGELN = [
     (r'abschreibung|\bafa\b', 'afa'),
     (r'zinsaufwand|zinsen und [äa]hnliche aufwend', 'zinsaufwand'),
     (r'zinsertr|zinsen und [äa]hnliche ertr', 'zinsertrag'),
-    (r'sonstige betriebliche aufwend|übrige kosten', 'sonst_aufwand'),
+    (r'sonstige betriebliche aufwend|übrige kosten|sonstige kosten', 'sonst_aufwand'),
     (r'\bbank\b|kasse|guthaben bei kreditinstitut', 'liquide'),
     (r'forderungen aus', 'forderungen'),
     (r'verbindlichkeiten aus', 'kurzfr_verb'),
@@ -128,10 +145,43 @@ WORTREGELN = [
 ]
 
 
+# Bestandsfelder kommen aus der Saldenliste, alles andere aus der BWA. Eine
+# BWA zeigt den Berichtsmonat, eine Saldenliste den Jahreswert. Wer beide
+# addiert, zaehlt denselben Umsatz zweimal und mischt dabei zwei Zeitraeume.
+BESTANDSFELDER = frozenset({'liquide', 'forderungen', 'kurzfr_verb',
+                            'eigenkapital', 'bilanzsumme'})
+
+# Konten, die in keine Auswertungsposition gehoeren. Saldenvortraege sind
+# Eroeffnungsbuchungen, Personenkonten sind einzelne Kunden und Lieferanten,
+# und die Umsatzsteuer ist ein durchlaufender Posten, kein Aufwand und kein
+# Ertrag. Alle drei wuerden sonst als Klaerfall auftauchen und nur Arbeit
+# machen.
+# Privatkonten (1800 bis 1899) stehen bewusst nicht hier. Entnahmen mindern
+# das Eigenkapital einer GbR und gehoeren deshalb auf den Tisch, nicht in den
+# Papierkorb. Sie landen in der Klaerliste und werden dort entschieden.
+NICHT_AUSWERTEN = [
+    (1500, 1599, 'Vorsteuer'),
+    (3960, 3999, 'Bestandskonto, kein Aufwand'),
+    (1700, 1799, 'Umsatzsteuer und Verrechnung'),
+    (9000, 9999, 'Saldenvortrag und Statistik'),
+    (10000, 99999, 'Personenkonto'),
+]
+
+
+def uebergehen(konto):
+    """Sagt, warum ein Konto nicht ausgewertet wird, sonst None."""
+    if konto is None:
+        return None
+    for von, bis, grund in NICHT_AUSWERTEN:
+        if von <= konto <= bis:
+            return grund
+    return None
+
+
 def kontonummer(text):
     """Holt eine Kontonummer aus einem Feld, wenn dort eine steht."""
     t = str(text or '').strip()
-    m = re.fullmatch(r'0*(\d{4,5})', t)
+    m = re.fullmatch(r'0*(\d{3,5})', t)
     return int(m.group(1)) if m else None
 
 
@@ -155,10 +205,11 @@ def _aus_bereich(konto, bereiche):
 
 
 def aus_konto(konto, rahmen):
-    ziel = _aus_bereich(konto, BILANZ)
+    bilanz = BILANZ04 if rahmen == 'SKR04' else BILANZ03
+    ziel = _aus_bereich(konto, bilanz)
     if ziel:
         return ziel, 0.7
-    bereiche = SKR03 if rahmen == 'SKR03' else SKR04
+    bereiche = SKR04 if rahmen == 'SKR04' else SKR03
     ziel = _aus_bereich(konto, bereiche)
     return (ziel, 0.75) if ziel else (None, 0.0)
 

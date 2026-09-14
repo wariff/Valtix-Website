@@ -91,8 +91,10 @@ def vorschlagen(periode_id):
                                      'Saldenliste hochladen.'})
             continue
         for tabelle in json.loads(d['tabellen'] or '[]'):
+            blatt = tabelle.get('blatt') or 'Datei'
             for quelle, text, betrag in posten(tabelle):
                 alle.append({'dokument_id': d['id'], 'datei': d['dateiname'],
+                             'blatt': blatt, 'art': tabelle.get('art', ''),
                              'quelle': quelle, 'bezeichnung': text, 'betrag': betrag})
 
     konten = [k for k in (mp.kontonummer(a['quelle']) for a in alle) if k]
@@ -102,33 +104,66 @@ def vorschlagen(periode_id):
     # Ueber Dateien hinweg NICHT: BWA und Summen- und Saldenliste enthalten
     # dieselben Zahlen, das haette jeden Betrag verdoppelt. Stattdessen wird
     # je Feld die zuverlaessigste Datei genommen und eine Abweichung gemeldet.
-    je_datei, offen = {}, []
+    # Gruppiert wird je Blatt, nicht je Datei. Eine DATEV-Ausgabe enthaelt BWA
+    # und Saldenliste in einem PDF, und beide nennen denselben Umsatz. Wer sie
+    # addiert, zaehlt ihn doppelt und mischt Monat und Jahr.
+    je_blatt, offen, uebergangen = {}, [], []
     for a in alle:
+        grund = mp.uebergehen(mp.kontonummer(a['quelle']))
+        if grund:
+            uebergangen.append({**a, 'grund': grund})
+            continue
         ziel, konfidenz, woher = mp.vorschlag(a['quelle'], a['bezeichnung'],
                                               rahmen, gelernt)
         if not ziel:
             offen.append(a)
             continue
-        f = je_datei.setdefault((a['dokument_id'], ziel),
+        f = je_blatt.setdefault((a['dokument_id'], a['blatt'], ziel),
                                 {'wert': 0.0, 'konfidenz': 1.0, 'posten': [],
                                  'dokument_id': a['dokument_id'],
-                                 'datei': a['datei']})
+                                 'datei': a['datei'], 'blatt': a['blatt'],
+                                 'art': a.get('art', '')})
         f['wert'] += abs(a['betrag'])
         f['konfidenz'] = min(f['konfidenz'], konfidenz)
         f['posten'].append({**a, 'woher': woher})
 
     felder = {}
-    for (dokument_id, ziel), f in je_datei.items():
+    for (dokument_id, blatt, ziel), f in je_blatt.items():
         felder.setdefault(ziel, []).append(f)
+
+    # Liegt eine BWA bei, ist sie fuer Erfolgszahlen die einzige Quelle. Was
+    # sie nicht ausweist, steckt bei ihr in einer Sammelzeile; aus der
+    # Saldenliste nachzufuellen wuerde den Jahreswert neben den Monatswert
+    # stellen und beides zusammen ergaebe keinen Zeitraum mehr.
+    hat_bwa = any(a.get('art') == 'bwa' for a in alle)
+    if hat_bwa:
+        for ziel, kandidaten in list(felder.items()):
+            if ziel in mp.BESTANDSFELDER:
+                continue
+            nur_bwa = [k for k in kandidaten if k.get('art') == 'bwa']
+            if nur_bwa:
+                felder[ziel] = nur_bwa
+            else:
+                for k in kandidaten:
+                    for post in k['posten']:
+                        offen.append({**post, 'grund': 'in der BWA nicht getrennt '
+                                                       'ausgewiesen'})
+                del felder[ziel]
+
     for ziel, kandidaten in list(felder.items()):
-        # Beste Quelle: hoechste Konfidenz, bei Gleichstand die mit mehr Posten.
-        kandidaten.sort(key=lambda k: (k['konfidenz'], len(k['posten'])), reverse=True)
+        # Welches Blatt gilt, entscheidet die Art des Feldes: Bestaende stehen
+        # in der Saldenliste, Erfolgszahlen in der BWA. Erst danach zaehlen
+        # Konfidenz und Anzahl der Posten.
+        bevorzugt = 'saldenliste' if ziel in mp.BESTANDSFELDER else 'bwa'
+        kandidaten.sort(key=lambda k: (k.get('art') == bevorzugt, k['konfidenz'],
+                                       len(k['posten'])), reverse=True)
         beste = dict(kandidaten[0])
         beste['abweichungen'] = []
         for andere in kandidaten[1:]:
             if beste['wert'] and abs(andere['wert'] - beste['wert']) / abs(beste['wert']) > 0.01:
                 beste['abweichungen'].append(
-                    {'datei': andere['datei'], 'wert': andere['wert']})
+                    {'datei': f'{andere["datei"]}, {andere["blatt"]}',
+                     'wert': andere['wert']})
         felder[ziel] = beste
 
     with db.verbinden() as con:
@@ -140,7 +175,8 @@ def vorschlagen(periode_id):
                         (periode_id, a['dokument_id'], a['quelle'],
                          a['bezeichnung'], a['betrag'], db.jetzt()))
     return {'rahmen': rahmen, 'felder': felder, 'offen': offen,
-            'hinweise': hinweise, 'posten_gesamt': len(alle)}
+            'uebergangen': uebergangen, 'hinweise': hinweise,
+            'posten_gesamt': len(alle)}
 
 
 def _vormonat(p):

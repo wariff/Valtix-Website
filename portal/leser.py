@@ -136,6 +136,98 @@ def aus_datev(daten):
                        f'Kodierung {kodierung}, {len(zeilen) - 2} Buchungen'}
 
 
+# Eine DATEV-Auswertung sagt im Kopf, was sie ist. Daran erkennen wir sie,
+# statt die Spalten zu raten.
+DATEV_BWA = re.compile(r'BWA-Form:|Kurzfristige Erfolgsrechnung')
+DATEV_SUSA = re.compile(r'Summen und Salden|SUSA Jahres')
+# Eine Betragsspalte in deutscher Schreibweise, das Vorzeichen kann hinten stehen.
+BETRAG = r'-?\d{1,3}(?:\.\d{3})*,\d{2}-?'
+# BWA-Zeile: Beschriftung, dann eine Reihe von Zahlen. Die erste ist der Monat,
+# alles danach sind Prozentwerte und die kumulierte Spalte.
+BWA_ZEILE = re.compile(rf'^(?P<text>[A-Za-zÄÖÜäöüß][^\d]*?)\s+(?P<zahlen>{BETRAG}(?:\s+{BETRAG})*)\s*$')
+# SuSa-Zeile: Kontonummer, Beschriftung, Zahlen, am Ende der Saldo mit S oder H.
+SUSA_ZEILE = re.compile(rf'^(?P<konto>\d{{3,5}})\s*(?P<text>[A-Za-zÄÖÜäöüß][^\d]*?)\s+'
+                        rf'(?P<zahlen>.*?{BETRAG})\s*(?P<vz>[SH])\s*$')
+# Summen- und Zwischenzeilen sind keine Posten, sie wuerden doppelt zaehlen.
+KEINE_POSTEN = ('gesamtleistung', 'rohertrag', 'betrieblicher rohertrag',
+                'gesamtkosten', 'betriebsergebnis', 'ergebnis vor steuern',
+                'vorläufiges ergebnis', 'neutraler aufwand', 'neutraler ertrag',
+                'summe klasse', 'kontenklasse unbesetzt', 'kostenarten')
+
+
+def _erste_zahl(text):
+    treffer = re.findall(BETRAG, text)
+    return _zahl(treffer[0]) if treffer else None
+
+
+def _letzte_zahl(text):
+    treffer = re.findall(BETRAG, text)
+    return _zahl(treffer[-1]) if treffer else None
+
+
+def aus_datev_auswertung(text):
+    """Liest eine DATEV-BWA und eine Summen- und Saldenliste aus dem Text.
+
+    pdfplumber presst eine BWA-Zeile in zwei Zellen: die Beschriftung und alle
+    Zahlen als eine Zeichenkette. Aus der lassen sich die Spalten nicht mehr
+    trennen, deshalb wird hier der Text gelesen statt die Tabelle.
+
+    In der BWA ist die erste Zahl der Berichtsmonat, danach folgen Prozente und
+    die kumulierte Spalte. In der Saldenliste steht der Saldo am Ende, mit S
+    oder H fuer das Vorzeichen.
+    """
+    # Dasselbe PDF enthaelt oft mehrere Auswertungen nacheinander: die BWA, den
+    # Wertenachweis, den Vorjahresvergleich, dazu die Saldenliste einmal je
+    # Monat und einmal als Jahresuebersicht. Die Beschriftungen wiederholen sich
+    # dabei. Wer sie alle addiert, zaehlt jeden Posten mehrfach. Deshalb zaehlt
+    # jeweils das erste Vorkommen, und das ist die eigentliche Auswertung.
+    bwa, susa, abschnitt = [], [], None
+    gesehen_bwa, gesehen_susa = set(), set()
+    for zeile in text.split('\n'):
+        zeile = zeile.strip()
+        if not zeile:
+            continue
+        if DATEV_SUSA.search(zeile):
+            abschnitt = 'susa'
+        elif DATEV_BWA.search(zeile):
+            abschnitt = 'bwa'
+        if abschnitt == 'susa':
+            t = SUSA_ZEILE.match(zeile)
+            if t:
+                betrag = _letzte_zahl(t.group('zahlen'))
+                if betrag is not None:
+                    # H heisst Haben. Fuer Bestaende ist das die andere Seite.
+                    if t.group('vz') == 'H':
+                        betrag = -betrag
+                    konto = t.group('konto').lstrip('0') or '0'
+                    if konto not in gesehen_susa:
+                        gesehen_susa.add(konto)
+                        susa.append([konto, t.group('text').strip(), betrag])
+            continue
+        if abschnitt == 'bwa':
+            t = BWA_ZEILE.match(zeile)
+            if not t:
+                continue
+            beschriftung = t.group('text').strip()
+            klein = beschriftung.lower()
+            if any(klein.startswith(x) for x in KEINE_POSTEN):
+                continue
+            betrag = _erste_zahl(t.group('zahlen'))
+            if betrag is not None and klein not in gesehen_bwa:
+                gesehen_bwa.add(klein)
+                bwa.append(['', beschriftung, betrag])
+    raus = []
+    # Die Art steht dabei, weil sie den Zeitraum bestimmt: eine BWA zeigt den
+    # Monat, eine Saldenliste den Stand beziehungsweise den Jahreswert.
+    if bwa:
+        raus.append({'blatt': 'BWA', 'art': 'bwa',
+                     'zeilen': [['Konto', 'Bezeichnung', 'Betrag']] + bwa})
+    if susa:
+        raus.append({'blatt': 'Saldenliste', 'art': 'saldenliste',
+                     'zeilen': [['Konto', 'Bezeichnung', 'Saldo']] + susa})
+    return raus
+
+
 def aus_pdf(daten):
     """PDF mit Textebene. Fehlt die Ebene, wird das gemeldet, nicht geraten."""
     import pdfplumber
@@ -155,6 +247,14 @@ def aus_pdf(daten):
                 'konfidenz': 0.0, 'status': 'ocr_noetig',
                 'hinweis': 'Die Datei hat keine durchsuchbare Textebene, '
                            'vermutlich ein Scan oder Foto. Sie braucht OCR.'}
+    if DATEV_BWA.search(text) or DATEV_SUSA.search(text):
+        erkannt = aus_datev_auswertung(text)
+        if erkannt:
+            teile = ', '.join(f'{t["blatt"]} mit {len(t["zeilen"]) - 1} Zeilen'
+                              for t in erkannt)
+            return {'weg': 'pdf_datev', 'tabellen': erkannt, 'rohtext': text[:200000],
+                    'seiten': seiten, 'konfidenz': 0.85,
+                    'hinweis': f'DATEV-Auswertung als PDF: {teile}'}
     return {'weg': 'pdf_text', 'tabellen': tabellen, 'rohtext': text[:200000],
             'seiten': seiten, 'konfidenz': 0.9 if tabellen else 0.6,
             'hinweis': f'{len(tabellen)} Tabellen erkannt' if tabellen
