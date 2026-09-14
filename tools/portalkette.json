@@ -1,0 +1,292 @@
+{
+ "paket": "Betreuung",
+ "plan": [
+  {
+   "titel": "Materialeinkauf bündeln",
+   "text": "Der Materialanteil ist im Juni gestiegen.",
+   "status": "offen",
+   "statustext": "offen",
+   "rang": "mittel",
+   "notizen": []
+  },
+  {
+   "titel": "Zahlungsziele von 48 auf 30 Tage senken",
+   "text": "Betrifft die zehn größten Kunden. Neue Zahlungsbedingungen ab dem nächsten Angebot.",
+   "status": "laeuft",
+   "statustext": "in Arbeit",
+   "rang": "hoch",
+   "notizen": [
+    {
+     "wer": "Ansprechpartner Muster",
+     "rolle": "mandant",
+     "text": "Mit vier Kunden gesprochen, drei haben zugestimmt."
+    },
+    {
+     "wer": "Valtix",
+     "rolle": "admin",
+     "text": "Gut. Den vierten nehmen wir im nächsten Pitch durch."
+    }
+   ]
+  }
+ ],
+ "planstand": {
+  "offen": 1,
+  "laeuft": 1,
+  "erledigt": 0,
+  "verworfen": 0
+ },
+ "monat": "Juni 2026",
+ "status": "in Bearbeitung",
+ "unterlagen": [
+  {
+   "bezeichnung": "BWA",
+   "pflicht": true,
+   "erledigt": true,
+   "grund": "",
+   "dateien": [
+    {
+     "name": "BWA Juni.xlsx",
+     "groesse": "5 kB",
+     "anmerkungen": []
+    }
+   ]
+  },
+  {
+   "bezeichnung": "Summen- und Saldenliste",
+   "pflicht": true,
+   "erledigt": true,
+   "grund": "",
+   "dateien": [
+    {
+     "name": "Summen und Salden.csv",
+     "groesse": "228 B",
+     "anmerkungen": []
+    }
+   ]
+  },
+  {
+   "bezeichnung": "OPOS Debitoren",
+   "pflicht": true,
+   "erledigt": true,
+   "grund": "",
+   "dateien": [
+    {
+     "name": "Offene Posten.pdf",
+     "groesse": "740 B",
+     "anmerkungen": []
+    }
+   ]
+  },
+  {
+   "bezeichnung": "OPOS Kreditoren",
+   "pflicht": true,
+   "erledigt": true,
+   "grund": "",
+   "dateien": [
+    {
+     "name": "EXTF_Buchungsstapel.txt",
+     "groesse": "326 B",
+     "anmerkungen": []
+    }
+   ]
+  },
+  {
+   "bezeichnung": "Kontensaldenliste oder Kontoauszüge",
+   "pflicht": true,
+   "erledigt": true,
+   "grund": "",
+   "dateien": [
+    {
+     "name": "Kontoauszug Scan.pdf",
+     "groesse": "596 B",
+     "anmerkungen": [
+      {
+       "wer": "Ansprechpartner Muster",
+       "rolle": "mandant",
+       "text": "Der Auszug ist ein Scan, unser Drucker gibt nichts anderes her."
+      },
+      {
+       "wer": "Valtix",
+       "rolle": "admin",
+       "text": "Danke, wir lassen ihn durch die Texterkennung laufen und melden uns, falls etwas unklar bleibt."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "bezeichnung": "Bestandsliste",
+   "pflicht": false,
+   "erledigt": true,
+   "grund": "Wir führen kein Lager",
+   "dateien": []
+  },
+  {
+   "bezeichnung": "Lohnjournal",
+   "pflicht": false,
+   "erledigt": false,
+   "grund": "",
+   "dateien": []
+  },
+  {
+   "bezeichnung": "Investitionsliste",
+   "pflicht": false,
+   "erledigt": false,
+   "grund": "",
+   "dateien": []
+  }
+ ],
+ "leseliste": [
+  {
+   "datei": "BWA Juni.xlsx",
+   "weg": "Tabelle",
+   "zustand": "gelesen",
+   "hinweis": ""
+  },
+  {
+   "datei": "Summen und Salden.csv",
+   "weg": "Textdatei mit Trennzeichen",
+   "zustand": "gelesen",
+   "hinweis": "Trennzeichen „;\", Kodierung cp1252"
+  },
+  {
+   "datei": "Offene Posten.pdf",
+   "weg": "PDF mit Text",
+   "zustand": "gelesen",
+   "hinweis": "Text erkannt, keine Tabellenstruktur"
+  },
+  {
+   "datei": "EXTF_Buchungsstapel.txt",
+   "weg": "DATEV-Export",
+   "zustand": "gelesen",
+   "hinweis": "DATEV-Format „Buchungsstapel\", Berater 1000, Mandant 1, Kodierung utf-8-sig, 2 Buchungen"
+  },
+  {
+   "datei": "Kontoauszug Scan.pdf",
+   "weg": "PDF mit Text",
+   "zustand": "braucht OCR",
+   "hinweis": "Die Datei hat keine durchsuchbare Textebene, vermutlich ein Scan oder Foto. Sie braucht OCR."
+  }
+ ],
+ "rahmen": "SKR04",
+ "posten": 8,
+ "zeilen": [
+  {
+   "klartext": "Erlöse Hauptleistung",
+   "blatt": "2 GuV",
+   "zeile": 6,
+   "wert": 365057.97,
+   "konfidenz": 0.75,
+   "quelle": "Summen und Salden.csv",
+   "warnungen": []
+  },
+  {
+   "klartext": "Wareneinsatz / Materialaufwand",
+   "blatt": "2 GuV",
+   "zeile": 15,
+   "wert": 116346.42,
+   "konfidenz": 0.6,
+   "quelle": "BWA Juni.xlsx",
+   "warnungen": []
+  },
+  {
+   "klartext": "Personalaufwand",
+   "blatt": "2 GuV",
+   "zeile": 27,
+   "wert": 142062.35,
+   "konfidenz": 0.75,
+   "quelle": "Summen und Salden.csv",
+   "warnungen": []
+  },
+  {
+   "klartext": "Offene Forderungen",
+   "blatt": "4 Liquidität & Bilanz",
+   "zeile": 7,
+   "wert": 705653.2,
+   "konfidenz": 0.6,
+   "quelle": "Summen und Salden.csv",
+   "warnungen": []
+  }
+ ],
+ "klaerliste": [
+  {
+   "quelle": "Betriebsergebnis",
+   "bezeichnung": "Betriebsergebnis",
+   "betrag": 36213.26
+  }
+ ],
+ "klaerzahl": 1,
+ "hinweise": [
+  {
+   "datei": "EXTF_Buchungsstapel.txt",
+   "text": "Buchungsstapel, daraus werden keine Werte vorgeschlagen. Bitte BWA oder Summen- und Saldenliste hochladen."
+  }
+ ],
+ "matrix": [
+  {
+   "mandant": "Muster Lüftungstechnik GmbH",
+   "monate": [
+    {
+     "kurz": "Jan",
+     "ampel": "fehlt",
+     "status": "offen"
+    },
+    {
+     "kurz": "Feb",
+     "ampel": "fehlt",
+     "status": "offen"
+    },
+    {
+     "kurz": "Mär",
+     "ampel": "fehlt",
+     "status": "offen"
+    },
+    {
+     "kurz": "Apr",
+     "ampel": "fehlt",
+     "status": "offen"
+    },
+    {
+     "kurz": "Mai",
+     "ampel": "fehlt",
+     "status": "offen"
+    },
+    {
+     "kurz": "Jun",
+     "ampel": "vollstaendig",
+     "status": "in Bearbeitung"
+    },
+    {
+     "kurz": "Jul",
+     "ampel": "unvollstaendig",
+     "status": "hochgeladen"
+    },
+    {
+     "kurz": "Aug",
+     "ampel": "fehlt",
+     "status": "offen"
+    },
+    {
+     "kurz": "Sep",
+     "ampel": "fehlt",
+     "status": "offen"
+    },
+    {
+     "kurz": "Okt",
+     "ampel": "fehlt",
+     "status": "offen"
+    },
+    {
+     "kurz": "Nov",
+     "ampel": "fehlt",
+     "status": "offen"
+    },
+    {
+     "kurz": "Dez",
+     "ampel": "fehlt",
+     "status": "offen"
+    }
+   ]
+  }
+ ]
+}

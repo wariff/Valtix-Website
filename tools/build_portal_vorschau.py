@@ -152,15 +152,32 @@ def daten():
 
 
 
-def portalkette():
-    """Laesst die echte Portalkette einmal ueber die Beispieldateien laufen.
+# Die Momentaufnahme der Portalkette. Sie entsteht, wenn portal/ zur Hand ist,
+# und wird sonst von hier gelesen. Damit baut die Website auch dann, wenn das
+# Portal in seinem eigenen, nicht oeffentlichen Repository liegt. Drin stehen
+# nur die anonymisierten Beispieldaten, dieselben wie in den Tests.
+AUFNAHME = os.path.join(_HIER, 'portalkette.json')
 
-    Nichts davon wird erfunden: Datenbank und Ablage liegen in einem
-    Wegwerfordner, die Dateien sind dieselben anonymisierten Beispiele wie
-    in den Tests, und was hier zurueckkommt, hat M1 bis M4 wirklich
-    ausgerechnet. Danach ist der Ordner weg und die Umgebung wieder wie
-    vorher.
+
+def portalkette():
+    """Das Ergebnis der echten Portalkette ueber die Beispieldateien.
+
+    Liegt portal/ daneben, laeuft die Kette wirklich: Datenbank und Ablage in
+    einem Wegwerfordner, die anonymisierten Beispieldateien hochgeladen,
+    gelesen, zugeordnet. Das Ergebnis wird als Momentaufnahme abgelegt.
+
+    Fehlt portal/, wird die Momentaufnahme gelesen. Erfunden wird nichts,
+    sie ist beim letzten echten Lauf entstanden.
     """
+    if not os.path.isdir(os.path.join(ROOT, 'portal')):
+        if not os.path.exists(AUFNAHME):
+            raise SystemExit('Weder portal/ noch tools/portalkette.json vorhanden.')
+        with open(AUFNAHME, encoding='utf-8') as f:
+            return json.load(f)
+    return _kette_laufen_lassen()
+
+
+def _kette_laufen_lassen():
     import shutil
     import tempfile
 
@@ -311,7 +328,7 @@ def portalkette():
                              'text': n['text']} for n in notizen.get(m['id'], [])],
             })
 
-        return {
+        ergebnis = {
             'paket': pkt.klar(mid),
             'plan': plan,
             'planstand': msn.stand(mid),
@@ -328,6 +345,9 @@ def portalkette():
             'hinweise': liste.get('hinweise', []),
             'matrix': uebersicht,
         }
+        with open(AUFNAHME, 'w', encoding='utf-8') as f:
+            json.dump(ergebnis, f, ensure_ascii=False, indent=1)
+        return ergebnis
     finally:
         for k, v in vorher.items():
             if v is None:
