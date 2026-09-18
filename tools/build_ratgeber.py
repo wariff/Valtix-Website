@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Erzeugt die Ratgeber-Uebersicht und die einzelnen Artikelseiten."""
-import os, json, html
+import os, json, html, re, datetime
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.makedirs(os.path.join(ROOT, 'ratgeber'), exist_ok=True)
@@ -1113,8 +1113,13 @@ def uebersicht():
 '''
 
 # ============================ SCHREIBEN ============================
-for a in ARTIKEL:
-    others = [x for x in ARTIKEL if x["slug"] != a["slug"]][:3]
+# Die weiterfuehrenden Beitraege werden durchgereicht, nicht abgeschnitten.
+# Vorher standen unter jedem Artikel dieselben ersten drei der Liste. Damit
+# bekamen die vorderen Artikel zwoelf interne Verweise und alles weiter hinten
+# keinen einzigen. Jetzt verlinkt Artikel i die drei danach, ringsum. Jeder
+# Beitrag erhaelt so genau drei Verweise von Geschwisterartikeln.
+for nr, a in enumerate(ARTIKEL):
+    others = [ARTIKEL[(nr + versatz) % len(ARTIKEL)] for versatz in (1, 2, 3)]
     more = "\n".join(
         f'        <li><a href="/ratgeber/{o["slug"]}.html">{html.escape(o["titel"])}'
         f'<span>{html.escape(o["branche"])}</span></a></li>' for o in others)
@@ -1155,14 +1160,80 @@ with open(os.path.join(ROOT, 'feed.xml'), 'w') as f:
 """)
 print('Feed:    ', len(feed_artikel), 'Beitraege')
 
-# Sitemap neu aufbauen
-urls = ['https://valtixfm.de/', 'https://valtixfm.de/ratgeber.html'] + \
-       [f'https://valtixfm.de/ratgeber/{a["slug"]}.html' for a in ARTIKEL]
+# Sitemap neu aufbauen.
+#
+# Frueher standen hier nur die Startseite, die Ratgeberuebersicht und die
+# Artikel. Die sechs Leistungsseiten fielen bei jedem Lauf aus der Sitemap,
+# und das lastmod war fuer alle Seiten fest auf einen Tag verdrahtet. Beides
+# fiel nicht auf, weil die Datei danach von Hand wieder hergerichtet wurde.
+#
+# Jetzt sucht der Generator die Seiten selbst und nimmt jede, die kein
+# noindex traegt. Damit kann keine Seite mehr vergessen werden, auch eine
+# kuenftige nicht. Das lastmod kommt aus der letzten Aenderung in Git, ist
+# also wahr und pflegt sich selbst.
+import subprocess
+
+
+# Fuer einen Beitrag ist sein eigenes Datum die ehrlichere Angabe als der
+# letzte Commit, der die Datei beruehrt hat. Wer nur einen Verweis im Fuss
+# aendert, hat den Beitrag nicht neu geschrieben.
+DATUM_JE_ARTIKEL = {f'ratgeber/{a["slug"]}.html': a['datum'] for a in ARTIKEL}
+
+
+def _zuletzt_geaendert(pfad):
+    """Datum der letzten Aenderung. Bei Beitraegen ihr eigenes Datum."""
+    if pfad in DATUM_JE_ARTIKEL:
+        return DATUM_JE_ARTIKEL[pfad]
+    try:
+        d = subprocess.run(['git', 'log', '-1', '--format=%cs', '--', pfad],
+                           cwd=ROOT, capture_output=True, text=True, timeout=10)
+        if d.returncode == 0 and d.stdout.strip():
+            return d.stdout.strip()
+    except Exception:                                     # noqa: BLE001
+        pass
+    return datetime.date.fromtimestamp(os.path.getmtime(
+        os.path.join(ROOT, pfad))).isoformat()
+
+
+def _indexierbar():
+    """Alle Seiten, die in die Sitemap gehoeren, in stabiler Reihenfolge."""
+    raus = []
+    for wurzel, verz, dateien in os.walk(ROOT):
+        verz[:] = [v for v in verz
+                   if v not in ('.git', 'node_modules', 'tools', 'docs',
+                                'portal', 'assets')]
+        for d in sorted(dateien):
+            if not d.endswith('.html'):
+                continue
+            pfad = os.path.relpath(os.path.join(wurzel, d), ROOT)
+            with open(os.path.join(ROOT, pfad), encoding='utf-8') as f:
+                kopf = f.read(4000)
+            # Was auf noindex steht, gehoert nicht in die Sitemap. Eine
+            # Adresse dort anzumelden und zugleich abzulehnen, ist ein
+            # widerspruechliches Signal.
+            if re.search(r'name="robots"[^>]*noindex', kopf):
+                continue
+            raus.append(pfad)
+    return raus
+
+
+def _adresse(pfad):
+    return ('https://valtixfm.de/' if pfad == 'index.html'
+            else 'https://valtixfm.de/' + pfad.replace(os.sep, '/'))
+
+
+seiten = _indexierbar()
+# Startseite zuerst, dann die Uebersicht, dann der Rest alphabetisch.
+vorne = {'index.html': 0, 'ratgeber.html': 1}
+seiten.sort(key=lambda p: (vorne.get(p, 2), p))
 entries = "\n".join(
-    f'  <url>\n    <loc>{u}</loc>\n    <lastmod>2026-08-20</lastmod>\n'
-    f'    <changefreq>monthly</changefreq>\n    <priority>{"1.0" if u.endswith("de/") else "0.8"}</priority>\n  </url>'
-    for u in urls)
+    f'  <url>\n    <loc>{_adresse(p)}</loc>\n'
+    f'    <lastmod>{_zuletzt_geaendert(p)}</lastmod>\n'
+    f'    <changefreq>monthly</changefreq>\n'
+    f'    <priority>{"1.0" if p == "index.html" else "0.8"}</priority>\n  </url>'
+    for p in seiten)
 with open(os.path.join(ROOT, 'sitemap.xml'), 'w') as f:
     f.write(f'<?xml version="1.0" encoding="UTF-8"?>\n'
-            f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{entries}\n</urlset>\n')
-print('Sitemap: ', len(urls), 'Eintraege')
+            f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+            f'{entries}\n</urlset>\n')
+print('Sitemap: ', len(seiten), 'Eintraege')
